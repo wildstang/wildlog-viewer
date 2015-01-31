@@ -7,12 +7,10 @@ import javax.swing.JTextField;
 public class Sensor extends JPanel {
 	JTextField data;
 	JLabel sensor;
-	int sensorKey;
 	
-	public Sensor(String name, int size, int index) {
+	public Sensor(String name, String text) {
 		sensor = new JLabel(name);
-		data = new JTextField(size);
-		sensorKey = index;
+		data = new JTextField(text, 10);
 		this.add(sensor);
 		this.add(data);
 	}

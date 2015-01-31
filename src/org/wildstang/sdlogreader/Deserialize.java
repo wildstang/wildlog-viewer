@@ -4,15 +4,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Deserialize {
+	static List<Sensor> stored;
+	static Map <String, Object> e;
 	static boolean isDone = false;
 	public static void deserial() {
 			if (Main.logFile != null) {
 			File file = Main.logFile;
-			Map <String, Object> e = new HashMap <String, Object>();
+			e = new HashMap <String, Object>();
 		    try
 		    {
 		       FileInputStream fileIn = new FileInputStream(file);
@@ -31,11 +35,15 @@ public class Deserialize {
 		       return;
 		    }
 		    System.out.println("Deserialized");
-		    for (Map.Entry<String, Object> entry:e.entrySet()) {
-		    	System.out.println(entry.getKey() + ": " + entry.getValue());
-		    }
+		    thisForLoop();
 			}
 			isDone = true;
 	}
-	
+	public static void thisForLoop() {
+		stored = new ArrayList<Sensor>();
+		for (Map.Entry<String, Object> entry:e.entrySet()) {
+	    	stored.add(new Sensor(entry.getKey(), entry.getValue() + ""));
+	    	System.out.println(stored.size());
+	    }
+	}
 }

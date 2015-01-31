@@ -1,5 +1,6 @@
 package org.wildstang.sdlogreader;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -40,7 +41,8 @@ public class FileChoosingPanel extends JPanel implements ActionListener{
 			window.logFile = null;
 		}
 		Deserialize.deserial();
-		Main.logPanel.refreshData();
+		
+		Main.logPanel.drawData();
 		Main.fileSelectedPanel.showFileName();
 	}
 }
