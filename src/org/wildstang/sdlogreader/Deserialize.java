@@ -13,8 +13,9 @@ public class Deserialize {
 	static List<Sensor> stored;
 	static Map <String, Object> e;
 	static boolean isDone = false;
+	
 	public static void deserial() {
-			if (Main.logFile != null) {
+		if (Main.logFile != null) {
 			File file = Main.logFile;
 			e = new HashMap <String, Object>();
 		    try
@@ -30,20 +31,18 @@ public class Deserialize {
 		       return;
 		    }catch(ClassNotFoundException c)
 		    {
-		       System.out.println("Employee class not found");
+		       System.out.println("Log file not found!");
 		       c.printStackTrace();
 		       return;
 		    }
 		    System.out.println("Deserialized");
-		    thisForLoop();
-			}
-			isDone = true;
-	}
-	public static void thisForLoop() {
-		stored = new ArrayList<Sensor>();
-		for (Map.Entry<String, Object> entry:e.entrySet()) {
-	    	stored.add(new Sensor(entry.getKey(), entry.getValue() + ""));
-	    	System.out.println(stored.size());
-	    }
+			stored = new ArrayList<Sensor>();
+			for (Map.Entry<String, Object> entry : e.entrySet())
+			{
+		    	stored.add(new Sensor(entry.getKey(), entry.getValue() + ""));
+		    	System.out.println(stored.size());
+		    }
+		}
+		isDone = true;
 	}
 }

@@ -11,7 +11,7 @@ public class Sensor extends JPanel {
 	public Sensor(String name, String text) {
 		sensor = new JLabel(name);
 		data = new JTextField(text, 10);
-		this.add(sensor);
-		this.add(data);
+		add(sensor);
+		add(data);
 	}
 }
