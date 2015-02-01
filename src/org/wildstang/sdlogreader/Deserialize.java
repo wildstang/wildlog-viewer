@@ -10,19 +10,19 @@ import java.util.List;
 import java.util.Map;
 
 public class Deserialize {
-	static List<Sensor> stored;
-	static Map <String, Object> e;
+	static List<List<Sensor>> stored;
+	static List<Map <String, Object>> e;
 	static boolean isDone = false;
 	
 	public static void deserial() {
 		if (Main.logFile != null) {
 			File file = Main.logFile;
-			e = new HashMap <String, Object>();
+			e = new ArrayList<>();
 		    try
 		    {
 		       FileInputStream fileIn = new FileInputStream(file);
 		       ObjectInputStream in = new ObjectInputStream(fileIn);
-		       e = (HashMap <String, Object>) in.readObject();
+		       e.add((HashMap <String, Object>) in.readObject());
 		       in.close();
 		       fileIn.close();
 		    }catch(IOException i)
@@ -36,12 +36,18 @@ public class Deserialize {
 		       return;
 		    }
 		    System.out.println("Deserialized");
-			stored = new ArrayList<Sensor>();
-			for (Map.Entry<String, Object> entry : e.entrySet())
+			stored = new ArrayList<List<Sensor>>();
+			for(int i = 0; i < e.size(); i++)
 			{
-		    	stored.add(new Sensor(entry.getKey(), entry.getValue() + ""));
-		    	System.out.println(stored.size());
-		    }
+				Map<String, Object> map = e.get(i);
+				List<Sensor> sensors = new ArrayList<>();
+				for (Map.Entry<String, Object> entry : map.entrySet())
+				{
+			    	sensors.add(new Sensor(entry.getKey(), entry.getValue() + ""));
+			    	System.out.println(stored.size());
+			    }
+				stored.add(sensors);
+			}
 		}
 		isDone = true;
 	}
