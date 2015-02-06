@@ -3,6 +3,7 @@ package org.wildstang.sdlogreader;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -37,7 +38,12 @@ public class FileChoosingPanel extends JPanel implements ActionListener{
 		} else {
 			Main.logFile = null;
 		}
-		Deserialize.deserial();
+		try {
+			Deserialize.deserial();
+		} catch (ClassNotFoundException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		Main.logPanel.drawData();
 		Main.fileSelectedPanel.showFileName();
