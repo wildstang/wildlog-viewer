@@ -1,19 +1,14 @@
 package org.wildstang.sdlogreader;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.io.File;
 
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-
-import sun.awt.HorizBagLayout;
 
 public class Main
 {
@@ -37,28 +32,21 @@ public class Main
 	
 	public Main()
 	{
-		try {
+		try
+		{
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+		}
+		catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e)
+		{
 			e.printStackTrace();
 		}
-		
-		setLookAndFeel();
 		initFrameComponents();
 		organizeFrameComponents();
 	}
 	
-	private static void setLookAndFeel() { 
-        try {
-            UIManager.setLookAndFeel(
-                "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"
-            );
-        } catch (Exception exc){
-            
-        }
-    }
 	private void initFrameComponents() {
 		frame = new JFrame("WildStang: SD Log Reader");
+		frame.setLocation(5, 5);
 		chooserPanel = new FileChoosingPanel();
 		dataPanel1 = new DataPanel(new Color(255, 0, 0));
 		dataPanel2 = new DataPanel(new Color(255, 127, 0));
@@ -74,6 +62,7 @@ public class Main
 		frame.setPreferredSize(new Dimension(1000, 702));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
+	
 	private void organizeFrameComponents() {
 		frame.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();

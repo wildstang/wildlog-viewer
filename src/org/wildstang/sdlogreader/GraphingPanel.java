@@ -29,6 +29,8 @@ public class GraphingPanel extends JPanel {
 		}
 		long firstTimestamp = dataPoints.get(0).timestamp;
 		long deltaTime = dataPoints.get(dataPoints.size() - 1).timestamp - firstTimestamp;
+		g.drawString(Long.toString(firstTimestamp), 5, getHeight()-5);
+		g.drawString(Long.toString(deltaTime + firstTimestamp), getWidth() - 45, getHeight()-5);
 		for (int i = 0; i < dataPoints.size(); i++) {
 			DataPoint point = dataPoints.get(i);
 			DataPoint nextPoint = null;
@@ -37,10 +39,10 @@ public class GraphingPanel extends JPanel {
 			}
 			if (graphType == DOUBLE_TYPE) {
 				if (point.storedObject instanceof Double && nextPoint.storedObject instanceof Double) {
-					int startXVal = (int) ((point.timestamp - firstTimestamp) / (deltaTime / this.getWidth()));
-					int startYVal = this.getHeight() - ((Double) point.storedObject).intValue();
-					int nextXVal = (int) ((nextPoint.timestamp - firstTimestamp) / (deltaTime / this.getWidth()));
-					int nextYVal = this.getHeight() - ((Double) nextPoint.storedObject).intValue();
+					int startXVal = (int) ((point.timestamp - firstTimestamp) / (deltaTime / getWidth()));
+					int startYVal = getHeight() - ((Double) point.storedObject).intValue();
+					int nextXVal = (int) ((nextPoint.timestamp - firstTimestamp) / (deltaTime / getWidth()));
+					int nextYVal = getHeight() - ((Double) nextPoint.storedObject).intValue();
 					g.setColor(Color.BLACK);
 					g.drawLine(startXVal, startYVal, nextXVal, nextYVal);
 					g.setColor(Color.YELLOW);
@@ -49,16 +51,17 @@ public class GraphingPanel extends JPanel {
 				}
 				if (graphType == BOOL_TYPE) {
 					if (point.storedObject instanceof Boolean && nextPoint.storedObject instanceof Boolean) {
-						int xVal = (int) ((point.timestamp - firstTimestamp) / (deltaTime / this.getWidth()));
+						int xVal = (int) ((point.timestamp - firstTimestamp) / (deltaTime / getWidth()));
 						int yVal;
+						int width = (int) ((nextPoint.timestamp - firstTimestamp) / (deltaTime / getWidth()) - xVal);
 						if (dataPoints.get(i).storedObject.equals(true)) {
 							g.setColor(Color.GREEN);
-							yVal = 10;
-							g.fillRect(xVal, yVal, 4, 4);
+							yVal = 30;
+							g.fillRect(xVal, yVal, width, 4);
 						} else {
 							g.setColor(Color.RED);
-							yVal = 30;
-							g.fillRect(xVal, yVal, 4, 4);
+							yVal = 10;
+							g.fillRect(xVal, yVal, width, 4);
 						}
 					}
 				}
