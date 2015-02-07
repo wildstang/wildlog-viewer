@@ -1,6 +1,5 @@
 package org.wildstang.sdlogreader;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -8,7 +7,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 public class DataPanel extends JPanel implements ActionListener {
@@ -27,6 +25,7 @@ public class DataPanel extends JPanel implements ActionListener {
 		sPane = new SensorSelectPanel(c);
 		sPane.setPreferredSize(new Dimension(200, 500));
 		sPane.typeSelected.addActionListener(this);
+		sPane.keySelected.addActionListener(this);
 		add(sPane, j);
 
 		j.gridx = 1;
@@ -40,21 +39,27 @@ public class DataPanel extends JPanel implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+
 		System.out.println("actionPerformed");
-		switch (sPane.typeSelected.getSelectedIndex()) {
-		case 0:
-			gPane.setType(GraphingPanel.DEFAULT_TYPE);
-			break;
-		case 1:
-			System.out.println("case1");
-			gPane.setType(GraphingPanel.BOOL_TYPE);
-			break;
-		case 2:
-			gPane.setType(GraphingPanel.DOUBLE_TYPE);
-			break;
-		case 3:
-			gPane.setType(GraphingPanel.STRING_TYPE);
-			break;	
+		if (e.getSource() == sPane.typeSelected) {
+			switch (sPane.typeSelected.getSelectedIndex()) {
+			case 0:
+				gPane.setType(GraphingPanel.DEFAULT_TYPE);
+				break;
+			case 1:
+				System.out.println("case1");
+				gPane.setType(GraphingPanel.BOOL_TYPE);
+				break;
+			case 2:
+				gPane.setType(GraphingPanel.DOUBLE_TYPE);
+				break;
+			case 3:
+				gPane.setType(GraphingPanel.STRING_TYPE);
+				break;
+			}
+		} else if (e.getSource() == sPane.keySelected) {
+			gPane.setDataKey((String) sPane.keySelected.getSelectedItem());
 		}
+
 	}
 }
