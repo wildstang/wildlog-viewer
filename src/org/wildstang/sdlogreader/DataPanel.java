@@ -34,7 +34,7 @@ public class DataPanel extends JPanel implements ActionListener {
 		j.fill = GridBagConstraints.BOTH;
 		j.weightx = 1;
 		j.weighty = 1.0;
-		gPane = new GraphingPanel(0);
+		gPane = new GraphingPanel();
 		add(gPane, j);
 
 	}
@@ -42,16 +42,19 @@ public class DataPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		System.out.println("actionPerformed");
 		switch (sPane.typeSelected.getSelectedIndex()) {
+		case 0:
+			gPane.setType(GraphingPanel.DEFAULT_TYPE);
+			break;
 		case 1:
 			System.out.println("case1");
-			gPane = new GraphingPanel(1);
+			gPane.setType(GraphingPanel.BOOL_TYPE);
 			break;
 		case 2:
-			gPane = new GraphingPanel(2);
+			gPane.setType(GraphingPanel.DOUBLE_TYPE);
 			break;
 		case 3:
-			gPane = new GraphingPanel(3);
-			break;
+			gPane.setType(GraphingPanel.STRING_TYPE);
+			break;	
 		}
 	}
 }

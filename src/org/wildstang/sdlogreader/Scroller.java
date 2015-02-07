@@ -19,6 +19,7 @@ public class Scroller extends JPanel implements AdjustmentListener {
 	}
 	public void adjustmentValueChanged(AdjustmentEvent arg0) {
 		System.out.println(scrollyPolly.getValue());
+		GraphingPanel.updateGraphs();
 		
 	}
 
