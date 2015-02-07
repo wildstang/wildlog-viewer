@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
@@ -19,7 +20,6 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 		add(fileSelectedPanel);
 		add(readFileStart);
 		readFileStart.addActionListener(this);
-		setBackground(Color.WHITE);
 	}
 
 	@Override
@@ -51,14 +51,14 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 			e.printStackTrace();
 		}
 		fileSelectedPanel.showFileName();
-		Main.sensorPanel1.getKeys();
-		Main.sensorPanel2.getKeys();
-		Main.sensorPanel3.getKeys();
-		Main.sensorPanel4.getKeys();
-		Main.sensorPanel5.getKeys();
-		Main.sensorPanel6.getKeys();
-		Main.sensorPanel7.getKeys();
-		Main.sensorPanel8.getKeys();
+		Main.dataPanel1.sPane.getKeys();
+		Main.dataPanel2.sPane.getKeys();
+		Main.dataPanel3.sPane.getKeys();
+		Main.dataPanel4.sPane.getKeys();
+		Main.dataPanel5.sPane.getKeys();
+		Main.dataPanel6.sPane.getKeys();
+		Main.dataPanel7.sPane.getKeys();
+		Main.dataPanel8.sPane.getKeys();
 		
 		fileSelectedPanel.showFileName();
 	}
