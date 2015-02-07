@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
@@ -36,12 +36,20 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 				.getParentDirectory(startFile));
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		chooser.setDialogTitle("Select the Local location");
-		if (chooser.showOpenDialog(Main.logPanel) == JFileChooser.APPROVE_OPTION) {
+		if (chooser.showOpenDialog(Main.chooserPanel) == JFileChooser.APPROVE_OPTION) {
 			Main.logFile = chooser.getSelectedFile();
 		} else {
 			Main.logFile = null;
 		}
-		Deserialize.deserial();
+		try {
+			Deserialize.deserial();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		fileSelectedPanel.showFileName();
 		Main.sensorPanel1.getKeys();
 		Main.sensorPanel2.getKeys();
@@ -51,5 +59,7 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 		Main.sensorPanel6.getKeys();
 		Main.sensorPanel7.getKeys();
 		Main.sensorPanel8.getKeys();
+		
+		fileSelectedPanel.showFileName();
 	}
 }

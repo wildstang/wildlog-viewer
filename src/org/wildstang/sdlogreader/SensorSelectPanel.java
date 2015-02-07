@@ -29,7 +29,6 @@ public class SensorSelectPanel extends JPanel{
 	public void getKeys() {
 		if (Main.logFile != null) {
 			keys = (String[]) Deserialize.storedSensors.toArray(new String[0]);
-			
 		} else {
 			keys = new String[1];
 			keys[0] = "                  ";
@@ -38,6 +37,7 @@ public class SensorSelectPanel extends JPanel{
 			keySelected = new JComboBox(keys);
 			add(keySelected);
 		}
+		
 		keySelected.setModel(new DefaultComboBoxModel<>(keys));
 	}
 }

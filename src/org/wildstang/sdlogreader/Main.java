@@ -16,9 +16,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 public class Main
 {
 	static JFrame frame;
-	static LoggerVisualizationPanel logPanel;
 	static FileChoosingPanel chooserPanel;
-	static ScrollButtonPanel timeScroller;
 	static SensorSelectPanel sensorPanel1;
 	static SensorSelectPanel sensorPanel2;
 	static SensorSelectPanel sensorPanel3;
@@ -47,8 +45,6 @@ public class Main
 		//initialize the JComponents
 		frame = new JFrame("WildStang: SD Log Reader");
 		chooserPanel = new FileChoosingPanel();
-		logPanel = new LoggerVisualizationPanel();
-		timeScroller = new ScrollButtonPanel();
 		sensorPanel1 = new SensorSelectPanel(new Color(255, 0, 0));
 		sensorPanel2 = new SensorSelectPanel(new Color(255, 127, 0));
 		sensorPanel3 = new SensorSelectPanel(new Color(255, 255, 0));
