@@ -7,9 +7,9 @@ import java.awt.GridLayout;
 import java.io.File;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -27,6 +27,7 @@ public class Main
 	static SensorSelectPanel sensorPanel6;
 	static SensorSelectPanel sensorPanel7;
 	static SensorSelectPanel sensorPanel8;
+	static JScrollBar scrollypolly = new JScrollBar();
 	static File logFile;
 	
 	public static void main(String[] args)
@@ -48,14 +49,14 @@ public class Main
 		chooserPanel = new FileChoosingPanel();
 		logPanel = new LoggerVisualizationPanel();
 		timeScroller = new ScrollButtonPanel();
-		sensorPanel1 = new SensorSelectPanel();
-		sensorPanel2 = new SensorSelectPanel();
-		sensorPanel3 = new SensorSelectPanel();
-		sensorPanel4 = new SensorSelectPanel();
-		sensorPanel5 = new SensorSelectPanel();
-		sensorPanel6 = new SensorSelectPanel();
-		sensorPanel7 = new SensorSelectPanel();
-		sensorPanel8 = new SensorSelectPanel();
+		sensorPanel1 = new SensorSelectPanel(new Color(255, 0, 0));
+		sensorPanel2 = new SensorSelectPanel(new Color(255, 127, 0));
+		sensorPanel3 = new SensorSelectPanel(new Color(255, 255, 0));
+		sensorPanel4 = new SensorSelectPanel(new Color(0, 255, 0));
+		sensorPanel5 = new SensorSelectPanel(new Color(0, 127, 255));
+		sensorPanel6 = new SensorSelectPanel(new Color(0, 0 , 255));
+		sensorPanel7 = new SensorSelectPanel(new Color(127, 0, 255));
+		sensorPanel8 = new SensorSelectPanel(new Color(255, 0, 255));
 		JPanel blankPanel = new JPanel();
 		blankPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		JPanel blankPanel1 = new JPanel();

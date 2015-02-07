@@ -5,32 +5,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 public class SensorSelectPanel extends JPanel{
-	JComboBox keySelected;
-	JComboBox typeSelected;
-	String[] keys = {"", "TestKeys", "LeftMotor", "Blahblah"};
+	JComboBox<String> keySelected;
+	JComboBox<String> typeSelected;
+	String[] keys;
 	
-	public SensorSelectPanel() {
+	public SensorSelectPanel(Color color) {
 		
 		String[] types = {"", "Boolean", "Temp", "Voltage", "Motor"};
+		getKeys();
 		typeSelected = new JComboBox(types);
-		keySelected = new JComboBox(keys);
-		add(keySelected);
 		add(typeSelected);
-		setBorder(BorderFactory.createLineBorder(Color.black));
+		setBackground(color);
+		setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		
 	}
 	
 	
 	public void getKeys() {
-		List<String> keyList = new ArrayList<String>();
-		for (int i = 1; i < Deserialize.stored.size(); i++ ) {
-			keyList.add(Deserialize.stored.get(i).toString());
-		} 
-		keySelected = new JComboBox(keyList.toArray(keys));
-		add(keySelected);
+		if (Main.logFile != null) {
+			keys = (String[]) Deserialize.storedSensors.toArray(new String[0]);
+			
+		} else {
+			keys = new String[1];
+			keys[0] = "                  ";
+		}
+		if (keySelected == null) {
+			keySelected = new JComboBox(keys);
+			add(keySelected);
+		}
+		keySelected.setModel(new DefaultComboBoxModel<>(keys));
 	}
 }

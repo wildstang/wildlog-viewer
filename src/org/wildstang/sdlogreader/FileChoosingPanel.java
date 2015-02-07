@@ -19,6 +19,7 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 		add(fileSelectedPanel);
 		add(readFileStart);
 		readFileStart.addActionListener(this);
+		setBackground(Color.WHITE);
 	}
 
 	@Override
