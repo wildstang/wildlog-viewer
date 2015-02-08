@@ -47,6 +47,21 @@ public class GraphingPanel extends JPanel {
 					g.fillRect(startXVal, startYVal- 1, 1, 3);
 					System.out.println(point.timestamp + ", " + point.storedObject);
 				}
+				if (graphType == BOOL_TYPE) {
+					if (point.storedObject instanceof Boolean && nextPoint.storedObject instanceof Boolean) {
+						int xVal = (int) ((point.timestamp - firstTimestamp) / (deltaTime / this.getWidth()));
+						int yVal;
+						if (dataPoints.get(i).storedObject.equals(true)) {
+							g.setColor(Color.GREEN);
+							yVal = 10;
+							g.fillRect(xVal, yVal, 4, 4);
+						} else {
+							g.setColor(Color.RED);
+							yVal = 30;
+							g.fillRect(xVal, yVal, 4, 4);
+						}
+					}
+				}
 			}
 		}
 	}
