@@ -15,6 +15,7 @@ public class Deserialize {
 	static List<String> storedSensors = new ArrayList<String>();
 	static List<Map<String, Object>> e = new ArrayList<Map<String, Object>>();
 	static boolean isDone = false;
+	static long startTimestamp, endTimestamp;
 
 	public static void deserial() throws IOException, ClassNotFoundException {
 		if (Main.logFile != null) {
@@ -25,7 +26,7 @@ public class Deserialize {
 				try {
 					e.add((HashMap<String, Object>) oin.readObject());
 				} catch (EOFException e) {
-					e.printStackTrace();
+					// End of file. Break.
 					break;
 				} catch (ClassCastException e) {
 					e.printStackTrace();
@@ -43,6 +44,9 @@ public class Deserialize {
 			}
 
 			System.out.println("Deserialized");
+			
+			startTimestamp = (Long) e.get(0).get("Timestamp");
+			endTimestamp = (Long) e.get(e.size() - 1).get("Timestamp");
 
 			for (int i = 0; i < e.size(); i++) {
 				Map<String, Object> map = e.get(i);

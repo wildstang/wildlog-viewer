@@ -2,17 +2,20 @@ package org.wildstang.sdlogreader;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JPanel;
 
-public class DataPanel extends JPanel implements ActionListener {
+public class DataPanel extends JPanel implements ActionListener, MouseMotionListener {
 	GraphingPanel gPane;
 	SensorSelectPanel sPane;
-
+	
 	public DataPanel(Color c) {
 		setLayout(new GridBagLayout());
 		GridBagConstraints j = new GridBagConstraints();
@@ -35,9 +38,15 @@ public class DataPanel extends JPanel implements ActionListener {
 		j.weighty = 1.0;
 		gPane = new GraphingPanel();
 		add(gPane, j);
-
+		
+		gPane.addMouseMotionListener(this);
 	}
-
+	public void update(Graphics g) {
+		System.out.println("in Data Panel update method");
+		g.setColor(Color.BLACK);
+		g.drawLine(gPane.mouseX, 0, gPane.mouseX, gPane.getHeight() * 8);
+		g.drawString(Long.toString(gPane.firstTimestamp + gPane.mouseX), gPane.mouseX - 25, getHeight() / 2);
+	}
 	public void actionPerformed(ActionEvent e) {
 
 		System.out.println("actionPerformed");
@@ -61,5 +70,25 @@ public class DataPanel extends JPanel implements ActionListener {
 			gPane.setDataKey((String) sPane.keySelected.getSelectedItem());
 		}
 
+	}
+	
+
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		Main.updateMousePosition(e.getX(), e.getY());
+	}
+	
+	public void updateMousePosition(int posX, int posY) {
+		gPane.setMousePosition(posX, posY);
+	}
+	
+	public void updateGraphView(long startTimestamp, long endTimestamp) {
+		gPane.updateGraphView(startTimestamp, endTimestamp);
 	}
 }

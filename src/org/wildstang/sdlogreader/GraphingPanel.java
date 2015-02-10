@@ -2,6 +2,8 @@ package org.wildstang.sdlogreader;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,18 +21,28 @@ public class GraphingPanel extends JPanel {
 
 	List<DataPoint> dataPoints = new ArrayList<>();
 	private int graphType = -1;
+	int buttonClicked;
+	long firstTimestamp;
+	int mouseX;
+	int mouseY;
+	long viewStartTimestamp, viewEndTimestamp;
+	Graphics graphics;
 
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		System.out.println("painting");
+		graphics = g;
 		if (dataPoints.isEmpty()) {
 			return;
 		}
-		long firstTimestamp = dataPoints.get(0).timestamp;
+		firstTimestamp = dataPoints.get(0).timestamp;
 		long deltaTime = dataPoints.get(dataPoints.size() - 1).timestamp - firstTimestamp;
-		g.drawString(Long.toString(firstTimestamp), 5, getHeight()-5);
-		g.drawString(Long.toString(deltaTime + firstTimestamp), getWidth() - 45, getHeight()-5);
+		graphics.drawString(Long.toString(firstTimestamp), 5, getHeight()-5);
+		graphics.drawString(Long.toString(deltaTime + firstTimestamp), getWidth() - 45, getHeight()-5);
+		graphics.setColor(Color.BLACK);
+		graphics.drawLine(mouseX, 0, mouseX, getHeight());
+		graphics.drawString(Long.toString((long) (firstTimestamp + ((double)mouseX / (double) getWidth()) * deltaTime)), mouseX - 25, getHeight() / 2);
+
 		for (int i = 0; i < dataPoints.size(); i++) {
 			DataPoint point = dataPoints.get(i);
 			DataPoint nextPoint = null;
@@ -47,7 +59,7 @@ public class GraphingPanel extends JPanel {
 					g.drawLine(startXVal, startYVal, nextXVal, nextYVal);
 					g.setColor(Color.YELLOW);
 					g.fillRect(startXVal, startYVal- 1, 1, 3);
-					System.out.println(point.timestamp + ", " + point.storedObject);
+					//System.out.println(point.timestamp + ", " + point.storedObject);
 				}
 				if (graphType == BOOL_TYPE) {
 					if (point.storedObject instanceof Boolean && nextPoint.storedObject instanceof Boolean) {
@@ -81,7 +93,19 @@ public class GraphingPanel extends JPanel {
 			repaint();
 		}
 	}
-
+	
+	public void setMousePosition(int posX, int posY) {
+		mouseX = posX;
+		mouseY = posY;
+		repaint();
+	}
+	
+	public void updateGraphView(long startTimestamp, long endTimestamp) {
+		viewStartTimestamp = startTimestamp;
+		viewEndTimestamp = endTimestamp;
+		repaint();
+	}
+	
 	public GraphingPanel() {
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
 	}
@@ -123,4 +147,6 @@ public class GraphingPanel extends JPanel {
 			break;
 		}
 	}
+
+	
 }

@@ -21,5 +21,8 @@ public class Scroller extends JPanel implements AdjustmentListener {
 		GraphingPanel.updateGraphs();
 		
 	}
+	public static void scroll(double wheelMovement) {
+		System.out.println(wheelMovement);
+	}
 
 }

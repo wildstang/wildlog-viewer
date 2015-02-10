@@ -49,15 +49,9 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 			e.printStackTrace();
 		}
 		fileSelectedPanel.showFileName();
-		Main.dataPanel1.sPane.getKeys();
-		Main.dataPanel2.sPane.getKeys();
-		Main.dataPanel3.sPane.getKeys();
-		Main.dataPanel4.sPane.getKeys();
-		Main.dataPanel5.sPane.getKeys();
-		Main.dataPanel6.sPane.getKeys();
-		Main.dataPanel7.sPane.getKeys();
-		Main.dataPanel8.sPane.getKeys();
-		
+		for (int i = 0; i < Main.dataPanels.length; i++) {
+			Main.dataPanels[i].sPane.getKeys();
+		}
 		fileSelectedPanel.showFileName();
 	}
 }
