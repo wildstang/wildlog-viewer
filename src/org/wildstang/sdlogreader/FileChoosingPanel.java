@@ -9,12 +9,19 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 
+import org.wildstang.sdlogreader.controllers.ApplicationController;
+import org.wildstang.sdlogreader.models.Deserializer;
+import org.wildstang.sdlogreader.models.LogsModel;
+
 public class FileChoosingPanel extends JPanel implements ActionListener {
+
+	private ApplicationController controller;
 
 	SelectedFilePanel fileSelectedPanel = new SelectedFilePanel();
 	JButton readFileStart = new JButton("Select Data File from SD Card");
 
-	public FileChoosingPanel() {
+	public FileChoosingPanel(ApplicationController c) {
+		controller = c;
 		add(fileSelectedPanel);
 		add(readFileStart);
 		readFileStart.addActionListener(this);
@@ -30,28 +37,24 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 	public void chooseFile() {
 		JFileChooser chooser = new JFileChooser();
 		File startFile = new File(System.getProperty("user.home"));
-		chooser.setCurrentDirectory(chooser.getFileSystemView()
-				.getParentDirectory(startFile));
+		chooser.setCurrentDirectory(chooser.getFileSystemView().getParentDirectory(startFile));
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		chooser.setDialogTitle("Select the Local location");
-		if (chooser.showOpenDialog(Main.chooserPanel) == JFileChooser.APPROVE_OPTION) {
-			Main.logFile = chooser.getSelectedFile();
+		File file;
+		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+			file = chooser.getSelectedFile();
 		} else {
-			Main.logFile = null;
+			file = null;
 		}
+		LogsModel model;
 		try {
-			Deserialize.deserial();
+			model = Deserializer.loadLogsModelFromFile(file);
+			controller.updateLogsModel(model);
+			fileSelectedPanel.showFileName(file.getName());
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		fileSelectedPanel.showFileName();
-		for (int i = 0; i < Main.dataPanels.length; i++) {
-			Main.dataPanels[i].sPane.getKeys();
-		}
-		fileSelectedPanel.showFileName();
 	}
 }

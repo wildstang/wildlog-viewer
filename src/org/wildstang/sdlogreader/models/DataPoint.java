@@ -1,17 +1,19 @@
-package org.wildstang.sdlogreader;
+package org.wildstang.sdlogreader.models;
 
 public class DataPoint {
-	
-	Object storedObject;
-	long timestamp;
-	
+
+	private Object storedObject;
+	private long timestamp;
+
 	public DataPoint(Object o, long timestamp) {
 		storedObject = o;
 		this.timestamp = timestamp;
 	}
+
 	public Object getObject() {
 		return storedObject;
 	}
+
 	public long getTimeStamp() {
 		return timestamp;
 	}
