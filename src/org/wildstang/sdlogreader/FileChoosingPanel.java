@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
@@ -15,6 +16,7 @@ import javax.swing.JPanel;
 import org.wildstang.sdlogreader.controllers.ApplicationController;
 import org.wildstang.sdlogreader.models.Deserializer;
 import org.wildstang.sdlogreader.models.LogsModel;
+import org.wildstang.sdlogreader.views.PanelEditor;
 
 public class FileChoosingPanel extends JPanel implements ActionListener {
 	
@@ -24,18 +26,16 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 
 	SelectedFilePanel fileSelectedPanel = new SelectedFilePanel();
 	JButton readFileStart = new JButton("Select Data File from SD Card");
-	JButton resetZoom = new JButton("Reset Zoom");
-	JButton clearAllFields = new JButton("Clear All Fields");
+	PanelEditor pEditor = new PanelEditor();
+	
 
 	public FileChoosingPanel(ApplicationController c) {
 		controller = c;
 		add(fileSelectedPanel);
 		add(readFileStart);
-		add(clearAllFields);
-		add(resetZoom);
+		add(pEditor);
+		pEditor.setBorder(BorderFactory.createEmptyBorder(0, 325, 0, 0));
 		readFileStart.addActionListener(this);
-		clearAllFields.addActionListener(this);
-		resetZoom.addActionListener(this);
 		initWSLogo();
 	}
 	public void initWSLogo() {
@@ -51,13 +51,7 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 		System.out.println("In actionPerformed of FileChoosing");
 		if (event.getSource() == readFileStart) {
 			chooseFile();
-		} else if (event.getSource() == resetZoom) {
-			ApplicationController.graphPanelViewController.resetDefaultZoom();
-		} else if (event.getSource() == clearAllFields) {
-			for (int i = 0; i < ApplicationController.dataPanels.length; i++) {
-				ApplicationController.dataPanels[i].dataSelectPanel.clearAllFields();
-			}
-		}
+		} 
 	}
 	@Override
 	public void paintComponent(Graphics g) {

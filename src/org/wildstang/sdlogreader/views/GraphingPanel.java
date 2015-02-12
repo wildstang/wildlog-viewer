@@ -28,9 +28,11 @@ public class GraphingPanel extends JPanel {
 	int mouseY;
 	long viewStartTimestamp = -1, viewEndTimestamp = -1;
 	Graphics graphics;
+	Color dotColor;
 
-	public GraphingPanel() {
+	public GraphingPanel(Color c) {
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		dotColor = c;
 	}
 
 	@Override
@@ -127,8 +129,11 @@ public class GraphingPanel extends JPanel {
 					int nextXVal = (int) ((nextPoint.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()));
 					int nextYVal = getHeight() - ((Double) nextPoint.getObject()).intValue();
 					g.setColor(Color.BLACK);
-					g.drawLine(startXVal, startYVal, nextXVal, nextYVal);
-					g.setColor(Color.BLACK);
+					if (i != lastPointIndex - 1) {
+						g.drawLine(startXVal, startYVal, nextXVal, nextYVal);
+					}
+						System.out.println("Line drawn from (" + startXVal + ", " + startYVal + ") to (" + nextXVal + ", " +nextYVal + ")");
+					g.setColor(dotColor);
 					g.fillRect(startXVal - 1, startYVal - 1, 3, 3);
 				}
 			} else if (graphType == BOOL_TYPE) {

@@ -45,7 +45,7 @@ public class DataPanel extends JPanel implements ActionListener, MouseMotionList
 		j.fill = GridBagConstraints.BOTH;
 		j.weightx = 1;
 		j.weighty = 1.0;
-		graphPanel = new GraphingPanel();
+		graphPanel = new GraphingPanel(c);
 		add(graphPanel, j);
 
 		graphPanel.addMouseMotionListener(this);
