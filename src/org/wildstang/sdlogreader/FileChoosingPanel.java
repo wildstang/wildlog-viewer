@@ -1,11 +1,13 @@
 package org.wildstang.sdlogreader;
 
-import java.awt.BorderLayout;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
@@ -15,7 +17,9 @@ import org.wildstang.sdlogreader.models.Deserializer;
 import org.wildstang.sdlogreader.models.LogsModel;
 
 public class FileChoosingPanel extends JPanel implements ActionListener {
-
+	
+	Image wsLogo;
+	
 	private ApplicationController controller;
 
 	SelectedFilePanel fileSelectedPanel = new SelectedFilePanel();
@@ -32,6 +36,14 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 		readFileStart.addActionListener(this);
 		clearAllFields.addActionListener(this);
 		resetZoom.addActionListener(this);
+		initWSLogo();
+	}
+	public void initWSLogo() {
+		try {
+            wsLogo = ImageIO.read(getClass().getResourceAsStream("/wslogo-small.gif"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
 	}
 
 	@Override
@@ -46,6 +58,12 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 				ApplicationController.dataPanels[i].dataSelectPanel.clearAllFields();
 			}
 		}
+	}
+	@Override
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		g.drawImage(wsLogo, 115, 0, wsLogo.getWidth(null) / 2, wsLogo.getHeight(null) / 2, null);
+		System.out.println(getHeight() + ", " + getWidth());
 	}
 
 	public void chooseFile() {

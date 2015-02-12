@@ -19,7 +19,7 @@ public class GraphPanelController implements MouseWheelListener{
 
 	public double zoomFactor = 1.0;
 	private int scrollPosition = 0;
-	private int minValue, maxValue;
+	private int minValue, maxValue, deltaPos;
 
 	public GraphPanelController(ApplicationController c) {
 		controller = c;
@@ -34,7 +34,6 @@ public class GraphPanelController implements MouseWheelListener{
 		scrollPosition = s.getScrollPosition();
 		minValue = s.getMinimum();
 		maxValue = s.getMaximum();
-
 		double totalWindowWidth = model.getEndTimestamp() - model.getStartTimestamp();
 		double slidingWindowWidth = (model.getEndTimestamp() - model.getStartTimestamp()) / zoomFactor;
 		double positionOfBeginningOfSlidingWindow = model.getStartTimestamp() + (totalWindowWidth - slidingWindowWidth) * ((double) scrollPosition / ((double) maxValue - (double) minValue));

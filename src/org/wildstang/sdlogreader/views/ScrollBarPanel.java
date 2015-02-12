@@ -43,7 +43,6 @@ public class ScrollBarPanel extends JPanel implements AdjustmentListener {
 	public int getMaximum() {
 		return scrollBar.getMaximum();
 	}
-
 	public void scrollByValue(int value) {
 		scrollBar.setValue(scrollBar.getValue() + value);
 	}

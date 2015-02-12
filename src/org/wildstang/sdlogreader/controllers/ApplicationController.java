@@ -132,7 +132,9 @@ public class ApplicationController implements ComponentListener{
 	}
 
 	public void updateScrollBarPosition(int position, int min, int max) {
+		position = 100;
 		graphPanelViewController.scrollPositionUpdated();
+		System.out.println(position +", " + min + ", "+max);
 	}
 
 	public void updateScrollBarExtent(int scrollbarExtent) {
