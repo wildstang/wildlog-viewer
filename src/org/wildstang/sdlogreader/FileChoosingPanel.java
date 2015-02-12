@@ -1,5 +1,6 @@
 package org.wildstang.sdlogreader;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -19,18 +20,31 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 
 	SelectedFilePanel fileSelectedPanel = new SelectedFilePanel();
 	JButton readFileStart = new JButton("Select Data File from SD Card");
+	JButton resetZoom = new JButton("Reset Zoom");
+	JButton clearAllFields = new JButton("Clear All Fields");
 
 	public FileChoosingPanel(ApplicationController c) {
 		controller = c;
 		add(fileSelectedPanel);
 		add(readFileStart);
+		add(clearAllFields);
+		add(resetZoom);
 		readFileStart.addActionListener(this);
+		clearAllFields.addActionListener(this);
+		resetZoom.addActionListener(this);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
+		System.out.println("In actionPerformed of FileChoosing");
 		if (event.getSource() == readFileStart) {
 			chooseFile();
+		} else if (event.getSource() == resetZoom) {
+			ApplicationController.graphPanelViewController.resetDefaultZoom();
+		} else if (event.getSource() == clearAllFields) {
+			for (int i = 0; i < ApplicationController.dataPanels.length; i++) {
+				ApplicationController.dataPanels[i].dataSelectPanel.clearAllFields();
+			}
 		}
 	}
 

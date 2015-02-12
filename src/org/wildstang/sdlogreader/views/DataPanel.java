@@ -19,7 +19,7 @@ public class DataPanel extends JPanel implements ActionListener, MouseMotionList
 	public ApplicationController controller;
 
 	GraphingPanel graphPanel;
-	DataSelectPanel dataSelectPanel;
+	public DataSelectPanel dataSelectPanel;
 
 	private LogsModel model;
 

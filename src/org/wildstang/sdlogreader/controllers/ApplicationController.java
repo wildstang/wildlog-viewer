@@ -8,7 +8,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.io.File;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.JFrame;
 import javax.swing.UIManager;
@@ -20,18 +21,18 @@ import org.wildstang.sdlogreader.views.DataPanel;
 import org.wildstang.sdlogreader.views.ScrollBarPanel;
 import org.wildstang.sdlogreader.views.TimelinePanel;
 
-public class ApplicationController implements ComponentListener {
+public class ApplicationController implements ComponentListener{
 
 	private static final int NUM_DATA_PANELS = 8;
 	private JFrame frame;
 	private FileChoosingPanel chooserPanel;
 
-	private DataPanel[] dataPanels = new DataPanel[NUM_DATA_PANELS];
+	public static DataPanel[] dataPanels = new DataPanel[NUM_DATA_PANELS];
 	private TimelinePanel timeline;
 	private ScrollBarPanel scrollBar;
 
 	// Controllers
-	private GraphPanelController graphPanelViewController;
+	public static GraphPanelController graphPanelViewController;
 
 	public void initializeApplication() {
 		try {
@@ -148,13 +149,13 @@ public class ApplicationController implements ComponentListener {
 
 	@Override
 	public void componentHidden(ComponentEvent e) {
-		System.out.println("Component event!");
+		//System.out.println("Component event!");
 
 	}
 
 	@Override
 	public void componentMoved(ComponentEvent e) {
-		System.out.println("Component event!");
+		//System.out.println("Component event!");
 		if (e.getSource() == dataPanels[0]) {
 			Point pos = dataPanels[0].getGraphingPanel().getLocationOnScreen();
 			Rectangle bounds = dataPanels[0].getGraphingPanel().getBounds();
@@ -165,7 +166,7 @@ public class ApplicationController implements ComponentListener {
 
 	@Override
 	public void componentResized(ComponentEvent e) {
-		System.out.println("Component event!");
+		//System.out.println("Component event!");
 		if (e.getSource() == dataPanels[0]) {
 			Point pos = dataPanels[0].getGraphingPanel().getLocationOnScreen();
 			Rectangle bounds = dataPanels[0].getGraphingPanel().getBounds();
@@ -175,8 +176,7 @@ public class ApplicationController implements ComponentListener {
 
 	@Override
 	public void componentShown(ComponentEvent e) {
-		System.out.println("Component event!");
+		//System.out.println("Component event!");
 
 	}
-
 }
