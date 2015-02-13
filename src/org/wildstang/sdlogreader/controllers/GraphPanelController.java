@@ -1,22 +1,25 @@
 package org.wildstang.sdlogreader.controllers;
 
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import org.wildstang.sdlogreader.models.LogsModel;
 import org.wildstang.sdlogreader.views.ScrollBarPanel;
 
-public class GraphPanelController implements MouseWheelListener {
+public class GraphPanelController implements MouseWheelListener{
 
 	private ApplicationController controller;
 	private LogsModel model;
 
 	private static final double deltaZoomFactor = 0.1;
 
-	private double zoomFactor = 1.0;
+	public double zoomFactor = 1.0;
 	private int scrollPosition = 0;
-	private int minValue, maxValue;
+	private int minValue, maxValue, deltaPos;
 
 	private long desiredStartTimestamp, desiredEndTimestamp;
 	private boolean shouldScrollToDesiredTimestamps;
@@ -68,14 +71,14 @@ public class GraphPanelController implements MouseWheelListener {
 			System.out.println("Calculated sb position: " + scrollbarPosition);
 		}
 	}
-
+	
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		if (e.getModifiers() == InputEvent.CTRL_MASK) {
 			// We subtract so that scrolling zooms in the right direction
 			zoomFactor -= e.getPreciseWheelRotation() * deltaZoomFactor;
 			if (zoomFactor < 1) {
-				zoomFactor = 1;
+				zoomFactor = 1.0;
 			}
 			System.out.println("Zoom factor updated: " + zoomFactor);
 		} else {
@@ -83,7 +86,12 @@ public class GraphPanelController implements MouseWheelListener {
 		}
 		recalculateAndUpdate();
 	}
-
+	public void resetDefaultZoom() {
+		zoomFactor = 1.0;
+		System.out.println(zoomFactor);
+		recalculateAndUpdate();
+	}
+	
 	public void updateModel(LogsModel model) {
 		this.model = model;
 		recalculateAndUpdate();
@@ -92,12 +100,11 @@ public class GraphPanelController implements MouseWheelListener {
 	public void scrollPositionUpdated() {
 		recalculateAndUpdate();
 	}
-
+	
 	public void zoomAndScrollToTimestampRange(long startTimestamp, long endTimestamp) {
 		desiredStartTimestamp = startTimestamp;
 		desiredEndTimestamp = endTimestamp;
 		shouldScrollToDesiredTimestamps = true;
 		recalculateAndUpdate();
 	}
-
 }

@@ -35,4 +35,8 @@ public class DataSelectPanel extends JPanel {
 
 		keySelected.setModel(new DefaultComboBoxModel<>(keys));
 	}
+	public void clearAllFields() {
+		keySelected.setSelectedIndex(0);
+		typeSelected.setSelectedIndex(0);
+	}
 }

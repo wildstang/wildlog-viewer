@@ -23,7 +23,7 @@ public class ScrollBarPanel extends JPanel implements AdjustmentListener {
 	}
 
 	public void adjustmentValueChanged(AdjustmentEvent event) {
-		System.out.println(scrollBar.getValue());
+		//System.out.println(scrollBar.getValue());
 		scrollBarUpdated();
 	}
 
@@ -50,7 +50,6 @@ public class ScrollBarPanel extends JPanel implements AdjustmentListener {
 	public int getMaximum() {
 		return scrollBar.getMaximum();
 	}
-
 	public void scrollByValue(int value) {
 		scrollBar.setValue(scrollBar.getValue() + value);
 	}
@@ -65,7 +64,7 @@ public class ScrollBarPanel extends JPanel implements AdjustmentListener {
 	public void setScrollBarExtent(int extent) {
 		// Don't let the extent get bigger than the total range
 		if (extent >= scrollBar.getMaximum() - scrollBar.getMinimum()) {
-			System.out.println("Extent too big. Clipping.");
+			//System.out.println("Extent too big. Clipping.");
 			extent = scrollBar.getMaximum() - scrollBar.getMinimum();
 			scrollBar.setValue(0);
 		}

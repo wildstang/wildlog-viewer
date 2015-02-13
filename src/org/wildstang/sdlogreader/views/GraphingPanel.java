@@ -3,6 +3,8 @@ package org.wildstang.sdlogreader.views;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -31,9 +33,11 @@ public class GraphingPanel extends JPanel {
 	long viewStartTimestamp = -1, viewEndTimestamp = -1;
 	int dragRegionStart, dragRegionEnd;
 	boolean shouldShowDragRegion = false;
+	Color dotColor;
 
-	public GraphingPanel() {
+	public GraphingPanel(Color c) {
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		dotColor = c;
 	}
 
 	@Override
@@ -117,13 +121,16 @@ public class GraphingPanel extends JPanel {
 		// Draw the beginning and end timestamps
 		g.drawString(Long.toString(startTimestamp), 5, getHeight() - 5);
 		g.drawString(Long.toString(startTimestamp + deltaTime), getWidth() - 45, getHeight() - 5);
+		g.setColor(Color.BLACK);
+		g.drawLine(mouseX, 0, mouseX, getHeight());
 
 		if (dataPoints == null || dataPoints.isEmpty()) {
 			return;
 		}
 
 		// Check if we have any data in the displayed range
-		// If our data is outside the range, skip all the next stuff for efficiency
+		// If our data is outside the range, skip all the next stuff for
+		// efficiency
 		if ((dataPoints.get(0).getTimeStamp() > endTimestamp) || (dataPoints.get(dataPoints.size() - 1).getTimeStamp() < startTimestamp)) {
 			return;
 		}
@@ -147,8 +154,10 @@ public class GraphingPanel extends JPanel {
 			return;
 		}
 
-		// If the last timestamp we have data for is less than the end timestamp,
-		// use the last timestamp. Otherwise, search ahead in the data for the first timestamp
+		// If the last timestamp we have data for is less than the end
+		// timestamp,
+		// use the last timestamp. Otherwise, search ahead in the data for the
+		// first timestamp
 		// beyond the end timestamp
 		if (dataPoints.get(dataPoints.size() - 1).getTimeStamp() < endTimestamp) {
 			lastPointIndex = dataPoints.size() - 1;
@@ -171,6 +180,37 @@ public class GraphingPanel extends JPanel {
 			return;
 		}
 
+		double scale = 0;
+		double lowest = 0;
+		double highest = 0;
+		if (graphType == DOUBLE_TYPE) {
+			double distance = 100000;
+			int closest = 0;
+
+			highest = (Double) dataPoints.get(firstPointIndex).getObject();
+			lowest = (Double) dataPoints.get(firstPointIndex).getObject();
+
+			for (int i = firstPointIndex; i < lastPointIndex + 1; i++) {
+				double current = (Double) dataPoints.get(i).getObject();
+				if (current > highest) {
+					highest = current;
+				} else if (current < lowest) {
+					lowest = current;
+				}
+
+				double newdist = Math.abs(dataPoints.get(i).getTimeStamp() - (startTimestamp + ((double) mouseX / (double) getWidth()) * deltaTime));
+				if (newdist < distance) {
+					distance = newdist;
+					closest = i;
+				}
+			}
+			scale = highest - lowest;
+
+			BigDecimal bd = new BigDecimal((Double) dataPoints.get(closest).getObject());
+			bd = bd.setScale(2, RoundingMode.HALF_UP);
+			g.drawString(Double.toString(bd.doubleValue()), mouseX - 30, getHeight() / 2);
+		}
+
 		for (int i = firstPointIndex; i < lastPointIndex + 1; i++) {
 			DataPoint point = dataPoints.get(i);
 			DataPoint nextPoint = null;
@@ -182,12 +222,33 @@ public class GraphingPanel extends JPanel {
 			if (graphType == DOUBLE_TYPE) {
 				if (point.getObject() instanceof Double && nextPoint.getObject() instanceof Double) {
 					int startXVal = (int) ((point.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()));
-					int startYVal = getHeight() - ((Double) point.getObject()).intValue();
+
+					int height = (int) (((Double) point.getObject()).intValue() - lowest);
+					double yScale = (height / scale);
+					int space = (int) (getHeight() * .8);
+					int yPos = (int) (yScale * space);
+					int unAdjusted = getHeight() - yPos;
+					int adjustment = (int) (.5 * (getHeight() - space));
+
+					// int startYVal = getHeight() - ((Double)
+					// point.getObject()).intValue();
+					int startYVal = unAdjusted - adjustment;
+
 					int nextXVal = (int) ((nextPoint.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()));
-					int nextYVal = getHeight() - ((Double) nextPoint.getObject()).intValue();
+
+					height = (int) (((Double) nextPoint.getObject()).intValue() - lowest);
+					yScale = (height / scale);
+					yPos = (int) (yScale * space);
+					unAdjusted = getHeight() - yPos;
+
+					// int nextYVal = getHeight() - ((Double)
+					// nextPoint.getObject()).intValue();
+					int nextYVal = unAdjusted - adjustment;
+
 					g.setColor(Color.BLACK);
 					g.drawLine(startXVal, startYVal, nextXVal, nextYVal);
-					g.setColor(Color.BLACK);
+					System.out.println("Line drawn from (" + startXVal + ", " + startYVal + ") to (" + nextXVal + ", " + nextYVal + ")");
+					g.setColor(dotColor);
 					g.fillRect(startXVal - 1, startYVal - 1, 3, 3);
 					g.fillRect(nextXVal - 1, nextYVal - 1, 3, 3);
 				}
@@ -206,6 +267,8 @@ public class GraphingPanel extends JPanel {
 						g.fillRect(xVal, yVal, width, 4);
 					}
 				}
+			} else if (graphType == STRING_TYPE) {
+
 			}
 		}
 	}
@@ -262,7 +325,7 @@ public class GraphingPanel extends JPanel {
 		long deltaTime = endTimestamp - startTimestamp;
 		return (long) (startTimestamp + ((double) mouseX / (double) getWidth()) * deltaTime);
 	}
-	
+
 	public long mapAbsoluteMousePositionToTimestamp(int mouseX) {
 		long startTimestamp, endTimestamp;
 		if (viewStartTimestamp == -1 || viewEndTimestamp == -1) {
@@ -272,7 +335,7 @@ public class GraphingPanel extends JPanel {
 			startTimestamp = viewStartTimestamp;
 			endTimestamp = viewEndTimestamp;
 		}
-		
+
 		int localX = mouseX - getLocationOnScreen().x;
 		long deltaTime = endTimestamp - startTimestamp;
 		return (long) (startTimestamp + ((double) localX / (double) getWidth()) * deltaTime);
