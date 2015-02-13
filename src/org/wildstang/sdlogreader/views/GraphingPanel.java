@@ -59,14 +59,17 @@ public class GraphingPanel extends JPanel {
 		graphics.drawString(Long.toString(deltaTime + startTimestamp), getWidth() - 45, getHeight() - 5);
 		graphics.setColor(Color.BLACK);
 		graphics.drawLine(mouseX, 0, mouseX, getHeight());
-		graphics.drawString(Long.toString((long) (startTimestamp + ((double) mouseX / (double) getWidth()) * deltaTime)), mouseX - 25, getHeight() / 2);
+		// graphics.drawString(Long.toString((long) (startTimestamp + ((double)
+		// mouseX / (double) getWidth()) * deltaTime)), mouseX - 25, getHeight()
+		// / 2);
 
 		if (dataPoints == null || dataPoints.isEmpty()) {
 			return;
 		}
 
 		// Check if we have any data in the displayed range
-		// If our data is outside the range, skip all the next stuff for efficiency
+		// If our data is outside the range, skip all the next stuff for
+		// efficiency
 		if ((dataPoints.get(0).getTimeStamp() > endTimestamp) || (dataPoints.get(dataPoints.size() - 1).getTimeStamp() < startTimestamp)) {
 			return;
 		}
@@ -90,8 +93,10 @@ public class GraphingPanel extends JPanel {
 			return;
 		}
 
-		// If the last timestamp we have data for is less than the end timestamp,
-		// use the last timestamp. Otherwise, search ahead in the data for the first timestamp
+		// If the last timestamp we have data for is less than the end
+		// timestamp,
+		// use the last timestamp. Otherwise, search ahead in the data for the
+		// first timestamp
 		// beyond the end timestamp
 		if (dataPoints.get(dataPoints.size() - 1).getTimeStamp() < endTimestamp) {
 			lastPointIndex = dataPoints.size() - 1;
@@ -114,6 +119,23 @@ public class GraphingPanel extends JPanel {
 			return;
 		}
 
+		double scale = 0;
+		double lowest = 0;
+		double highest = 0;
+		if (graphType == DOUBLE_TYPE) {
+			highest = (Double) dataPoints.get(firstPointIndex).getObject();
+			lowest = (Double) dataPoints.get(firstPointIndex).getObject();
+			for (int i = firstPointIndex; i < lastPointIndex + 1; i++) {
+				double current = (Double) dataPoints.get(i).getObject();
+				if (current > highest) {
+					highest = current;
+				} else if (current < lowest) {
+					lowest = current;
+				}
+			}
+			scale = highest - lowest;
+		}
+
 		for (int i = firstPointIndex; i < lastPointIndex + 1; i++) {
 			DataPoint point = dataPoints.get(i);
 			DataPoint nextPoint = null;
@@ -125,14 +147,32 @@ public class GraphingPanel extends JPanel {
 			if (graphType == DOUBLE_TYPE) {
 				if (point.getObject() instanceof Double && nextPoint.getObject() instanceof Double) {
 					int startXVal = (int) ((point.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()));
-					int startYVal = getHeight() - ((Double) point.getObject()).intValue();
+
+					int height = (int) (((Double) point.getObject()).intValue() - lowest);
+					double yScale = (height / scale);
+					int space = (int) (getHeight() * .8);
+					int yPos = (int) (yScale * space);
+					int unAdjusted = getHeight() - yPos;
+					int adjustment = (int) (.5 * (getHeight() - space));
+
+					// int startYVal = getHeight() - ((Double)
+					// point.getObject()).intValue();
+					int startYVal = unAdjusted - adjustment;
+
 					int nextXVal = (int) ((nextPoint.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()));
-					int nextYVal = getHeight() - ((Double) nextPoint.getObject()).intValue();
+
+					height = (int) (((Double) nextPoint.getObject()).intValue() - lowest);
+					yScale = (height / scale);
+					yPos = (int) (yScale * space);
+					unAdjusted = getHeight() - yPos;
+
+					// int nextYVal = getHeight() - ((Double)
+					// nextPoint.getObject()).intValue();
+					int nextYVal = unAdjusted - adjustment;
+
 					g.setColor(Color.BLACK);
-					if (i != lastPointIndex - 1) {
-						g.drawLine(startXVal, startYVal, nextXVal, nextYVal);
-					}
-						System.out.println("Line drawn from (" + startXVal + ", " + startYVal + ") to (" + nextXVal + ", " +nextYVal + ")");
+					g.drawLine(startXVal, startYVal, nextXVal, nextYVal);
+					System.out.println("Line drawn from (" + startXVal + ", " + startYVal + ") to (" + nextXVal + ", " + nextYVal + ")");
 					g.setColor(dotColor);
 					g.fillRect(startXVal - 1, startYVal - 1, 3, 3);
 				}
