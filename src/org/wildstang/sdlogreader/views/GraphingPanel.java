@@ -1,11 +1,13 @@
 package org.wildstang.sdlogreader.views;
 
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.wildstang.sdlogreader.models.DataPoint;
@@ -27,7 +29,8 @@ public class GraphingPanel extends JPanel {
 	int mouseX;
 	int mouseY;
 	long viewStartTimestamp = -1, viewEndTimestamp = -1;
-	Graphics graphics;
+	int dragRegionStart, dragRegionEnd;
+	boolean shouldShowDragRegion = false;
 
 	public GraphingPanel() {
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -36,7 +39,6 @@ public class GraphingPanel extends JPanel {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		graphics = g;
 
 		if (model == null) {
 			return;
@@ -53,11 +55,68 @@ public class GraphingPanel extends JPanel {
 
 		long deltaTime = endTimestamp - startTimestamp;
 
-		graphics.drawString(Long.toString(startTimestamp), 5, getHeight() - 5);
-		graphics.drawString(Long.toString(deltaTime + startTimestamp), getWidth() - 45, getHeight() - 5);
-		graphics.setColor(Color.BLACK);
-		graphics.drawLine(mouseX, 0, mouseX, getHeight());
-		graphics.drawString(Long.toString((long) (startTimestamp + ((double) mouseX / (double) getWidth()) * deltaTime)), mouseX - 25, getHeight() / 2);
+		if (shouldShowDragRegion) {
+			// Draw drag region, with the time scrubber positioned at the current mouse position
+
+			int localPxDragRegionStart = dragRegionStart - getLocationOnScreen().x;
+			int localPxDragRegionEnd = dragRegionEnd - getLocationOnScreen().x;
+
+			// Bound the drag region by the width of the box
+			if (localPxDragRegionStart < 0) {
+				localPxDragRegionStart = 0;
+			}
+
+			if (localPxDragRegionEnd > getWidth()) {
+				localPxDragRegionEnd = getWidth();
+			}
+
+			// Draw drag region
+			g.setColor(Color.WHITE);
+			g.fillRect(localPxDragRegionStart, 0, localPxDragRegionEnd - localPxDragRegionStart, getHeight());
+
+			// Compute where we should draw the labels (inside or outside the time line)
+			FontMetrics fMetrics = g.getFontMetrics();
+			String startTimestampString = Long.toString(mapMousePositionToTimestamp(localPxDragRegionStart, startTimestamp, endTimestamp));
+			String endTimestampString = Long.toString(mapMousePositionToTimestamp(localPxDragRegionEnd, startTimestamp, endTimestamp));
+
+			int startTimestampX;
+			int startStringWidth = SwingUtilities.computeStringWidth(fMetrics, startTimestampString);
+			if (localPxDragRegionStart - startStringWidth - 5 < 0) {
+				// The label would extend past the start of the panel and we should draw it on the inside
+				startTimestampX = localPxDragRegionStart + 5;
+			} else {
+				// There's enough room on the outside
+				startTimestampX = localPxDragRegionStart - startStringWidth - 5;
+			}
+
+			int endTimestampX;
+			int endStringWidth = SwingUtilities.computeStringWidth(fMetrics, endTimestampString);
+			if (localPxDragRegionEnd + 5 + endStringWidth > getWidth()) {
+				// The label would extend past the start of the panel and we should draw it on the inside
+				endTimestampX = localPxDragRegionEnd - 5 - endStringWidth;
+			} else {
+				// There's enough room on the outside
+				endTimestampX = localPxDragRegionEnd + 5;
+			}
+
+			// Draw start line and label
+			g.setColor(Color.BLACK);
+			g.drawLine(localPxDragRegionStart, 0, localPxDragRegionStart, getHeight());
+			g.drawString(startTimestampString, startTimestampX, getHeight() / 2);
+
+			// Draw end line and label
+			g.drawLine(localPxDragRegionEnd, 0, localPxDragRegionEnd, getHeight());
+			g.drawString(endTimestampString, endTimestampX, getHeight() / 2);
+		} else {
+			// Draw the time scrubber without any drag region
+			g.setColor(Color.BLACK);
+			g.drawLine(mouseX, 0, mouseX, getHeight());
+			g.drawString(Long.toString(mapMousePositionToTimestamp(mouseX, startTimestamp, endTimestamp)), mouseX - 25, getHeight() / 2);
+		}
+
+		// Draw the beginning and end timestamps
+		g.drawString(Long.toString(startTimestamp), 5, getHeight() - 5);
+		g.drawString(Long.toString(startTimestamp + deltaTime), getWidth() - 45, getHeight() - 5);
 
 		if (dataPoints == null || dataPoints.isEmpty()) {
 			return;
@@ -130,6 +189,7 @@ public class GraphingPanel extends JPanel {
 					g.drawLine(startXVal, startYVal, nextXVal, nextYVal);
 					g.setColor(Color.BLACK);
 					g.fillRect(startXVal - 1, startYVal - 1, 3, 3);
+					g.fillRect(nextXVal - 1, nextYVal - 1, 3, 3);
 				}
 			} else if (graphType == BOOL_TYPE) {
 				if (point.getObject() instanceof Boolean && nextPoint.getObject() instanceof Boolean) {
@@ -182,6 +242,13 @@ public class GraphingPanel extends JPanel {
 		repaint();
 	}
 
+	public void updateDragRegion(int pxStart, int pxEnd, boolean shouldShowDragRegion) {
+		dragRegionStart = pxStart;
+		dragRegionEnd = pxEnd;
+		this.shouldShowDragRegion = shouldShowDragRegion;
+		repaint();
+	}
+
 	private void clearPanel() {
 		setBackground(UIManager.getColor("Panel.background"));
 	}
@@ -189,6 +256,26 @@ public class GraphingPanel extends JPanel {
 	public void setType(int type) {
 		graphType = type;
 		repaint();
+	}
+
+	private long mapMousePositionToTimestamp(int mouseX, long startTimestamp, long endTimestamp) {
+		long deltaTime = endTimestamp - startTimestamp;
+		return (long) (startTimestamp + ((double) mouseX / (double) getWidth()) * deltaTime);
+	}
+	
+	public long mapAbsoluteMousePositionToTimestamp(int mouseX) {
+		long startTimestamp, endTimestamp;
+		if (viewStartTimestamp == -1 || viewEndTimestamp == -1) {
+			startTimestamp = model.getStartTimestamp();
+			endTimestamp = model.getEndTimestamp();
+		} else {
+			startTimestamp = viewStartTimestamp;
+			endTimestamp = viewEndTimestamp;
+		}
+		
+		int localX = mouseX - getLocationOnScreen().x;
+		long deltaTime = endTimestamp - startTimestamp;
+		return (long) (startTimestamp + ((double) localX / (double) getWidth()) * deltaTime);
 	}
 
 }

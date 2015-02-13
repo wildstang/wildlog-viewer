@@ -14,9 +14,9 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import org.wildstang.sdlogreader.FileChoosingPanel;
 import org.wildstang.sdlogreader.models.LogsModel;
 import org.wildstang.sdlogreader.views.DataPanel;
+import org.wildstang.sdlogreader.views.FileChoosingPanel;
 import org.wildstang.sdlogreader.views.ScrollBarPanel;
 import org.wildstang.sdlogreader.views.TimelinePanel;
 
@@ -129,6 +129,10 @@ public class ApplicationController implements ComponentListener {
 	public void scrollByValue(int value) {
 		scrollBar.scrollByValue(value);
 	}
+	
+	public void scrollToValue(int value) {
+		scrollBar.scrollToValue(value);
+	}
 
 	public void updateScrollBarPosition(int position, int min, int max) {
 		graphPanelViewController.scrollPositionUpdated();
@@ -144,6 +148,19 @@ public class ApplicationController implements ComponentListener {
 
 	public void updateDataPanelBounds(int leftEdgePx, int rightEdgePx) {
 		timeline.updateGraphingPanelsBounds(leftEdgePx, rightEdgePx);
+	}
+	
+	public void updateDragRegion(int pxStart, int pxEnd, boolean shouldShowDragRegion) {
+		for (int i = 0; i < dataPanels.length; i++) {
+			dataPanels[i].updateDragRegion(pxStart, pxEnd, shouldShowDragRegion);
+		}
+	}
+	
+	public void zoomToDragRegion(int pxStart, int pxEnd) {
+		// Map pixels to timestamps
+		long startTimestamp = dataPanels[0].getGraphingPanel().mapAbsoluteMousePositionToTimestamp(pxStart);
+		long endTimestamp = dataPanels[0].getGraphingPanel().mapAbsoluteMousePositionToTimestamp(pxEnd);
+		graphPanelViewController.zoomAndScrollToTimestampRange(startTimestamp, endTimestamp);
 	}
 
 	@Override

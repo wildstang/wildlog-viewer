@@ -18,6 +18,9 @@ public class GraphPanelController implements MouseWheelListener {
 	private int scrollPosition = 0;
 	private int minValue, maxValue;
 
+	private long desiredStartTimestamp, desiredEndTimestamp;
+	private boolean shouldScrollToDesiredTimestamps;
+
 	public GraphPanelController(ApplicationController c) {
 		controller = c;
 	}
@@ -32,12 +35,38 @@ public class GraphPanelController implements MouseWheelListener {
 		minValue = s.getMinimum();
 		maxValue = s.getMaximum();
 
-		double totalWindowWidth = model.getEndTimestamp() - model.getStartTimestamp();
-		double slidingWindowWidth = (model.getEndTimestamp() - model.getStartTimestamp()) / zoomFactor;
-		double positionOfBeginningOfSlidingWindow = model.getStartTimestamp() + (totalWindowWidth - slidingWindowWidth) * ((double) scrollPosition / ((double) maxValue - (double) minValue));
-		int scrollbarExtent = (int) ((maxValue - minValue) * (1 / zoomFactor));
-		controller.updateGraphPanelZoomAndScroll((long) positionOfBeginningOfSlidingWindow, (long) (positionOfBeginningOfSlidingWindow + slidingWindowWidth));
-		controller.updateScrollBarExtent(scrollbarExtent);
+		if (!shouldScrollToDesiredTimestamps) {
+			System.out.println("scrollbar position (read): " + scrollPosition);
+			double totalWindowWidth = model.getEndTimestamp() - model.getStartTimestamp();
+			double slidingWindowWidth = (model.getEndTimestamp() - model.getStartTimestamp()) / zoomFactor;
+			System.out.println("sliding window width (calc): " + slidingWindowWidth);
+			double positionOfBeginningOfSlidingWindow = model.getStartTimestamp() + (totalWindowWidth - slidingWindowWidth) * ((double) scrollPosition / ((double) maxValue - (double) minValue));
+			System.out.println("beginning of sliding window (calc): " + positionOfBeginningOfSlidingWindow);
+			int scrollbarExtent = (int) ((maxValue - minValue) * (1 / zoomFactor));
+			controller.updateGraphPanelZoomAndScroll((long) positionOfBeginningOfSlidingWindow, (long) (positionOfBeginningOfSlidingWindow + slidingWindowWidth));
+			controller.updateScrollBarExtent(scrollbarExtent);
+		} else {
+			// Calculate zoom factor
+			double totalWindowWidth = model.getEndTimestamp() - model.getStartTimestamp();
+			double slidingWindowWidth = desiredEndTimestamp - desiredStartTimestamp;
+			System.out.println("sliding window width (from timestamps): " + slidingWindowWidth);
+			double positionOfBeginningOfSlidingWindow = desiredStartTimestamp;
+			System.out.println("beginning of sliding window (desired): " + positionOfBeginningOfSlidingWindow);
+			zoomFactor = totalWindowWidth / slidingWindowWidth;
+			System.out.println("Zoom factor: " + zoomFactor);
+			// Calculate scrollbar extent
+			int scrollbarExtent = (int) ((maxValue - minValue) * (1 / zoomFactor));
+			// Calculate scrollbar position
+			int scrollbarPosition = (int) ((positionOfBeginningOfSlidingWindow / ((model.getEndTimestamp() - slidingWindowWidth) - model.getStartTimestamp())) * ((double) maxValue - scrollbarExtent - (double) minValue));
+			System.out.println("scrollbar position (timestamps): " + scrollbarPosition);
+			controller.updateGraphPanelZoomAndScroll((long) desiredStartTimestamp, (long) (desiredEndTimestamp));
+			controller.scrollToValue(scrollbarPosition);
+			controller.updateScrollBarExtent(scrollbarExtent);
+
+			shouldScrollToDesiredTimestamps = false;
+			System.out.println("Calculated sb extent: " + scrollbarExtent);
+			System.out.println("Calculated sb position: " + scrollbarPosition);
+		}
 	}
 
 	@Override
@@ -48,6 +77,7 @@ public class GraphPanelController implements MouseWheelListener {
 			if (zoomFactor < 1) {
 				zoomFactor = 1;
 			}
+			System.out.println("Zoom factor updated: " + zoomFactor);
 		} else {
 			controller.scrollByValue(e.getWheelRotation());
 		}
@@ -60,6 +90,13 @@ public class GraphPanelController implements MouseWheelListener {
 	}
 
 	public void scrollPositionUpdated() {
+		recalculateAndUpdate();
+	}
+
+	public void zoomAndScrollToTimestampRange(long startTimestamp, long endTimestamp) {
+		desiredStartTimestamp = startTimestamp;
+		desiredEndTimestamp = endTimestamp;
+		shouldScrollToDesiredTimestamps = true;
 		recalculateAndUpdate();
 	}
 

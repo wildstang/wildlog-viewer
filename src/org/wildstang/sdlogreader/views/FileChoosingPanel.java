@@ -1,4 +1,4 @@
-package org.wildstang.sdlogreader;
+package org.wildstang.sdlogreader.views;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

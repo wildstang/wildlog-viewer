@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
 import javax.swing.JPanel;
+import javax.swing.event.MouseInputAdapter;
 
 import org.wildstang.sdlogreader.controllers.ApplicationController;
 import org.wildstang.sdlogreader.models.LogsModel;
@@ -49,6 +50,46 @@ public class DataPanel extends JPanel implements ActionListener, MouseMotionList
 		add(graphPanel, j);
 
 		graphPanel.addMouseMotionListener(this);
+
+		MouseInputAdapter mouseAdapter = new MouseInputAdapter() {
+			private int startX;
+
+			public void mousePressed(MouseEvent e) {
+				startX = e.getXOnScreen();
+				controller.updateDragRegion(startX, startX, true);
+				System.out.println("Mouse pressed: " + e);
+			}
+
+			public void mouseDragged(MouseEvent e) {
+				int currentX = e.getXOnScreen();
+
+				// If we dragged to the left of the initial point, invert the points
+				if (currentX < startX) {
+					controller.updateDragRegion(currentX, startX, true);
+				} else {
+					controller.updateDragRegion(startX, currentX, true);
+				}
+				System.out.println("Mouse dragged: " + e);
+			}
+
+			public void mouseReleased(MouseEvent e) {
+				int finalX = e.getXOnScreen();
+				
+				// If we dragged to the left of the initial point, invert the points
+				if (finalX < startX) {
+					controller.updateDragRegion(finalX, startX, false);
+					controller.zoomToDragRegion(finalX, startX);
+				} else {
+					controller.updateDragRegion(startX, finalX, false);
+					controller.zoomToDragRegion(startX, finalX);
+				}
+				
+				System.out.println("Mouse released: " + e);
+			}
+		};
+
+		graphPanel.addMouseMotionListener(mouseAdapter);
+		graphPanel.addMouseListener(mouseAdapter);
 	}
 
 	public GraphingPanel getGraphingPanel() {
@@ -63,6 +104,10 @@ public class DataPanel extends JPanel implements ActionListener, MouseMotionList
 
 	public void updateGraphPanelZoomAndScroll(long startTimestamp, long endTimestamp) {
 		graphPanel.updateGraphView(startTimestamp, endTimestamp);
+	}
+	
+	public void updateDragRegion(int pxStart, int pxEnd, boolean shouldShowDragRegion) {
+		graphPanel.updateDragRegion(pxStart, pxEnd, shouldShowDragRegion);
 	}
 
 	public void actionPerformed(ActionEvent e) {

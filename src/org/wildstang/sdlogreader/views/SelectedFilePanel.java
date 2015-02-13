@@ -1,4 +1,4 @@
-package org.wildstang.sdlogreader;
+package org.wildstang.sdlogreader.views;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
