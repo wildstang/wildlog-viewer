@@ -2,6 +2,8 @@ package org.wildstang.sdlogreader.views;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -66,6 +68,7 @@ public class GraphingPanel extends JPanel {
 		if (dataPoints == null || dataPoints.isEmpty()) {
 			return;
 		}
+		
 
 		// Check if we have any data in the displayed range
 		// If our data is outside the range, skip all the next stuff for
@@ -122,18 +125,38 @@ public class GraphingPanel extends JPanel {
 		double scale = 0;
 		double lowest = 0;
 		double highest = 0;
-		if (graphType == DOUBLE_TYPE) {
+		if (graphType == DOUBLE_TYPE)
+		{
+			double distance = 100000;
+			int closest = 0;
+			
 			highest = (Double) dataPoints.get(firstPointIndex).getObject();
 			lowest = (Double) dataPoints.get(firstPointIndex).getObject();
-			for (int i = firstPointIndex; i < lastPointIndex + 1; i++) {
+			
+			for (int i = firstPointIndex; i < lastPointIndex + 1; i++)
+			{
 				double current = (Double) dataPoints.get(i).getObject();
-				if (current > highest) {
+				if (current > highest)
+				{
 					highest = current;
-				} else if (current < lowest) {
+				}
+				else if (current < lowest)
+				{
 					lowest = current;
+				}
+				
+				double newdist = Math.abs(dataPoints.get(i).getTimeStamp() - (startTimestamp + ((double) mouseX / (double) getWidth()) * deltaTime));
+				if(newdist < distance)
+				{
+					distance = newdist;
+					closest = i;
 				}
 			}
 			scale = highest - lowest;
+
+		    BigDecimal bd = new BigDecimal((Double) dataPoints.get(closest).getObject());
+		    bd = bd.setScale(2, RoundingMode.HALF_UP);
+			graphics.drawString(Double.toString(bd.doubleValue()), mouseX - 30, getHeight() / 2);
 		}
 
 		for (int i = firstPointIndex; i < lastPointIndex + 1; i++) {
@@ -191,6 +214,10 @@ public class GraphingPanel extends JPanel {
 						g.fillRect(xVal, yVal, width, 4);
 					}
 				}
+			}
+			else if(graphType == STRING_TYPE)
+			{
+				
 			}
 		}
 	}
