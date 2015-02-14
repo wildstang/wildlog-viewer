@@ -8,12 +8,9 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.JFrame;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import org.wildstang.sdlogreader.models.LogsModel;
 import org.wildstang.sdlogreader.views.DataPanel;
@@ -24,11 +21,12 @@ import org.wildstang.sdlogreader.views.TimelinePanel;
 public class ApplicationController implements ComponentListener{
 
 	private static final int NUM_DATA_PANELS = 8;
-	private JFrame frame;
+	public static JFrame frame;
 	private FileChoosingPanel chooserPanel;
 
 	public static DataPanel[] dataPanels = new DataPanel[NUM_DATA_PANELS];
-	private TimelinePanel timeline;
+	public static Color[] theWSRainbow = new Color[NUM_DATA_PANELS];
+	public static TimelinePanel timeline;
 	private ScrollBarPanel scrollBar;
 
 	// Controllers
@@ -36,9 +34,9 @@ public class ApplicationController implements ComponentListener{
 
 	public void initializeApplication() {
 		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-			e.printStackTrace();
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception exc){
+
 		}
 		initFrameComponents();
 		organizeFrameComponents();
@@ -51,20 +49,25 @@ public class ApplicationController implements ComponentListener{
 	private void initFrameComponents() {
 		frame = new JFrame("WildStang: SD Log Reader");
 		chooserPanel = new FileChoosingPanel(this);
+		
 		timeline = new TimelinePanel();
-		timeline.setPreferredSize(new Dimension(1000, 120));
-		dataPanels[0] = new DataPanel(this, new Color(255, 0, 0));
-		dataPanels[1] = new DataPanel(this, new Color(255, 127, 0));
-		dataPanels[2] = new DataPanel(this, new Color(255, 255, 0));
-		dataPanels[3] = new DataPanel(this, new Color(0, 255, 0));
-		dataPanels[4] = new DataPanel(this, new Color(0, 127, 255));
-		dataPanels[5] = new DataPanel(this, new Color(0, 0, 255));
-		dataPanels[6] = new DataPanel(this, new Color(127, 0, 255));
-		dataPanels[7] = new DataPanel(this, new Color(255, 0, 255));
+		timeline.setMinimumSize(new Dimension(0, 20));
+		
+		theWSRainbow[0] = new Color(255, 0, 0);
+		theWSRainbow[1] = new Color(255, 127, 0);
+		theWSRainbow[2] = new Color(255, 255, 0);
+		theWSRainbow[3] = new Color(0, 255, 0);
+		theWSRainbow[4] = new Color(0, 127, 255);
+		theWSRainbow[5] = new Color(0, 0, 255);
+		theWSRainbow[6] = new Color(127, 0, 255);
+		theWSRainbow[7] = new Color(255, 0, 255);
+		
+		for (int i = 0; i < dataPanels.length; i++) {
+			dataPanels[i] = new DataPanel(this, theWSRainbow[i]);
+		}
 
 		dataPanels[0].addComponentListener(this);
 		scrollBar = new ScrollBarPanel(this);
-		scrollBar.setPreferredSize(new Dimension(1000, 40));
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -190,6 +193,7 @@ public class ApplicationController implements ComponentListener{
 			Point pos = dataPanels[0].getGraphingPanel().getLocationOnScreen();
 			Rectangle bounds = dataPanels[0].getGraphingPanel().getBounds();
 			updateDataPanelBounds(pos.x, pos.x + bounds.width);
+			//chooserPanel.resizeBorder();
 		}
 	}
 
