@@ -36,12 +36,10 @@ public class GraphPanelController implements MouseWheelListener {
 		maxValue = s.getMaximum();
 
 		if (!shouldScrollToDesiredTimestamps) {
-			System.out.println("scrollbar position (read): " + scrollPosition);
 			double totalWindowWidth = model.getEndTimestamp() - model.getStartTimestamp();
 			double slidingWindowWidth = (model.getEndTimestamp() - model.getStartTimestamp()) / zoomFactor;
 			System.out.println("sliding window width (calc): " + slidingWindowWidth);
 			double positionOfBeginningOfSlidingWindow = model.getStartTimestamp() + (totalWindowWidth - slidingWindowWidth) * ((double) scrollPosition / ((double) maxValue - (double) minValue));
-			System.out.println("beginning of sliding window (calc): " + positionOfBeginningOfSlidingWindow);
 			int scrollbarExtent = (int) ((maxValue - minValue) * (1 / zoomFactor));
 			controller.updateGraphPanelZoomAndScroll((long) positionOfBeginningOfSlidingWindow, (long) (positionOfBeginningOfSlidingWindow + slidingWindowWidth));
 			controller.updateScrollBarExtent(scrollbarExtent);
@@ -49,11 +47,8 @@ public class GraphPanelController implements MouseWheelListener {
 			// Calculate zoom factor
 			double totalWindowWidth = model.getEndTimestamp() - model.getStartTimestamp();
 			double slidingWindowWidth = desiredEndTimestamp - desiredStartTimestamp;
-			System.out.println("sliding window width (from timestamps): " + slidingWindowWidth);
 			double positionOfBeginningOfSlidingWindow = desiredStartTimestamp;
-			System.out.println("beginning of sliding window (desired): " + positionOfBeginningOfSlidingWindow);
 			zoomFactor = totalWindowWidth / slidingWindowWidth;
-			System.out.println("Zoom factor: " + zoomFactor);
 			// Calculate scrollbar extent
 			int scrollbarExtent = (int) ((maxValue - minValue) * (1 / zoomFactor));
 			// Calculate scrollbar position
@@ -64,8 +59,6 @@ public class GraphPanelController implements MouseWheelListener {
 			controller.updateScrollBarExtent(scrollbarExtent);
 
 			shouldScrollToDesiredTimestamps = false;
-			System.out.println("Calculated sb extent: " + scrollbarExtent);
-			System.out.println("Calculated sb position: " + scrollbarPosition);
 		}
 	}
 
@@ -77,7 +70,6 @@ public class GraphPanelController implements MouseWheelListener {
 			if (zoomFactor < 1) {
 				zoomFactor = 1.0;
 			}
-			System.out.println("Zoom factor updated: " + zoomFactor);
 		} else {
 			controller.scrollByValue(e.getWheelRotation());
 		}
@@ -86,7 +78,6 @@ public class GraphPanelController implements MouseWheelListener {
 
 	public void resetDefaultZoom() {
 		zoomFactor = 1.0;
-		System.out.println(zoomFactor);
 		recalculateAndUpdate();
 	}
 

@@ -366,7 +366,6 @@ public class GraphingPanel extends JPanel {
 	}
 
 	public void updateModel(LogsModel model) {
-		System.out.println("updated model");
 		this.model = model;
 		if (logKey != null) {
 			dataPoints = model.getDataPointsForKey(logKey);
@@ -375,7 +374,6 @@ public class GraphingPanel extends JPanel {
 	}
 
 	public void setDataKey(String key) {
-		System.out.println("updated data key");
 		this.logKey = key;
 		if (model != null) {
 			dataPoints = model.getDataPointsForKey(logKey);

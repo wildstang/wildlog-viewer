@@ -76,8 +76,6 @@ public class Deserializer {
 			long startTimestamp = (Long) logsList.get(0).get("Timestamp");
 			long endTimestamp = (Long) logsList.get(logsList.size() - 1).get("Timestamp");
 
-			System.out.println("Deserialized");
-
 			return new LogsModel(startTimestamp, endTimestamp, dataPoints, keys.toArray(new String[0]));
 		}
 		return null;
