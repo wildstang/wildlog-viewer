@@ -1,5 +1,8 @@
 package org.wildstang.sdlogreader;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -11,6 +14,7 @@ import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import org.wildstang.sdlogreader.controllers.ApplicationController;
@@ -23,18 +27,28 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 	Image wsLogo;
 	
 	private ApplicationController controller;
-
+	private static final int MINIMUM_FRAME_WIDTH = 575;
 	SelectedFilePanel fileSelectedPanel = new SelectedFilePanel();
 	JButton readFileStart = new JButton("Select Data File from SD Card");
 	PanelEditor pEditor = new PanelEditor();
-	
+	private int panEditBorder;
 
 	public FileChoosingPanel(ApplicationController c) {
 		controller = c;
-		add(fileSelectedPanel);
-		add(readFileStart);
-		add(pEditor);
-		pEditor.setBorder(BorderFactory.createEmptyBorder(0, 325, 0, 0));
+		setLayout(new BorderLayout());
+		JPanel paneLeft = new JPanel();
+		FlowLayout layoutLeft = new FlowLayout(FlowLayout.LEADING);
+		paneLeft.setLayout(layoutLeft);
+		paneLeft.add(fileSelectedPanel);
+		paneLeft.add(readFileStart);
+		JPanel paneRight = new JPanel();
+		FlowLayout layoutRight = new FlowLayout(FlowLayout.TRAILING);
+		paneRight.setLayout(layoutRight);
+		paneRight.add(pEditor);
+		//resizeBorder();
+		//pEditor.setBorder(BorderFactory.createEmptyBorder(0, panEditBorder, 0, 0));
+		add(BorderLayout.WEST, paneLeft);
+		add(BorderLayout.EAST, paneRight);
 		readFileStart.addActionListener(this);
 		initWSLogo();
 	}
@@ -48,7 +62,6 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		System.out.println("In actionPerformed of FileChoosing");
 		if (event.getSource() == readFileStart) {
 			chooseFile();
 		} 
@@ -56,7 +69,9 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		g.drawImage(wsLogo, 115, 0, wsLogo.getWidth(null) / 2, wsLogo.getHeight(null) / 2, null);
+		if (ApplicationController.frame.getExtendedState() == JFrame.MAXIMIZED_BOTH) {
+			g.drawImage(wsLogo, 115, 0, wsLogo.getWidth(null) / 2, wsLogo.getHeight(null) / 2, null);
+		}
 		System.out.println(getHeight() + ", " + getWidth());
 	}
 
@@ -82,5 +97,10 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	public void resizeBorder() {
+		panEditBorder = (int) ((ApplicationController.frame.getWidth() - MINIMUM_FRAME_WIDTH) / 2.5);
+		System.out.println(ApplicationController.frame.getWidth() + ", " + MINIMUM_FRAME_WIDTH + ", " + panEditBorder);
+		pEditor.setBorder(BorderFactory.createEmptyBorder(0, panEditBorder, 0, 0));
 	}
 }

@@ -24,7 +24,7 @@ import org.wildstang.sdlogreader.views.TimelinePanel;
 public class ApplicationController implements ComponentListener{
 
 	private static final int NUM_DATA_PANELS = 8;
-	private JFrame frame;
+	public static JFrame frame;
 	private FileChoosingPanel chooserPanel;
 
 	public static DataPanel[] dataPanels = new DataPanel[NUM_DATA_PANELS];
@@ -173,6 +173,7 @@ public class ApplicationController implements ComponentListener{
 			Point pos = dataPanels[0].getGraphingPanel().getLocationOnScreen();
 			Rectangle bounds = dataPanels[0].getGraphingPanel().getBounds();
 			updateDataPanelBounds(pos.x, pos.x + bounds.width);
+			//chooserPanel.resizeBorder();
 		}
 	}
 
