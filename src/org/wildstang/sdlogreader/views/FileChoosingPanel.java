@@ -1,29 +1,60 @@
 package org.wildstang.sdlogreader.views;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import org.wildstang.sdlogreader.controllers.ApplicationController;
 import org.wildstang.sdlogreader.models.Deserializer;
 import org.wildstang.sdlogreader.models.LogsModel;
 
 public class FileChoosingPanel extends JPanel implements ActionListener {
-
+		
 	private ApplicationController controller;
 
-	SelectedFilePanel fileSelectedPanel = new SelectedFilePanel();
+	WildStangLogoPanel logoPanel = new WildStangLogoPanel();
+	JLabel fileLabel = new JLabel("File: ");
+	JTextField fileName = new JTextField("No file Selected", 15);
 	JButton readFileStart = new JButton("Select Data File from SD Card");
+	
+	PanelEditor pEditor = new PanelEditor();
 
 	public FileChoosingPanel(ApplicationController c) {
 		controller = c;
-		add(fileSelectedPanel);
-		add(readFileStart);
+		setLayout(new BorderLayout());
+		JPanel paneLeft = new JPanel();
+		paneLeft.setLayout(new BoxLayout(paneLeft, BoxLayout.X_AXIS));
+		paneLeft.add(fileLabel);
+		paneLeft.add(fileName);
+		paneLeft.add(readFileStart);
+		JPanel paneRight = new JPanel();
+		paneRight.setLayout(new FlowLayout(FlowLayout.TRAILING));
+		paneRight.add(pEditor);
+		add(paneLeft, BorderLayout.WEST);
+		try {
+            Image wsLogo = ImageIO.read(getClass().getResourceAsStream("/wildstang-logo.png"));
+            // Scale this to 50px tall
+            double scaleFactor = 50.0 / (double) wsLogo.getHeight(null);
+            wsLogo = wsLogo.getScaledInstance((int) ((double) wsLogo.getWidth(null) * scaleFactor), 50, 0);
+            add(new JLabel(new ImageIcon(wsLogo)), BorderLayout.CENTER);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+		add(paneRight, BorderLayout.EAST);
 		readFileStart.addActionListener(this);
 	}
 
@@ -31,7 +62,7 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent event) {
 		if (event.getSource() == readFileStart) {
 			chooseFile();
-		}
+		} 
 	}
 
 	public void chooseFile() {
@@ -50,7 +81,7 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 		try {
 			model = Deserializer.loadLogsModelFromFile(file);
 			controller.updateLogsModel(model);
-			fileSelectedPanel.showFileName(file.getName());
+			fileName.setText(file.getName());
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

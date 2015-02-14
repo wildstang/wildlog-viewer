@@ -180,7 +180,7 @@ public class GraphingPanel extends JPanel {
 			return;
 		}
 
-		double scale = 0;
+		double range = 0;
 		double lowest = 0;
 		double highest = 0;
 		if (graphType == DOUBLE_TYPE) {
@@ -190,7 +190,7 @@ public class GraphingPanel extends JPanel {
 			highest = (Double) dataPoints.get(firstPointIndex).getObject();
 			lowest = (Double) dataPoints.get(firstPointIndex).getObject();
 
-			for (int i = firstPointIndex; i < lastPointIndex + 1; i++) {
+			for (int i = 0; i < dataPoints.size(); i++) {
 				double current = (Double) dataPoints.get(i).getObject();
 				if (current > highest) {
 					highest = current;
@@ -204,7 +204,7 @@ public class GraphingPanel extends JPanel {
 					closest = i;
 				}
 			}
-			scale = highest - lowest;
+			range = highest - lowest;
 
 			BigDecimal bd = new BigDecimal((Double) dataPoints.get(closest).getObject());
 			bd = bd.setScale(2, RoundingMode.HALF_UP);
@@ -223,27 +223,26 @@ public class GraphingPanel extends JPanel {
 				if (point.getObject() instanceof Double && nextPoint.getObject() instanceof Double) {
 					int startXVal = (int) ((point.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()));
 
-					int height = (int) (((Double) point.getObject()).intValue() - lowest);
-					double yScale = (height / scale);
-					int space = (int) (getHeight() * .8);
-					int yPos = (int) (yScale * space);
-					int unAdjusted = getHeight() - yPos;
-					int adjustment = (int) (.5 * (getHeight() - space));
-
-					// int startYVal = getHeight() - ((Double)
-					// point.getObject()).intValue();
-					int startYVal = unAdjusted - adjustment;
+					/*
+					 * Calculate the scaled position of this point. It will be a value between 0 and 1, with 0
+					 * corresponding with the min in the range, and 1 with the max
+					 */
+					double scaledPosition = (((Double) point.getObject()) - lowest) / range;
+					System.out.println("Actual value: " + point.getObject() + "; scaled position: " + scaledPosition);
+					/*
+					 * "space" is the amount of vertical space we have to graph in. This is equal to the height,
+					 * minus a 10% padding on the top and bottom.
+					 */
+					double padding = (double) getHeight() * 0.1;
+					double space = (double) getHeight() - (padding * 2);
+					int yPos = (int) (scaledPosition * space);
+					int startYVal = (int) (getHeight() - padding - yPos);
 
 					int nextXVal = (int) ((nextPoint.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()));
 
-					height = (int) (((Double) nextPoint.getObject()).intValue() - lowest);
-					yScale = (height / scale);
-					yPos = (int) (yScale * space);
-					unAdjusted = getHeight() - yPos;
-
-					// int nextYVal = getHeight() - ((Double)
-					// nextPoint.getObject()).intValue();
-					int nextYVal = unAdjusted - adjustment;
+					scaledPosition = (((Double) nextPoint.getObject()) - lowest) / range;
+					yPos = (int) (scaledPosition * space);
+					int nextYVal = (int) (getHeight() - padding - yPos);
 
 					g.setColor(Color.BLACK);
 					g.drawLine(startXVal, startYVal, nextXVal, nextYVal);
