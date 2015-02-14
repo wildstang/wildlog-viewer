@@ -1,6 +1,7 @@
 package org.wildstang.sdlogreader.views;
 
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -68,7 +69,6 @@ public class GraphingPanel extends JPanel {
 		if (dataPoints == null || dataPoints.isEmpty()) {
 			return;
 		}
-		
 
 		// Check if we have any data in the displayed range
 		// If our data is outside the range, skip all the next stuff for
@@ -125,37 +125,34 @@ public class GraphingPanel extends JPanel {
 		double scale = 0;
 		double lowest = 0;
 		double highest = 0;
-		if (graphType == DOUBLE_TYPE)
-		{
+		if (graphType == DOUBLE_TYPE) {
 			double distance = 100000;
 			int closest = 0;
-			
 			highest = (Double) dataPoints.get(firstPointIndex).getObject();
 			lowest = (Double) dataPoints.get(firstPointIndex).getObject();
-			
-			for (int i = firstPointIndex; i < lastPointIndex + 1; i++)
+
+			for(int i = 0; i < dataPoints.size(); i++)
 			{
 				double current = (Double) dataPoints.get(i).getObject();
-				if (current > highest)
-				{
+				if (current > highest) {
 					highest = current;
-				}
-				else if (current < lowest)
-				{
+				} else if (current < lowest) {
 					lowest = current;
 				}
-				
+			}
+			
+			for (int i = firstPointIndex; i < lastPointIndex + 1; i++) {
+
 				double newdist = Math.abs(dataPoints.get(i).getTimeStamp() - (startTimestamp + ((double) mouseX / (double) getWidth()) * deltaTime));
-				if(newdist < distance)
-				{
+				if (newdist < distance) {
 					distance = newdist;
 					closest = i;
 				}
 			}
 			scale = highest - lowest;
 
-		    BigDecimal bd = new BigDecimal((Double) dataPoints.get(closest).getObject());
-		    bd = bd.setScale(2, RoundingMode.HALF_UP);
+			BigDecimal bd = new BigDecimal((Double) dataPoints.get(closest).getObject());
+			bd = bd.setScale(2, RoundingMode.HALF_UP);
 			graphics.drawString(Double.toString(bd.doubleValue()), mouseX - 30, getHeight() / 2);
 		}
 
@@ -208,18 +205,30 @@ public class GraphingPanel extends JPanel {
 						g.setColor(Color.GREEN);
 						yVal = 30;
 						g.fillRect(xVal, yVal, width, 4);
+						System.out.println("Drawing green rect @ (" + xVal + ", " + yVal + ")");
 					} else {
 						g.setColor(Color.RED);
 						yVal = 10;
 						g.fillRect(xVal, yVal, width, 4);
+						System.out.println("Drawing red rect @ (" + xVal + ", " + yVal + ")");
 					}
 				}
-			}
-			else if(graphType == STRING_TYPE)
-			{
-				
+			} else if (graphType == STRING_TYPE) {
+				if (point.getObject() instanceof String && nextPoint.getObject() instanceof String) {
+					int startXVal = (int) ((point.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()));
+					g.fillRect(startXVal - 1, getHeight() / 2 - 1, 3, 3);
+					System.out.println("Drawing string @ (" + startXVal + ", " + getHeight() / 2 + ")");
+					drawCenteredString((String) point.getObject(), startXVal, getHeight() / 2, g);
+				}
+			} else {
+				System.out.println("Not a Type");
 			}
 		}
+	}
+
+	public void drawCenteredString(String s, int x, int y, Graphics g) {
+		FontMetrics fm = g.getFontMetrics();
+		g.drawString(s, (x - fm.stringWidth(s)) / 2, y);
 	}
 
 	public void updateModel(LogsModel model) {
