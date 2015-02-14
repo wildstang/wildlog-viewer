@@ -26,9 +26,9 @@ public class TimelinePanel extends JPanel {
 		g.setColor(Color.BLACK);
 
 		Rectangle2D stringBounds = g.getFontMetrics().getStringBounds("" + startTimestamp, g);
-		g.drawString("" + startTimestamp, timelineLeftBound + 5, (int) (0 + getHeight() / 2 + stringBounds.getHeight() / 2));
+		g.drawString("" + startTimestamp, timelineLeftBound + 5, (int) (0 + getHeight() / 2 + stringBounds.getHeight() / 2) - 5);
 		stringBounds = g.getFontMetrics().getStringBounds("" + endTimestamp, g);
-		g.drawString("" + endTimestamp, (int) (timelineRightBound - stringBounds.getWidth() - 5), (int) (getHeight() / 2 + stringBounds.getHeight() / 2));
+		g.drawString("" + endTimestamp, (int) (timelineRightBound - stringBounds.getWidth() - 5), (int) (getHeight() / 2 + stringBounds.getHeight() / 2) - 5);
 
 		g.setColor(Color.BLACK);
 		g.drawLine(mouseX + timelineLeftBound, 0, mouseX + timelineLeftBound, getHeight());

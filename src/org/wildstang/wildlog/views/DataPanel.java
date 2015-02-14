@@ -56,7 +56,7 @@ public class DataPanel extends JPanel implements ActionListener, MouseMotionList
 
 			public void mousePressed(MouseEvent e) {
 				startX = e.getXOnScreen();
-				controller.updateDragRegion(startX, startX, true);
+				DataPanel.this.controller.updateDragRegion(startX, startX, true);
 				System.out.println("Mouse pressed: " + e);
 			}
 
@@ -65,9 +65,9 @@ public class DataPanel extends JPanel implements ActionListener, MouseMotionList
 
 				// If we dragged to the left of the initial point, invert the points
 				if (currentX < startX) {
-					controller.updateDragRegion(currentX, startX, true);
+					DataPanel.this.controller.updateDragRegion(currentX, startX, true);
 				} else {
-					controller.updateDragRegion(startX, currentX, true);
+					DataPanel.this.controller.updateDragRegion(startX, currentX, true);
 				}
 				System.out.println("Mouse dragged: " + e);
 			}
@@ -77,11 +77,11 @@ public class DataPanel extends JPanel implements ActionListener, MouseMotionList
 
 				// If we dragged to the left of the initial point, invert the points
 				if (finalX < startX) {
-					controller.updateDragRegion(finalX, startX, false);
-					controller.zoomToDragRegion(finalX, startX);
+					DataPanel.this.controller.updateDragRegion(finalX, startX, false);
+					DataPanel.this.controller.zoomToDragRegion(finalX, startX);
 				} else {
-					controller.updateDragRegion(startX, finalX, false);
-					controller.zoomToDragRegion(startX, finalX);
+					DataPanel.this.controller.updateDragRegion(startX, finalX, false);
+					DataPanel.this.controller.zoomToDragRegion(startX, finalX);
 				}
 
 				System.out.println("Mouse released: " + e);

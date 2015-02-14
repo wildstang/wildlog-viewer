@@ -34,9 +34,10 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 
 	public FileChoosingPanel(ApplicationController c) {
 		controller = c;
+		fileName.setEditable(false);
 		setLayout(new BorderLayout());
 		JPanel paneLeft = new JPanel();
-		paneLeft.setLayout(new BoxLayout(paneLeft, BoxLayout.X_AXIS));
+		paneLeft.setLayout(new FlowLayout(FlowLayout.LEADING));
 		paneLeft.add(fileLabel);
 		paneLeft.add(fileName);
 		paneLeft.add(readFileStart);
