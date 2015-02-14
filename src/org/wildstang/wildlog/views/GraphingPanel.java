@@ -3,6 +3,8 @@ package org.wildstang.wildlog.views;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -83,11 +85,6 @@ public class GraphingPanel extends JPanel {
 			drawForString(g, startTimestamp, endTimestamp, firstPointIndex, lastPointIndex);
 		}
 
-	}
-
-	public void drawCenteredString(String s, int x, int y, Graphics g) {
-		FontMetrics fm = g.getFontMetrics();
-		g.drawString(s, x - (fm.stringWidth(s) / 2), y);
 	}
 
 	private void drawTimeLine(Graphics g, long startTimestamp, long endTimestamp) {
@@ -261,9 +258,32 @@ public class GraphingPanel extends JPanel {
 				int startXVal = (int) ((point.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()));
 				g.setColor(dotColor);
 				g.fillRect(startXVal - 2, getHeight() / 2 - 2, 5, 5);
-				System.out.println("Drawing string @ (" + startXVal + ", " + getHeight() / 2 + ")");
-				g.setColor(Color.BLACK);
-				drawCenteredString((String) point.getObject(), startXVal, getHeight() / 2, g);
+				System.out.println("Drawing point @ (" + startXVal + ", " + getHeight() / 2 + ")");
+				if(mouseX >= startXVal - 2 && mouseX <= startXVal + 2 /*&& mouseY >= getHeight() / 2 - 2 && mouseY <= getHeight() / 2 + 2*/)
+				{
+					FontMetrics fm = g.getFontMetrics();
+					String string = (String) point.getObject();
+					int boxWidth = fm.stringWidth(string) + (int)(.33 * fm.getHeight());
+					int boxHeight = (int)(1.33 * fm.getHeight());
+
+					g.setColor(new Color(255, 255, 202));
+					if(mouseX + (1.2 * fm.stringWidth(string)) > getWidth())
+					{
+						g.fillRect(getWidth() - boxWidth, mouseY - boxHeight, boxWidth, boxHeight);
+						g.setColor(new Color(0, 0, 19));
+						g.drawRect(getWidth() - boxWidth, mouseY - boxHeight, boxWidth, boxHeight);
+						g.setColor(Color.BLACK);
+						g.drawString(string, getWidth() - (fm.getHeight() + (int)(.33 * fm.getHeight())) + (int)(.33 * fm.getHeight()), mouseY - (int)(.33 * fm.getHeight()));
+					}
+					else
+					{
+						g.fillRect(mouseX, mouseY - boxHeight, boxWidth, boxHeight);
+						g.setColor(new Color(0, 0, 19));
+						g.drawRect(mouseX, mouseY - boxHeight, boxWidth, boxHeight);
+						g.setColor(Color.BLACK);
+						g.drawString(string, mouseX + (int)(.25 * fm.getHeight()), mouseY - (int)(.33 * fm.getHeight()));
+					}
+				}
 			}
 		}
 	}
