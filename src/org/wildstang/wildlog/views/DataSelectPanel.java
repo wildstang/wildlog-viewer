@@ -1,30 +1,37 @@
 package org.wildstang.wildlog.views;
 
 import java.awt.Color;
+import java.awt.GridLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import org.wildstang.wildlog.models.LogsModel;
 
 public class DataSelectPanel extends JPanel {
 
-	private static final String[] DATA_TYPES = { "Select Type", "Boolean", "Double", "String" };
+	//private static final String[] DATA_TYPES = { "Select Type", "Boolean", "Double", "String" };
 
 	JComboBox<String> keySelected;
-	JComboBox<String> typeSelected;
+	//JComboBox<String> typeSelected;
+	JTextField typeOfKey;
 	String[] keys = new String[1];
 	String[] tempKeys;
 	private static final String defaultKey = "Select Key               ";
+	private static final String defaultType = "Type of Key";
 
 	public DataSelectPanel(Color color) {
 		keys[0] = defaultKey;
 		keySelected = new JComboBox<>(keys);
 		add(keySelected);
-		typeSelected = new JComboBox<>(DATA_TYPES);
-		add(typeSelected);
+		typeOfKey = new JTextField(defaultType, 8);
+		typeOfKey.setEditable(false);
+		add(typeOfKey);
+		//typeSelected = new JComboBox<>(DATA_TYPES);
+		//add(typeSelected);
 		setBackground(color);
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
 	}
@@ -39,9 +46,12 @@ public class DataSelectPanel extends JPanel {
 		keys[0] = defaultKey;
 		keySelected.setModel(new DefaultComboBoxModel<>(keys));
 	}
-
+	public void settingText(String text) {
+		typeOfKey.setText(text);
+	}
 	public void clearAllFields() {
 		keySelected.setSelectedIndex(0);
-		typeSelected.setSelectedIndex(0);
+		typeOfKey.setText(defaultType);
+		//typeSelected.setSelectedIndex(0);
 	}
 }

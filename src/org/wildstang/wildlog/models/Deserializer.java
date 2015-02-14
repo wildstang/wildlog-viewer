@@ -12,8 +12,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.wildstang.wildlog.controllers.ApplicationController;
+
 public class Deserializer {
 
+	private static List<String> keys;
+	private static List<Object> values;
+	
 	@SuppressWarnings("unchecked")
 	public static LogsModel loadLogsModelFromFile(File file) throws IOException, ClassNotFoundException {
 		if (file != null) {
@@ -39,7 +44,8 @@ public class Deserializer {
 			oin.close();
 
 			// Extract list of all keys from the data
-			List<String> keys = new ArrayList<>();
+			keys = new ArrayList<>();
+			values = new ArrayList<>();
 			for (Map<String, Object> map : logsList) {
 				for (String key : map.keySet()) {
 					if (!keys.contains(key) && !key.equals("Timestamp")) {
@@ -57,6 +63,7 @@ public class Deserializer {
 			// Convert data to DataPoints
 			HashMap<String, List<DataPoint>> dataPoints = new HashMap<>();
 			for (String key : keys) {
+				boolean getFirst = false;
 				for (Map<String, Object> map : logsList) {
 					if (map.containsKey(key)) {
 						long timestamp = (Long) map.get("Timestamp");
@@ -64,9 +71,15 @@ public class Deserializer {
 						if (dataPoints.get(key) == null) {
 							dataPoints.put(key, new ArrayList<DataPoint>());
 						}
-						System.out.println(key + new DataPoint(value, timestamp));
+						//System.out.println(key + new DataPoint(value, timestamp));
 						dataPoints.get(key).add(new DataPoint(value, timestamp));
+						if (!getFirst) {
+							System.out.println(value);
+							values.add(value);
+							getFirst = true;
+						}
 					}
+					
 				}
 			}
 
@@ -90,5 +103,11 @@ public class Deserializer {
 			return timestamp1.compareTo(timestamp2);
 		}
 
+	}
+	public static List<String> getKeyData() {
+		return keys;
+	}
+	public static List<Object> getTypeData() {
+		return values;
 	}
 }
