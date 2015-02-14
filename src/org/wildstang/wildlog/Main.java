@@ -1,9 +1,6 @@
-package org.wildstang.sdlogreader;
+package org.wildstang.wildlog;
 
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-
-import org.wildstang.sdlogreader.controllers.ApplicationController;
+import org.wildstang.wildlog.controllers.ApplicationController;
 
 public class Main {
 

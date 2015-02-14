@@ -1,4 +1,4 @@
-package org.wildstang.sdlogreader.views;
+package org.wildstang.wildlog.views;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;

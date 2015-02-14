@@ -1,4 +1,4 @@
-package org.wildstang.sdlogreader.views;
+package org.wildstang.wildlog.views;
 
 import java.awt.Color;
 
@@ -7,8 +7,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
-import org.wildstang.sdlogreader.controllers.ApplicationController;
-import org.wildstang.sdlogreader.models.LogsModel;
+import org.wildstang.wildlog.models.LogsModel;
 
 public class DataSelectPanel extends JPanel {
 
@@ -19,8 +18,7 @@ public class DataSelectPanel extends JPanel {
 	String[] keys = new String[1];
 	String[] tempKeys;
 	private static final String defaultKey = "Select key     ";
-	
-	
+
 	public DataSelectPanel(Color color) {
 		keys[0] = defaultKey;
 		keySelected = new JComboBox<>(keys);
@@ -41,6 +39,7 @@ public class DataSelectPanel extends JPanel {
 		keys[0] = "Select Key";
 		keySelected.setModel(new DefaultComboBoxModel<>(keys));
 	}
+
 	public void clearAllFields() {
 		keySelected.setSelectedIndex(0);
 		typeSelected.setSelectedIndex(0);

@@ -1,16 +1,13 @@
-package org.wildstang.sdlogreader.controllers;
+package org.wildstang.wildlog.controllers;
 
 import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
-import org.wildstang.sdlogreader.models.LogsModel;
-import org.wildstang.sdlogreader.views.ScrollBarPanel;
+import org.wildstang.wildlog.models.LogsModel;
+import org.wildstang.wildlog.views.ScrollBarPanel;
 
-public class GraphPanelController implements MouseWheelListener{
+public class GraphPanelController implements MouseWheelListener {
 
 	private ApplicationController controller;
 	private LogsModel model;
@@ -71,7 +68,7 @@ public class GraphPanelController implements MouseWheelListener{
 			System.out.println("Calculated sb position: " + scrollbarPosition);
 		}
 	}
-	
+
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		if (e.getModifiers() == InputEvent.CTRL_MASK) {
@@ -86,12 +83,13 @@ public class GraphPanelController implements MouseWheelListener{
 		}
 		recalculateAndUpdate();
 	}
+
 	public void resetDefaultZoom() {
 		zoomFactor = 1.0;
 		System.out.println(zoomFactor);
 		recalculateAndUpdate();
 	}
-	
+
 	public void updateModel(LogsModel model) {
 		this.model = model;
 		recalculateAndUpdate();
@@ -100,7 +98,7 @@ public class GraphPanelController implements MouseWheelListener{
 	public void scrollPositionUpdated() {
 		recalculateAndUpdate();
 	}
-	
+
 	public void zoomAndScrollToTimestampRange(long startTimestamp, long endTimestamp) {
 		desiredStartTimestamp = startTimestamp;
 		desiredEndTimestamp = endTimestamp;

@@ -1,4 +1,4 @@
-package org.wildstang.sdlogreader.controllers;
+package org.wildstang.wildlog.controllers;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -12,13 +12,13 @@ import java.awt.event.ComponentListener;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
-import org.wildstang.sdlogreader.models.LogsModel;
-import org.wildstang.sdlogreader.views.DataPanel;
-import org.wildstang.sdlogreader.views.FileChoosingPanel;
-import org.wildstang.sdlogreader.views.ScrollBarPanel;
-import org.wildstang.sdlogreader.views.TimelinePanel;
+import org.wildstang.wildlog.models.LogsModel;
+import org.wildstang.wildlog.views.DataPanel;
+import org.wildstang.wildlog.views.FileChoosingPanel;
+import org.wildstang.wildlog.views.ScrollBarPanel;
+import org.wildstang.wildlog.views.TimelinePanel;
 
-public class ApplicationController implements ComponentListener{
+public class ApplicationController implements ComponentListener {
 
 	private static final int NUM_DATA_PANELS = 8;
 	public static JFrame frame;
@@ -34,8 +34,8 @@ public class ApplicationController implements ComponentListener{
 
 	public void initializeApplication() {
 		try {
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception exc){
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception exc) {
 
 		}
 		initFrameComponents();
@@ -49,10 +49,10 @@ public class ApplicationController implements ComponentListener{
 	private void initFrameComponents() {
 		frame = new JFrame("WildStang: SD Log Reader");
 		chooserPanel = new FileChoosingPanel(this);
-		
+
 		timeline = new TimelinePanel();
 		timeline.setMinimumSize(new Dimension(0, 20));
-		
+
 		theWSRainbow[0] = new Color(255, 0, 0);
 		theWSRainbow[1] = new Color(255, 127, 0);
 		theWSRainbow[2] = new Color(255, 255, 0);
@@ -61,7 +61,7 @@ public class ApplicationController implements ComponentListener{
 		theWSRainbow[5] = new Color(0, 0, 255);
 		theWSRainbow[6] = new Color(127, 0, 255);
 		theWSRainbow[7] = new Color(255, 0, 255);
-		
+
 		for (int i = 0; i < dataPanels.length; i++) {
 			dataPanels[i] = new DataPanel(this, theWSRainbow[i]);
 		}
@@ -133,7 +133,7 @@ public class ApplicationController implements ComponentListener{
 	public void scrollByValue(int value) {
 		scrollBar.scrollByValue(value);
 	}
-	
+
 	public void scrollToValue(int value) {
 		scrollBar.scrollToValue(value);
 	}
@@ -141,7 +141,7 @@ public class ApplicationController implements ComponentListener{
 	public void updateScrollBarPosition(int position, int min, int max) {
 		position = 100;
 		graphPanelViewController.scrollPositionUpdated();
-		System.out.println(position +", " + min + ", "+max);
+		System.out.println(position + ", " + min + ", " + max);
 	}
 
 	public void updateScrollBarExtent(int scrollbarExtent) {
@@ -155,13 +155,13 @@ public class ApplicationController implements ComponentListener{
 	public void updateDataPanelBounds(int leftEdgePx, int rightEdgePx) {
 		timeline.updateGraphingPanelsBounds(leftEdgePx, rightEdgePx);
 	}
-	
+
 	public void updateDragRegion(int pxStart, int pxEnd, boolean shouldShowDragRegion) {
 		for (int i = 0; i < dataPanels.length; i++) {
 			dataPanels[i].updateDragRegion(pxStart, pxEnd, shouldShowDragRegion);
 		}
 	}
-	
+
 	public void zoomToDragRegion(int pxStart, int pxEnd) {
 		// Map pixels to timestamps
 		long startTimestamp = dataPanels[0].getGraphingPanel().mapAbsoluteMousePositionToTimestamp(pxStart);
@@ -171,13 +171,13 @@ public class ApplicationController implements ComponentListener{
 
 	@Override
 	public void componentHidden(ComponentEvent e) {
-		//System.out.println("Component event!");
+		// System.out.println("Component event!");
 
 	}
 
 	@Override
 	public void componentMoved(ComponentEvent e) {
-		//System.out.println("Component event!");
+		// System.out.println("Component event!");
 		if (e.getSource() == dataPanels[0]) {
 			Point pos = dataPanels[0].getGraphingPanel().getLocationOnScreen();
 			Rectangle bounds = dataPanels[0].getGraphingPanel().getBounds();
@@ -188,18 +188,18 @@ public class ApplicationController implements ComponentListener{
 
 	@Override
 	public void componentResized(ComponentEvent e) {
-		//System.out.println("Component event!");
+		// System.out.println("Component event!");
 		if (e.getSource() == dataPanels[0]) {
 			Point pos = dataPanels[0].getGraphingPanel().getLocationOnScreen();
 			Rectangle bounds = dataPanels[0].getGraphingPanel().getBounds();
 			updateDataPanelBounds(pos.x, pos.x + bounds.width);
-			//chooserPanel.resizeBorder();
+			// chooserPanel.resizeBorder();
 		}
 	}
 
 	@Override
 	public void componentShown(ComponentEvent e) {
-		//System.out.println("Component event!");
+		// System.out.println("Component event!");
 
 	}
 }

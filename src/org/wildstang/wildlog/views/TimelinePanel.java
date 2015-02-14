@@ -1,12 +1,10 @@
-package org.wildstang.sdlogreader.views;
+package org.wildstang.wildlog.views;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
 
-import javax.swing.BorderFactory;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 public class TimelinePanel extends JPanel {
 
@@ -37,7 +35,7 @@ public class TimelinePanel extends JPanel {
 		long deltaTime = endTimestamp - startTimestamp;
 		String currentPositionLabel = Long.toString((long) (startTimestamp + ((double) mouseX / (double) getWidth()) * deltaTime));
 		stringBounds = g.getFontMetrics().getStringBounds(currentPositionLabel, g);
-		if(timelineLeftBound + mouseX - (int) (stringBounds.getWidth()) < timelineLeftBound) {
+		if (timelineLeftBound + mouseX - (int) (stringBounds.getWidth()) < timelineLeftBound) {
 			// String would be drawn past the start of the timeline
 			// Draw to the right of the line
 			g.drawString(currentPositionLabel, timelineLeftBound + mouseX + 5, (int) (stringBounds.getHeight() / 2) + 5);

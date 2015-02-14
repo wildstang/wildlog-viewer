@@ -1,4 +1,4 @@
-package org.wildstang.sdlogreader.models;
+package org.wildstang.wildlog.models;
 
 public class DataPoint {
 
@@ -17,7 +17,7 @@ public class DataPoint {
 	public long getTimeStamp() {
 		return timestamp;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "[Timestamp=" + timestamp + "; Value=" + value + "]";

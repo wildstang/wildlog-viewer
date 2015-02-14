@@ -1,4 +1,4 @@
-package org.wildstang.sdlogreader.views;
+package org.wildstang.wildlog.views;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -18,19 +17,19 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.wildstang.sdlogreader.controllers.ApplicationController;
-import org.wildstang.sdlogreader.models.Deserializer;
-import org.wildstang.sdlogreader.models.LogsModel;
+import org.wildstang.wildlog.controllers.ApplicationController;
+import org.wildstang.wildlog.models.Deserializer;
+import org.wildstang.wildlog.models.LogsModel;
 
 public class FileChoosingPanel extends JPanel implements ActionListener {
-		
+
 	private ApplicationController controller;
 
 	WildStangLogoPanel logoPanel = new WildStangLogoPanel();
 	JLabel fileLabel = new JLabel("File: ");
 	JTextField fileName = new JTextField("No file Selected", 15);
 	JButton readFileStart = new JButton("Select Data File from SD Card");
-	
+
 	PanelEditor pEditor = new PanelEditor();
 
 	public FileChoosingPanel(ApplicationController c) {
@@ -46,14 +45,14 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 		paneRight.add(pEditor);
 		add(paneLeft, BorderLayout.WEST);
 		try {
-            Image wsLogo = ImageIO.read(getClass().getResourceAsStream("/wildstang-logo.png"));
-            // Scale this to 50px tall
-            double scaleFactor = 50.0 / (double) wsLogo.getHeight(null);
-            wsLogo = wsLogo.getScaledInstance((int) ((double) wsLogo.getWidth(null) * scaleFactor), 50, 0);
-            add(new JLabel(new ImageIcon(wsLogo)), BorderLayout.CENTER);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+			Image wsLogo = ImageIO.read(getClass().getResourceAsStream("/wildstang-logo.png"));
+			// Scale this to 50px tall
+			double scaleFactor = 50.0 / (double) wsLogo.getHeight(null);
+			wsLogo = wsLogo.getScaledInstance((int) ((double) wsLogo.getWidth(null) * scaleFactor), 50, 0);
+			add(new JLabel(new ImageIcon(wsLogo)), BorderLayout.CENTER);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
 		add(paneRight, BorderLayout.EAST);
 		readFileStart.addActionListener(this);
 	}
@@ -62,7 +61,7 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent event) {
 		if (event.getSource() == readFileStart) {
 			chooseFile();
-		} 
+		}
 	}
 
 	public void chooseFile() {

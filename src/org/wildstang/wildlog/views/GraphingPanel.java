@@ -1,4 +1,4 @@
-package org.wildstang.sdlogreader.views;
+package org.wildstang.wildlog.views;
 
 import java.awt.Color;
 import java.awt.FontMetrics;
@@ -12,8 +12,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import org.wildstang.sdlogreader.models.DataPoint;
-import org.wildstang.sdlogreader.models.LogsModel;
+import org.wildstang.wildlog.models.DataPoint;
+import org.wildstang.wildlog.models.LogsModel;
 
 public class GraphingPanel extends JPanel {
 

@@ -1,4 +1,4 @@
-package org.wildstang.sdlogreader.models;
+package org.wildstang.wildlog.models;
 
 import java.io.EOFException;
 import java.io.File;

@@ -1,4 +1,4 @@
-package org.wildstang.sdlogreader.views;
+package org.wildstang.wildlog.views;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -12,8 +12,8 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputAdapter;
 
-import org.wildstang.sdlogreader.controllers.ApplicationController;
-import org.wildstang.sdlogreader.models.LogsModel;
+import org.wildstang.wildlog.controllers.ApplicationController;
+import org.wildstang.wildlog.models.LogsModel;
 
 public class DataPanel extends JPanel implements ActionListener, MouseMotionListener {
 
@@ -74,7 +74,7 @@ public class DataPanel extends JPanel implements ActionListener, MouseMotionList
 
 			public void mouseReleased(MouseEvent e) {
 				int finalX = e.getXOnScreen();
-				
+
 				// If we dragged to the left of the initial point, invert the points
 				if (finalX < startX) {
 					controller.updateDragRegion(finalX, startX, false);
@@ -83,7 +83,7 @@ public class DataPanel extends JPanel implements ActionListener, MouseMotionList
 					controller.updateDragRegion(startX, finalX, false);
 					controller.zoomToDragRegion(startX, finalX);
 				}
-				
+
 				System.out.println("Mouse released: " + e);
 			}
 		};
@@ -105,7 +105,7 @@ public class DataPanel extends JPanel implements ActionListener, MouseMotionList
 	public void updateGraphPanelZoomAndScroll(long startTimestamp, long endTimestamp) {
 		graphPanel.updateGraphView(startTimestamp, endTimestamp);
 	}
-	
+
 	public void updateDragRegion(int pxStart, int pxEnd, boolean shouldShowDragRegion) {
 		graphPanel.updateDragRegion(pxStart, pxEnd, shouldShowDragRegion);
 	}
