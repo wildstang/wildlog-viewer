@@ -17,7 +17,7 @@ public class DataSelectPanel extends JPanel {
 	JComboBox<String> typeSelected;
 	String[] keys = new String[1];
 	String[] tempKeys;
-	private static final String defaultKey = "Select key     ";
+	private static final String defaultKey = "Select Key               ";
 
 	public DataSelectPanel(Color color) {
 		keys[0] = defaultKey;
@@ -36,7 +36,7 @@ public class DataSelectPanel extends JPanel {
 		System.arraycopy(keys, 0, tempKeys, 1, keys.length);
 		tempKeys[0] = "SelectKey";
 		keys = tempKeys;
-		keys[0] = "Select Key";
+		keys[0] = defaultKey;
 		keySelected.setModel(new DefaultComboBoxModel<>(keys));
 	}
 
