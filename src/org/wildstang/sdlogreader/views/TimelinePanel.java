@@ -12,14 +12,15 @@ public class TimelinePanel extends JPanel {
 	private long startTimestamp, endTimestamp;
 	private int leftEdgePx, rightEdgePx;
 	private int mouseX, mouseY;
-
+	private int timelineLeftBound; 
+	private int timelineRightBound;
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
 		// Convert graphing panel bounds to local coordinates
-		int timelineLeftBound = leftEdgePx - getLocationOnScreen().x;
-		int timelineRightBound = rightEdgePx - getLocationOnScreen().x;
+		timelineLeftBound = leftEdgePx - getLocationOnScreen().x;
+		timelineRightBound = rightEdgePx - getLocationOnScreen().x;
 		g.setColor(Color.GREEN);
 		g.fillRect(timelineLeftBound, 0, timelineRightBound, getHeight());
 		g.setColor(Color.BLACK);
@@ -50,5 +51,4 @@ public class TimelinePanel extends JPanel {
 		this.mouseY = mouseY;
 		repaint();
 	}
-
 }

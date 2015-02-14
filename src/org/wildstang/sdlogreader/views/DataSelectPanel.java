@@ -1,11 +1,13 @@
 package org.wildstang.sdlogreader.views;
 
 import java.awt.Color;
+
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
+import org.wildstang.sdlogreader.controllers.ApplicationController;
 import org.wildstang.sdlogreader.models.LogsModel;
 
 public class DataSelectPanel extends JPanel {

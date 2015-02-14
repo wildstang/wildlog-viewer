@@ -57,8 +57,8 @@ public class GraphingPanel extends JPanel {
 
 		long deltaTime = endTimestamp - startTimestamp;
 
-		graphics.drawString(Long.toString(startTimestamp), 5, getHeight() - 5);
-		graphics.drawString(Long.toString(deltaTime + startTimestamp), getWidth() - 45, getHeight() - 5);
+		//graphics.drawString(Long.toString(startTimestamp), 5, getHeight() - 5);
+		//graphics.drawString(Long.toString(deltaTime + startTimestamp), getWidth() - 45, getHeight() - 5);
 		graphics.setColor(Color.BLACK);
 		graphics.drawLine(mouseX, 0, mouseX, getHeight());
 		// graphics.drawString(Long.toString((long) (startTimestamp + ((double)
