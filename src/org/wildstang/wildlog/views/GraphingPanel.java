@@ -172,9 +172,10 @@ public class GraphingPanel extends JPanel {
 		double space = (double) getHeight() - topPadding - bottomPadding;
 		
 		// draw gridlines (just min and max)
-		g.drawLine(50, (int) topPadding, getWidth(), (int) topPadding);
-		g.drawLine(50, (int) (getHeight() - bottomPadding), getWidth(), (int) (getHeight() - bottomPadding));
-
+		g.setColor(Color.LIGHT_GRAY);
+		g.drawLine(40, (int) topPadding, getWidth(), (int) topPadding);
+		g.drawLine(40, (int) (getHeight() - bottomPadding), getWidth(), (int) (getHeight() - bottomPadding));
+		g.setColor(Color.BLACK);
 		// finds the height of the nearest point and draws it
 		double distance = Math.abs(dataPoints.get(0).getTimeStamp() - (startTimestamp + ((double) mouseX / (double) getWidth()) * deltaTime));
 		int indexOfClosest = 0;
@@ -191,6 +192,7 @@ public class GraphingPanel extends JPanel {
 			bd = bd.setScale(2, RoundingMode.HALF_UP);
 			String label = Double.toString(bd.doubleValue());
 			int stringWidth = SwingUtilities.computeStringWidth(g.getFontMetrics(), label);
+			
 			g.drawString(label, mouseX - stringWidth - 5, getHeight() - 2);
 		}
 
