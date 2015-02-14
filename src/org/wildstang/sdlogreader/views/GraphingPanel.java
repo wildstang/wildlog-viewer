@@ -131,8 +131,7 @@ public class GraphingPanel extends JPanel {
 			highest = (Double) dataPoints.get(firstPointIndex).getObject();
 			lowest = (Double) dataPoints.get(firstPointIndex).getObject();
 
-			for(int i = 0; i < dataPoints.size(); i++)
-			{
+			for (int i = 0; i < dataPoints.size(); i++) {
 				double current = (Double) dataPoints.get(i).getObject();
 				if (current > highest) {
 					highest = current;
@@ -140,7 +139,7 @@ public class GraphingPanel extends JPanel {
 					lowest = current;
 				}
 			}
-			
+
 			for (int i = firstPointIndex; i < lastPointIndex + 1; i++) {
 
 				double newdist = Math.abs(dataPoints.get(i).getTimeStamp() - (startTimestamp + ((double) mouseX / (double) getWidth()) * deltaTime));
@@ -198,26 +197,24 @@ public class GraphingPanel extends JPanel {
 				}
 			} else if (graphType == BOOL_TYPE) {
 				if (point.getObject() instanceof Boolean && nextPoint.getObject() instanceof Boolean) {
-					int xVal = (int) ((point.getTimeStamp() - startTimestamp) / (deltaTime / getWidth()));
-					int yVal;
-					int width = (int) ((nextPoint.getTimeStamp() - startTimestamp) / (deltaTime / getWidth()) - xVal);
+					int xVal = (int) ((point.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()));
+					int width = (int) ((nextPoint.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()) - xVal);
 					if (dataPoints.get(i).getObject().equals(true)) {
 						g.setColor(Color.GREEN);
-						yVal = 30;
-						g.fillRect(xVal, yVal, width, 4);
-						System.out.println("Drawing green rect @ (" + xVal + ", " + yVal + ")");
+						System.out.println("Drawing green rect @ (" + xVal + ", " + 0 + ")");
 					} else {
 						g.setColor(Color.RED);
-						yVal = 10;
-						g.fillRect(xVal, yVal, width, 4);
-						System.out.println("Drawing red rect @ (" + xVal + ", " + yVal + ")");
+						System.out.println("Drawing red rect @ (" + xVal + ", " + 0 + ")");
 					}
+					g.fillRect(xVal, 0, width, getHeight());
 				}
 			} else if (graphType == STRING_TYPE) {
 				if (point.getObject() instanceof String && nextPoint.getObject() instanceof String) {
 					int startXVal = (int) ((point.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()));
-					g.fillRect(startXVal - 1, getHeight() / 2 - 1, 3, 3);
+					g.setColor(dotColor);
+					g.fillRect(startXVal - 2, getHeight() / 2 - 2, 5, 5);
 					System.out.println("Drawing string @ (" + startXVal + ", " + getHeight() / 2 + ")");
+					g.setColor(Color.BLACK);
 					drawCenteredString((String) point.getObject(), startXVal, getHeight() / 2, g);
 				}
 			} else {
@@ -228,7 +225,7 @@ public class GraphingPanel extends JPanel {
 
 	public void drawCenteredString(String s, int x, int y, Graphics g) {
 		FontMetrics fm = g.getFontMetrics();
-		g.drawString(s, (x - fm.stringWidth(s)) / 2, y);
+		g.drawString(s, x - (fm.stringWidth(s) / 2), y);
 	}
 
 	public void updateModel(LogsModel model) {

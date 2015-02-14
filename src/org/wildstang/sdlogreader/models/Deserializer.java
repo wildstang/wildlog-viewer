@@ -25,7 +25,7 @@ public class Deserializer {
 				try {
 					Object o = oin.readObject();
 					if (o instanceof HashMap) {
-						logsList.add((HashMap<String, Object>) oin.readObject());
+						logsList.add((HashMap<String, Object>) o);
 					}
 				} catch (EOFException e) {
 					// End of file. Break.
@@ -64,6 +64,7 @@ public class Deserializer {
 						if (dataPoints.get(key) == null) {
 							dataPoints.put(key, new ArrayList<DataPoint>());
 						}
+						System.out.println(key + new DataPoint(value, timestamp));
 						dataPoints.get(key).add(new DataPoint(value, timestamp));
 					}
 				}
