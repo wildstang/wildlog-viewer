@@ -204,7 +204,6 @@ public class GraphingPanel extends JPanel {
 				 * with the min in the range, and 1 with the max
 				 */
 				double scaledPosition = (((Double) point.getObject()) - lowest) / range;
-				System.out.println("Actual value: " + point.getObject() + "; scaled position: " + scaledPosition);
 				/*
 				 * "space" is the amount of vertical space we have to graph in. This is equal to the height, minus a 10%
 				 * padding on the top and bottom.
@@ -223,7 +222,6 @@ public class GraphingPanel extends JPanel {
 
 				g.setColor(Color.BLACK);
 				g.drawLine(startXVal, startYVal, nextXVal, nextYVal);
-				System.out.println("Line drawn from (" + startXVal + ", " + startYVal + ") to (" + nextXVal + ", " + nextYVal + ")");
 
 				g.setColor(dotColor);
 				// Highlight the current point if we so desire
@@ -258,7 +256,6 @@ public class GraphingPanel extends JPanel {
 				int startXVal = (int) ((point.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()));
 				g.setColor(dotColor);
 				g.fillRect(startXVal - 2, getHeight() / 2 - 2, 5, 5);
-				System.out.println("Drawing point @ (" + startXVal + ", " + getHeight() / 2 + ")");
 				if(mouseX >= startXVal - 2 && mouseX <= startXVal + 2 /*&& mouseY >= getHeight() / 2 - 2 && mouseY <= getHeight() / 2 + 2*/)
 				{
 					FontMetrics fm = g.getFontMetrics();
@@ -304,10 +301,8 @@ public class GraphingPanel extends JPanel {
 				int width = (int) ((nextPoint.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()) - xVal);
 				if (dataPoints.get(i).getObject().equals(true)) {
 					g.setColor(Color.GREEN);
-					System.out.println("Drawing green rect @ (" + xVal + ", " + 0 + ")");
 				} else {
 					g.setColor(Color.RED);
-					System.out.println("Drawing red rect @ (" + xVal + ", " + 0 + ")");
 				}
 				g.fillRect(xVal, 0, width, getHeight());
 			}
