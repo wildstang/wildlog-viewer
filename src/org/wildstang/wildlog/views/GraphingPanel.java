@@ -137,16 +137,13 @@ public class GraphingPanel extends JPanel {
 			// Draw start line and label
 			g.setColor(Color.BLACK);
 			g.drawLine(localPxDragRegionStart, 0, localPxDragRegionStart, getHeight());
-			g.drawString(startTimestampString, startTimestampX, getHeight() / 2);
+			g.drawString(startTimestampString, startTimestampX, getHeight());
 
 			// Draw end line and label
 			g.drawLine(localPxDragRegionEnd, 0, localPxDragRegionEnd, getHeight());
-			g.drawString(endTimestampString, endTimestampX, getHeight() / 2);
+			g.drawString(endTimestampString, endTimestampX, getHeight());
 		}
 
-		// Draw the beginning and end timestamps
-		g.drawString(Long.toString(startTimestamp), 5, getHeight() - 5);
-		g.drawString(Long.toString(startTimestamp + deltaTime), getWidth() - 45, getHeight() - 5);
 		g.setColor(Color.BLACK);
 		g.drawLine(mouseX, 0, mouseX, getHeight());
 
@@ -184,7 +181,7 @@ public class GraphingPanel extends JPanel {
 			bd = bd.setScale(2, RoundingMode.HALF_UP);
 			String label = Double.toString(bd.doubleValue());
 			int stringWidth = SwingUtilities.computeStringWidth(g.getFontMetrics(), label);
-			g.drawString(label, mouseX - stringWidth - 5, getHeight() / 2);
+			g.drawString(label, mouseX - stringWidth - 5, getHeight() - 2);
 		}
 
 		// iterates through points and draws them
@@ -194,7 +191,7 @@ public class GraphingPanel extends JPanel {
 			if (i < (dataPoints.size() - 1)) {
 				nextPoint = dataPoints.get(i + 1);
 			} else {
-				return;
+				break;
 			}
 			if (point.getObject() instanceof Double && nextPoint.getObject() instanceof Double) {
 				int startXVal = (int) ((point.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()));
@@ -239,6 +236,14 @@ public class GraphingPanel extends JPanel {
 				}
 			}
 		}
+		FontMetrics fm = g.getFontMetrics();
+		g.setColor(Color.DARK_GRAY);
+		BigDecimal bd = new BigDecimal(lowest);
+		bd = bd.setScale(2, RoundingMode.HALF_UP);
+		g.drawString(Double.toString(bd.doubleValue()), 5, getHeight() - fm.getHeight()/2);
+		bd = new BigDecimal(highest);
+		bd = bd.setScale(2, RoundingMode.HALF_UP);
+		g.drawString(Double.toString(bd.doubleValue()), 5, fm.getHeight());
 	}
 
 	private void drawForString(Graphics g, long startTimestamp, long endTimestamp, int firstPointIndex, int lastPointIndex) {
