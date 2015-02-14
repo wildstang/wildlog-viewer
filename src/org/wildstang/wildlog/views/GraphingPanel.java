@@ -152,6 +152,7 @@ public class GraphingPanel extends JPanel {
 	private void drawForDouble(Graphics g, long startTimestamp, long endTimestamp, int firstPointIndex, int lastPointIndex, boolean highlightAndLabelNearestPoint) {
 		// compute delta time
 		long deltaTime = endTimestamp - startTimestamp;
+		
 		// finds the highest and lowest points and their difference
 		double highest = (Double) dataPoints.get(firstPointIndex).getObject();
 		double lowest = (Double) dataPoints.get(firstPointIndex).getObject();
@@ -164,6 +165,15 @@ public class GraphingPanel extends JPanel {
 			}
 		}
 		double range = highest - lowest;
+		
+		// compute constant things
+		double topPadding = (double) getHeight() * 0.1;
+		double bottomPadding = g.getFontMetrics().getHeight();
+		double space = (double) getHeight() - topPadding - bottomPadding;
+		
+		// draw gridlines (just min and max)
+		g.drawLine(50, (int) topPadding, getWidth(), (int) topPadding);
+		g.drawLine(50, (int) (getHeight() - bottomPadding), getWidth(), (int) (getHeight() - bottomPadding));
 
 		// finds the height of the nearest point and draws it
 		double distance = Math.abs(dataPoints.get(0).getTimeStamp() - (startTimestamp + ((double) mouseX / (double) getWidth()) * deltaTime));
@@ -205,9 +215,6 @@ public class GraphingPanel extends JPanel {
 				 * "space" is the amount of vertical space we have to graph in. This is equal to the height, minus a 10%
 				 * padding on the top and bottom.
 				 */
-				double topPadding = (double) getHeight() * 0.1;
-				double bottomPadding = g.getFontMetrics().getHeight();
-				double space = (double) getHeight() - topPadding - bottomPadding;
 				int yPos = (int) (scaledPosition * space);
 				int startYVal = (int) (getHeight() - bottomPadding - yPos);
 

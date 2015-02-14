@@ -8,16 +8,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputAdapter;
 
 import org.wildstang.wildlog.controllers.ApplicationController;
-import org.wildstang.wildlog.models.Deserializer;
 import org.wildstang.wildlog.models.LogsModel;
-
-import com.sun.org.apache.bcel.internal.generic.Type;
 
 public class DataPanel extends JPanel implements ActionListener, MouseMotionListener {
 
@@ -41,7 +37,6 @@ public class DataPanel extends JPanel implements ActionListener, MouseMotionList
 		j.weighty = 1.0;
 		dataSelectPanel = new DataSelectPanel(c);
 		dataSelectPanel.setPreferredSize(new Dimension(200, 500));
-		//dataSelectPanel.typeSelected.addActionListener(this);
 		dataSelectPanel.keySelected.addActionListener(this);
 		add(dataSelectPanel, j);
 
@@ -115,50 +110,32 @@ public class DataPanel extends JPanel implements ActionListener, MouseMotionList
 	}
 
 	public void actionPerformed(ActionEvent e) {
-
-		System.out.println("actionPerformed");
-		/*if (e.getSource() == dataSelectPanel.typeSelected) {
-			switch (dataSelectPanel.typeSelected.getSelectedIndex()) {
-			case 0:
-				graphPanel.setType(GraphingPanel.DEFAULT_TYPE);
-				break;
-			case 1:
-				System.out.println("case1");
-				graphPanel.setType(GraphingPanel.BOOL_TYPE);
-				break;
-			case 2:
-				graphPanel.setType(GraphingPanel.DOUBLE_TYPE);
-				break;
-			case 3:
-				graphPanel.setType(GraphingPanel.STRING_TYPE);
-				break;
-			}
-		}*/ 
 		if (e.getSource() == dataSelectPanel.keySelected) {
-			System.out.println("In actionPerformed that we want");
-			graphPanel.setDataKey((String) dataSelectPanel.keySelected.getSelectedItem());
-			int selectedIndex = dataSelectPanel.keySelected.getSelectedIndex();
-			List<String> keys = Deserializer.getKeyData();
-			List<Object> values = Deserializer.getTypeData();
-			getRespectiveType(keys, values, selectedIndex);
+			String selectedKey = (String) dataSelectPanel.keySelected.getSelectedItem();
+			dataKeyUpdated(selectedKey);
 		}
 	}
-	public void getRespectiveType(List<String> keys, List<Object> values, int selectedIndex) {
-		selectedIndex -= 1;
-		if (values.get(selectedIndex) instanceof Double) {
-			dataSelectPanel.settingText("Double");
+	
+	public void dataKeyUpdated(String newKey) {
+		graphPanel.setDataKey(newKey);
+		Class<?> clazz = model.getClassTypeForKey(newKey);
+		System.out.println("Selected key class: " + clazz.getName());
+
+		if (clazz.equals(Double.class)) {
+			dataSelectPanel.setDataTypeText("Double");
 			graphPanel.setType(GraphingPanel.DOUBLE_TYPE);
-		} else if (values.get(selectedIndex) instanceof String) {
-			dataSelectPanel.settingText("String");
+		} else if (clazz.equals(String.class)) {
+			dataSelectPanel.setDataTypeText("String");
 			graphPanel.setType(GraphingPanel.STRING_TYPE);
-		} else if (values.get(selectedIndex) instanceof Boolean) {
-			dataSelectPanel.settingText("Boolean");
+		} else if (clazz.equals(Boolean.class)) {
+			dataSelectPanel.setDataTypeText("Boolean");
 			graphPanel.setType(GraphingPanel.BOOL_TYPE);
 		} else {
-			dataSelectPanel.settingText("Invalid!");
+			dataSelectPanel.setDataTypeText("Invalid type!");
 			graphPanel.setType(GraphingPanel.DEFAULT_TYPE);
 		}
 	}
+	
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
 
