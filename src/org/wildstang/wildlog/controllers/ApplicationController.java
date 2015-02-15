@@ -189,7 +189,7 @@ public class ApplicationController implements ComponentListener {
 	@Override
 	public void componentResized(ComponentEvent e) {
 		if (e.getSource() == dataPanels[0]) {
-			if (e.getSource() == dataPanels[0]) {
+			if (dataPanels[0].isVisible()) {
 				Point pos = dataPanels[0].getGraphingPanel().getLocationOnScreen();
 				Rectangle bounds = dataPanels[0].getGraphingPanel().getBounds();
 				updateDataPanelBounds(pos.x, pos.x + bounds.width);
