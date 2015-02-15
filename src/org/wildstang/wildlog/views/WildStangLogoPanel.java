@@ -32,7 +32,5 @@ public class WildStangLogoPanel extends JPanel {
 		int imageWidth = (int) ((double) wsLogo.getWidth(null) * scaleFactor);
 		int imageHeight = (int) ((double) wsLogo.getHeight(null) * scaleFactor);
 		g.drawImage(wsLogo, 0, 0, imageWidth, imageHeight, null);
-		System.out.println("panel height: " + getHeight());
 	}
-
 }

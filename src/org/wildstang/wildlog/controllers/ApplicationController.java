@@ -142,7 +142,6 @@ public class ApplicationController implements ComponentListener {
 	public void updateScrollBarPosition(int position, int min, int max) {
 		position = 100;
 		graphPanelViewController.scrollPositionUpdated();
-		System.out.println(position + ", " + min + ", " + max);
 	}
 
 	public void updateScrollBarExtent(int scrollbarExtent) {
@@ -172,13 +171,11 @@ public class ApplicationController implements ComponentListener {
 
 	@Override
 	public void componentHidden(ComponentEvent e) {
-		// System.out.println("Component event!");
 
 	}
 
 	@Override
 	public void componentMoved(ComponentEvent e) {
-		// System.out.println("Component event!");
 		if (e.getSource() == dataPanels[0]) {
 			if (dataPanels[0].isVisible()) {
 				Point pos = dataPanels[0].getGraphingPanel().getLocationOnScreen();
@@ -191,7 +188,6 @@ public class ApplicationController implements ComponentListener {
 
 	@Override
 	public void componentResized(ComponentEvent e) {
-		// System.out.println("Component event!");
 		if (e.getSource() == dataPanels[0]) {
 			if (e.getSource() == dataPanels[0]) {
 				Point pos = dataPanels[0].getGraphingPanel().getLocationOnScreen();
@@ -203,7 +199,5 @@ public class ApplicationController implements ComponentListener {
 
 	@Override
 	public void componentShown(ComponentEvent e) {
-		// System.out.println("Component event!");
-
 	}
 }
