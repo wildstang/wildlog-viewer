@@ -60,12 +60,13 @@ public class DataPanel extends JPanel implements ActionListener, MouseMotionList
 
 			public void mouseDragged(MouseEvent e) {
 				int currentX = e.getXOnScreen();
-
 				// If we dragged to the left of the initial point, invert the points
-				if (currentX < startX) {
-					DataPanel.this.controller.updateDragRegion(currentX, startX, true);
-				} else {
-					DataPanel.this.controller.updateDragRegion(startX, currentX, true);
+				if (Math.abs(currentX - startX) > 1) {
+					if (currentX < startX) {
+						DataPanel.this.controller.updateDragRegion(currentX, startX, true);
+					} else {
+						DataPanel.this.controller.updateDragRegion(startX, currentX, true);
+					}
 				}
 			}
 
@@ -73,12 +74,16 @@ public class DataPanel extends JPanel implements ActionListener, MouseMotionList
 				int finalX = e.getXOnScreen();
 
 				// If we dragged to the left of the initial point, invert the points
-				if (finalX < startX) {
-					DataPanel.this.controller.updateDragRegion(finalX, startX, false);
-					DataPanel.this.controller.zoomToDragRegion(finalX, startX);
+				if (Math.abs(finalX - startX) > 1) {
+					if (finalX < startX) {
+						DataPanel.this.controller.updateDragRegion(finalX, startX, false);
+						DataPanel.this.controller.zoomToDragRegion(finalX, startX);
+					} else {
+						DataPanel.this.controller.updateDragRegion(startX, finalX, false);
+						DataPanel.this.controller.zoomToDragRegion(startX, finalX);
+					}
 				} else {
-					DataPanel.this.controller.updateDragRegion(startX, finalX, false);
-					DataPanel.this.controller.zoomToDragRegion(startX, finalX);
+					DataPanel.this.controller.updateDragRegion(0,0,false);
 				}
 			}
 		};
