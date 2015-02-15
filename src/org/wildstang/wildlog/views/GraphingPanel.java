@@ -54,7 +54,8 @@ public class GraphingPanel extends JPanel {
 		if (viewStartTimestamp == -1 || viewEndTimestamp == -1) {
 			startTimestamp = model.getStartTimestamp();
 			endTimestamp = model.getEndTimestamp();
-		} else {
+		}
+		else {
 			startTimestamp = viewStartTimestamp;
 			endTimestamp = viewEndTimestamp;
 		}
@@ -79,19 +80,27 @@ public class GraphingPanel extends JPanel {
 		boolean shouldDrawHighlightsAndLabels = !shouldShowDragRegion;
 		if (graphType == DOUBLE_TYPE) {
 			drawForDouble(g, startTimestamp, endTimestamp, firstPointIndex, lastPointIndex, shouldDrawHighlightsAndLabels);
-		} else if (graphType == BOOL_TYPE) {
+		}
+		else if (graphType == BOOL_TYPE) {
 			drawForBoolean(g, startTimestamp, endTimestamp, firstPointIndex, lastPointIndex);
-		} else if (graphType == STRING_TYPE) {
+		}
+		else if (graphType == STRING_TYPE) {
 			drawForString(g, startTimestamp, endTimestamp, firstPointIndex, lastPointIndex);
 		}
 
+	}
+
+	public void clearData() {
+		dataPoints = null;
+		repaint();
 	}
 
 	private void drawTimeLine(Graphics g, long startTimestamp, long endTimestamp) {
 		long deltaTime = endTimestamp - startTimestamp;
 
 		if (shouldShowDragRegion) {
-			// Draw drag region, with the time scrubber positioned at the current mouse position
+			// Draw drag region, with the time scrubber positioned at the
+			// current mouse position
 
 			int localPxDragRegionStart = dragRegionStart - getLocationOnScreen().x;
 			int localPxDragRegionEnd = dragRegionEnd - getLocationOnScreen().x;
@@ -109,7 +118,8 @@ public class GraphingPanel extends JPanel {
 			g.setColor(Color.WHITE);
 			g.fillRect(localPxDragRegionStart, 0, localPxDragRegionEnd - localPxDragRegionStart, getHeight());
 
-			// Compute where we should draw the labels (inside or outside the time line)
+			// Compute where we should draw the labels (inside or outside the
+			// time line)
 			FontMetrics fMetrics = g.getFontMetrics();
 			String startTimestampString = Long.toString(mapMousePositionToTimestamp(localPxDragRegionStart, startTimestamp, endTimestamp));
 			String endTimestampString = Long.toString(mapMousePositionToTimestamp(localPxDragRegionEnd, startTimestamp, endTimestamp));
@@ -117,9 +127,11 @@ public class GraphingPanel extends JPanel {
 			int startTimestampX;
 			int startStringWidth = SwingUtilities.computeStringWidth(fMetrics, startTimestampString);
 			if (localPxDragRegionStart - startStringWidth - 5 < 0) {
-				// The label would extend past the start of the panel and we should draw it on the inside
+				// The label would extend past the start of the panel and we
+				// should draw it on the inside
 				startTimestampX = localPxDragRegionStart + 5;
-			} else {
+			}
+			else {
 				// There's enough room on the outside
 				startTimestampX = localPxDragRegionStart - startStringWidth - 5;
 			}
@@ -127,9 +139,11 @@ public class GraphingPanel extends JPanel {
 			int endTimestampX;
 			int endStringWidth = SwingUtilities.computeStringWidth(fMetrics, endTimestampString);
 			if (localPxDragRegionEnd + 5 + endStringWidth > getWidth()) {
-				// The label would extend past the start of the panel and we should draw it on the inside
+				// The label would extend past the start of the panel and we
+				// should draw it on the inside
 				endTimestampX = localPxDragRegionEnd - 5 - endStringWidth;
-			} else {
+			}
+			else {
 				// There's enough room on the outside
 				endTimestampX = localPxDragRegionEnd + 5;
 			}
@@ -152,7 +166,7 @@ public class GraphingPanel extends JPanel {
 	private void drawForDouble(Graphics g, long startTimestamp, long endTimestamp, int firstPointIndex, int lastPointIndex, boolean highlightAndLabelNearestPoint) {
 		// compute delta time
 		long deltaTime = endTimestamp - startTimestamp;
-		
+
 		// finds the highest and lowest points and their difference
 		double highest = (Double) dataPoints.get(firstPointIndex).getObject();
 		double lowest = (Double) dataPoints.get(firstPointIndex).getObject();
@@ -160,17 +174,18 @@ public class GraphingPanel extends JPanel {
 			double current = (Double) dataPoints.get(i).getObject();
 			if (current > highest) {
 				highest = current;
-			} else if (current < lowest) {
+			}
+			else if (current < lowest) {
 				lowest = current;
 			}
 		}
 		double range = highest - lowest;
-		
+
 		// compute constant things
 		double topPadding = (double) getHeight() * 0.1;
 		double bottomPadding = g.getFontMetrics().getHeight();
 		double space = (double) getHeight() - topPadding - bottomPadding;
-		
+
 		// draw gridlines (just min and max)
 		g.setColor(Color.LIGHT_GRAY);
 		g.drawLine(40, (int) topPadding, getWidth(), (int) topPadding);
@@ -192,7 +207,7 @@ public class GraphingPanel extends JPanel {
 			bd = bd.setScale(2, RoundingMode.HALF_UP);
 			String label = Double.toString(bd.doubleValue());
 			int stringWidth = SwingUtilities.computeStringWidth(g.getFontMetrics(), label);
-			
+
 			g.drawString(label, mouseX - stringWidth - 5, getHeight() - 2);
 		}
 
@@ -202,20 +217,23 @@ public class GraphingPanel extends JPanel {
 			DataPoint nextPoint = null;
 			if (i < (dataPoints.size() - 1)) {
 				nextPoint = dataPoints.get(i + 1);
-			} else {
+			}
+			else {
 				break;
 			}
 			if (point.getObject() instanceof Double && nextPoint.getObject() instanceof Double) {
 				int startXVal = (int) ((point.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()));
 
 				/*
-				 * Calculate the scaled position of this point. It will be a value between 0 and 1, with 0 corresponding
-				 * with the min in the range, and 1 with the max
+				 * Calculate the scaled position of this point. It will be a
+				 * value between 0 and 1, with 0 corresponding with the min in
+				 * the range, and 1 with the max
 				 */
 				double scaledPosition = (((Double) point.getObject()) - lowest) / range;
 				/*
-				 * "space" is the amount of vertical space we have to graph in. This is equal to the height, minus a 10%
-				 * padding on the top and bottom.
+				 * "space" is the amount of vertical space we have to graph in.
+				 * This is equal to the height, minus a 10% padding on the top
+				 * and bottom.
 				 */
 				int yPos = (int) (scaledPosition * space);
 				int startYVal = (int) (getHeight() - bottomPadding - yPos);
@@ -233,13 +251,15 @@ public class GraphingPanel extends JPanel {
 				// Highlight the current point if we so desire
 				if (highlightAndLabelNearestPoint && i == indexOfClosest) {
 					g.fillRect(startXVal - 3, startYVal - 3, 7, 7);
-				} else {
+				}
+				else {
 					g.fillRect(startXVal - 1, startYVal - 1, 3, 3);
 
 				}
 				if (highlightAndLabelNearestPoint && i + 1 == indexOfClosest) {
 					g.fillRect(nextXVal - 3, nextYVal - 3, 7, 7);
-				} else {
+				}
+				else {
 					g.fillRect(nextXVal - 1, nextYVal - 1, 3, 3);
 
 				}
@@ -249,7 +269,7 @@ public class GraphingPanel extends JPanel {
 		g.setColor(Color.DARK_GRAY);
 		BigDecimal bd = new BigDecimal(lowest);
 		bd = bd.setScale(2, RoundingMode.HALF_UP);
-		g.drawString(Double.toString(bd.doubleValue()), 5, getHeight() - fm.getHeight()/2);
+		g.drawString(Double.toString(bd.doubleValue()), 5, getHeight() - fm.getHeight() / 2);
 		bd = new BigDecimal(highest);
 		bd = bd.setScale(2, RoundingMode.HALF_UP);
 		g.drawString(Double.toString(bd.doubleValue()), 5, fm.getHeight());
@@ -262,7 +282,8 @@ public class GraphingPanel extends JPanel {
 			DataPoint nextPoint = null;
 			if (i < (dataPoints.size() - 1)) {
 				nextPoint = dataPoints.get(i + 1);
-			} else {
+			}
+			else {
 				return;
 			}
 
@@ -270,29 +291,39 @@ public class GraphingPanel extends JPanel {
 				int startXVal = (int) ((point.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()));
 				g.setColor(dotColor);
 				g.fillRect(startXVal - 2, getHeight() / 2 - 2, 5, 5);
-				if(mouseX >= startXVal - 2 && mouseX <= startXVal + 2 /*&& mouseY >= getHeight() / 2 - 2 && mouseY <= getHeight() / 2 + 2*/)
-				{
+				if (mouseX >= startXVal - 2 && mouseX <= startXVal + 2 /*
+																		 * &&
+																		 * mouseY
+																		 * >=
+																		 * getHeight
+																		 * () /
+																		 * 2 - 2
+																		 * &&
+																		 * mouseY
+																		 * <=
+																		 * getHeight
+																		 * () /
+																		 * 2 + 2
+																		 */) {
 					FontMetrics fm = g.getFontMetrics();
 					String string = (String) point.getObject();
-					int boxWidth = fm.stringWidth(string) + (int)(.33 * fm.getHeight());
-					int boxHeight = (int)(1.33 * fm.getHeight());
+					int boxWidth = fm.stringWidth(string) + (int) (.33 * fm.getHeight());
+					int boxHeight = (int) (1.33 * fm.getHeight());
 
 					g.setColor(new Color(255, 255, 202));
-					if(mouseX + (1.2 * fm.stringWidth(string)) > getWidth())
-					{
+					if (mouseX + (1.2 * fm.stringWidth(string)) > getWidth()) {
 						g.fillRect(getWidth() - boxWidth, mouseY - boxHeight, boxWidth, boxHeight);
 						g.setColor(new Color(0, 0, 19));
 						g.drawRect(getWidth() - boxWidth, mouseY - boxHeight, boxWidth, boxHeight);
 						g.setColor(Color.BLACK);
-						g.drawString(string, getWidth() - (fm.getHeight() + (int)(.33 * fm.getHeight())) + (int)(.33 * fm.getHeight()), mouseY - (int)(.33 * fm.getHeight()));
+						g.drawString(string, getWidth() - (fm.getHeight() + (int) (.33 * fm.getHeight())) + (int) (.33 * fm.getHeight()), mouseY - (int) (.33 * fm.getHeight()));
 					}
-					else
-					{
+					else {
 						g.fillRect(mouseX, mouseY - boxHeight, boxWidth, boxHeight);
 						g.setColor(new Color(0, 0, 19));
 						g.drawRect(mouseX, mouseY - boxHeight, boxWidth, boxHeight);
 						g.setColor(Color.BLACK);
-						g.drawString(string, mouseX + (int)(.25 * fm.getHeight()), mouseY - (int)(.33 * fm.getHeight()));
+						g.drawString(string, mouseX + (int) (.25 * fm.getHeight()), mouseY - (int) (.33 * fm.getHeight()));
 					}
 				}
 			}
@@ -306,7 +337,8 @@ public class GraphingPanel extends JPanel {
 			DataPoint nextPoint = null;
 			if (i < (dataPoints.size() - 1)) {
 				nextPoint = dataPoints.get(i + 1);
-			} else {
+			}
+			else {
 				return;
 			}
 
@@ -315,7 +347,8 @@ public class GraphingPanel extends JPanel {
 				int width = (int) ((nextPoint.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()) - xVal);
 				if (dataPoints.get(i).getObject().equals(true)) {
 					g.setColor(Color.GREEN);
-				} else {
+				}
+				else {
 					g.setColor(Color.RED);
 				}
 				g.fillRect(xVal, 0, width, getHeight());
@@ -349,7 +382,8 @@ public class GraphingPanel extends JPanel {
 		int lastPointIndex = -1;
 		if (dataPoints.get(dataPoints.size() - 1).getTimeStamp() < endTimestamp) {
 			lastPointIndex = dataPoints.size() - 1;
-		} else {
+		}
+		else {
 			for (int i = 0; i < dataPoints.size(); i++) {
 				long timestamp = dataPoints.get(i).getTimeStamp();
 				if (timestamp >= endTimestamp) {
@@ -380,9 +414,7 @@ public class GraphingPanel extends JPanel {
 		if (model != null) {
 			dataPoints = model.getDataPointsForKey(logKey);
 		}
-		if (graphType != -1) {
-			repaint();
-		}
+		repaint();
 	}
 
 	public void updateMousePosition(int posX, int posY) {
@@ -404,10 +436,6 @@ public class GraphingPanel extends JPanel {
 		repaint();
 	}
 
-	private void clearPanel() {
-		setBackground(UIManager.getColor("Panel.background"));
-	}
-
 	public void setType(int type) {
 		graphType = type;
 		repaint();
@@ -423,7 +451,8 @@ public class GraphingPanel extends JPanel {
 		if (viewStartTimestamp == -1 || viewEndTimestamp == -1) {
 			startTimestamp = model.getStartTimestamp();
 			endTimestamp = model.getEndTimestamp();
-		} else {
+		}
+		else {
 			startTimestamp = viewStartTimestamp;
 			endTimestamp = viewEndTimestamp;
 		}

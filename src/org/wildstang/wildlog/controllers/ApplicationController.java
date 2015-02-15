@@ -35,7 +35,8 @@ public class ApplicationController implements ComponentListener {
 	public void initializeApplication() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception exc) {
+		}
+		catch (Exception exc) {
 
 		}
 		initFrameComponents();
@@ -179,9 +180,11 @@ public class ApplicationController implements ComponentListener {
 	public void componentMoved(ComponentEvent e) {
 		// System.out.println("Component event!");
 		if (e.getSource() == dataPanels[0]) {
-			Point pos = dataPanels[0].getGraphingPanel().getLocationOnScreen();
-			Rectangle bounds = dataPanels[0].getGraphingPanel().getBounds();
-			updateDataPanelBounds(pos.x, pos.x + bounds.width);
+			if (dataPanels[0].isVisible()) {
+				Point pos = dataPanels[0].getGraphingPanel().getLocationOnScreen();
+				Rectangle bounds = dataPanels[0].getGraphingPanel().getBounds();
+				updateDataPanelBounds(pos.x, pos.x + bounds.width);
+			}
 		}
 
 	}
@@ -190,10 +193,11 @@ public class ApplicationController implements ComponentListener {
 	public void componentResized(ComponentEvent e) {
 		// System.out.println("Component event!");
 		if (e.getSource() == dataPanels[0]) {
-			Point pos = dataPanels[0].getGraphingPanel().getLocationOnScreen();
-			Rectangle bounds = dataPanels[0].getGraphingPanel().getBounds();
-			updateDataPanelBounds(pos.x, pos.x + bounds.width);
-			// chooserPanel.resizeBorder();
+			if (e.getSource() == dataPanels[0]) {
+				Point pos = dataPanels[0].getGraphingPanel().getLocationOnScreen();
+				Rectangle bounds = dataPanels[0].getGraphingPanel().getBounds();
+				updateDataPanelBounds(pos.x, pos.x + bounds.width);
+			}
 		}
 	}
 
