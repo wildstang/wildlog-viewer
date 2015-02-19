@@ -81,6 +81,8 @@ public class GraphPanelController implements MouseWheelListener, AdjustmentListe
 			ignoreNextScrollBarPositionUpdate = true;
 		} else {
 			System.out.println("Zoom factor: " + zoomFactor);
+			// The amount we shift is inversely proportional to the zoom factor.
+			// For instance, at zoom level "5", distanceToShift would be 20.
 			long distanceToShift = (int) (e.getWheelRotation() * 100 * (1 / zoomFactor));
 			// If we get zero through rounding, ensure we still scroll
 			if (distanceToShift == 0) {
