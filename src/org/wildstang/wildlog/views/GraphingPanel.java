@@ -152,7 +152,7 @@ public class GraphingPanel extends JPanel {
 	private void drawForDouble(Graphics g, long startTimestamp, long endTimestamp, int firstPointIndex, int lastPointIndex, boolean highlightAndLabelNearestPoint) {
 		// compute delta time
 		long deltaTime = endTimestamp - startTimestamp;
-		
+
 		// finds the highest and lowest points and their difference
 		double highest = (Double) dataPoints.get(firstPointIndex).getObject();
 		double lowest = (Double) dataPoints.get(firstPointIndex).getObject();
@@ -165,12 +165,12 @@ public class GraphingPanel extends JPanel {
 			}
 		}
 		double range = highest - lowest;
-		
+
 		// compute constant things
 		double topPadding = (double) getHeight() * 0.1;
 		double bottomPadding = g.getFontMetrics().getHeight();
 		double space = (double) getHeight() - topPadding - bottomPadding;
-		
+
 		// draw gridlines (just min and max)
 		g.drawLine(50, (int) topPadding, getWidth(), (int) topPadding);
 		g.drawLine(50, (int) (getHeight() - bottomPadding), getWidth(), (int) (getHeight() - bottomPadding));
@@ -247,7 +247,7 @@ public class GraphingPanel extends JPanel {
 		g.setColor(Color.DARK_GRAY);
 		BigDecimal bd = new BigDecimal(lowest);
 		bd = bd.setScale(2, RoundingMode.HALF_UP);
-		g.drawString(Double.toString(bd.doubleValue()), 5, getHeight() - fm.getHeight()/2);
+		g.drawString(Double.toString(bd.doubleValue()), 5, getHeight() - fm.getHeight() / 2);
 		bd = new BigDecimal(highest);
 		bd = bd.setScale(2, RoundingMode.HALF_UP);
 		g.drawString(Double.toString(bd.doubleValue()), 5, fm.getHeight());
@@ -268,29 +268,28 @@ public class GraphingPanel extends JPanel {
 				int startXVal = (int) ((point.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()));
 				g.setColor(dotColor);
 				g.fillRect(startXVal - 2, getHeight() / 2 - 2, 5, 5);
-				if(mouseX >= startXVal - 2 && mouseX <= startXVal + 2 /*&& mouseY >= getHeight() / 2 - 2 && mouseY <= getHeight() / 2 + 2*/)
-				{
+				if (mouseX >= startXVal - 2 && mouseX <= startXVal + 2 /*
+																		 * && mouseY >= getHeight() / 2 - 2 && mouseY <=
+																		 * getHeight() / 2 + 2
+																		 */) {
 					FontMetrics fm = g.getFontMetrics();
 					String string = (String) point.getObject();
-					int boxWidth = fm.stringWidth(string) + (int)(.33 * fm.getHeight());
-					int boxHeight = (int)(1.33 * fm.getHeight());
+					int boxWidth = fm.stringWidth(string) + (int) (.33 * fm.getHeight());
+					int boxHeight = (int) (1.33 * fm.getHeight());
 
 					g.setColor(new Color(255, 255, 202));
-					if(mouseX + (1.2 * fm.stringWidth(string)) > getWidth())
-					{
+					if (mouseX + (1.2 * fm.stringWidth(string)) > getWidth()) {
 						g.fillRect(getWidth() - boxWidth, mouseY - boxHeight, boxWidth, boxHeight);
 						g.setColor(new Color(0, 0, 19));
 						g.drawRect(getWidth() - boxWidth, mouseY - boxHeight, boxWidth, boxHeight);
 						g.setColor(Color.BLACK);
-						g.drawString(string, getWidth() - (fm.getHeight() + (int)(.33 * fm.getHeight())) + (int)(.33 * fm.getHeight()), mouseY - (int)(.33 * fm.getHeight()));
-					}
-					else
-					{
+						g.drawString(string, getWidth() - (fm.getHeight() + (int) (.33 * fm.getHeight())) + (int) (.33 * fm.getHeight()), mouseY - (int) (.33 * fm.getHeight()));
+					} else {
 						g.fillRect(mouseX, mouseY - boxHeight, boxWidth, boxHeight);
 						g.setColor(new Color(0, 0, 19));
 						g.drawRect(mouseX, mouseY - boxHeight, boxWidth, boxHeight);
 						g.setColor(Color.BLACK);
-						g.drawString(string, mouseX + (int)(.25 * fm.getHeight()), mouseY - (int)(.33 * fm.getHeight()));
+						g.drawString(string, mouseX + (int) (.25 * fm.getHeight()), mouseY - (int) (.33 * fm.getHeight()));
 					}
 				}
 			}
@@ -378,9 +377,7 @@ public class GraphingPanel extends JPanel {
 		if (model != null) {
 			dataPoints = model.getDataPointsForKey(logKey);
 		}
-		if (graphType != -1) {
-			repaint();
-		}
+		repaint();
 	}
 
 	public void updateMousePosition(int posX, int posY) {
