@@ -1,5 +1,7 @@
 package org.wildstang.wildlog.controllers;
 
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
@@ -7,22 +9,27 @@ import java.awt.event.MouseWheelListener;
 import org.wildstang.wildlog.models.LogsModel;
 import org.wildstang.wildlog.views.ScrollBarPanel;
 
-public class GraphPanelController implements MouseWheelListener {
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
+
+public class GraphPanelController implements MouseWheelListener, AdjustmentListener {
+
+	private static final double DELTA_ZOOM_FACTOR = 0.1;
 
 	private ApplicationController controller;
+	private ScrollBarPanel scrollPanel;
 	private LogsModel model;
 
-	private static final double deltaZoomFactor = 0.1;
+	// State variables
+	private long currentStartTimestamp, currentWindowWidth;
+	private double zoomFactor = 1.0;
 
-	public double zoomFactor = 1.0;
-	private int scrollPosition = 0;
-	private int minValue, maxValue, deltaPos;
+	private boolean ignoreNextScrollBarPositionUpdate = false;
+	private boolean dontDoNextScrollbarPositionCalculation = false;
 
-	private long desiredStartTimestamp, desiredEndTimestamp;
-	private boolean shouldScrollToDesiredTimestamps;
-
-	public GraphPanelController(ApplicationController c) {
+	public GraphPanelController(ApplicationController c, ScrollBarPanel scroll) {
 		controller = c;
+		scrollPanel = scroll;
+		scrollPanel.addAdjustmentListener(this);
 	}
 
 	private void recalculateAndUpdate() {
@@ -30,70 +37,108 @@ public class GraphPanelController implements MouseWheelListener {
 			return;
 		}
 
-		ScrollBarPanel s = controller.getScroller();
-		scrollPosition = s.getScrollPosition();
-		minValue = s.getMinimum();
-		maxValue = s.getMaximum();
+		int scrollMinValue = scrollPanel.getMinimum();
+		int scrollMaxValue = scrollPanel.getMaximum();
 
-		if (!shouldScrollToDesiredTimestamps) {
-			double totalWindowWidth = model.getEndTimestamp() - model.getStartTimestamp();
-			double slidingWindowWidth = (model.getEndTimestamp() - model.getStartTimestamp()) / zoomFactor;
-			System.out.println("sliding window width (calc): " + slidingWindowWidth);
-			double positionOfBeginningOfSlidingWindow = model.getStartTimestamp() + (totalWindowWidth - slidingWindowWidth) * ((double) scrollPosition / ((double) maxValue - (double) minValue));
-			int scrollbarExtent = (int) ((maxValue - minValue) * (1 / zoomFactor));
-			controller.updateGraphPanelZoomAndScroll((long) positionOfBeginningOfSlidingWindow, (long) (positionOfBeginningOfSlidingWindow + slidingWindowWidth));
-			controller.updateScrollBarExtent(scrollbarExtent);
-		} else {
-			// Calculate zoom factor
-			double totalWindowWidth = model.getEndTimestamp() - model.getStartTimestamp();
-			double slidingWindowWidth = desiredEndTimestamp - desiredStartTimestamp;
-			double positionOfBeginningOfSlidingWindow = desiredStartTimestamp;
-			zoomFactor = totalWindowWidth / slidingWindowWidth;
-			// Calculate scrollbar extent
-			int scrollbarExtent = (int) ((maxValue - minValue) * (1 / zoomFactor));
-			// Calculate scrollbar position
-			int scrollbarPosition = (int) ((positionOfBeginningOfSlidingWindow / ((model.getEndTimestamp() - slidingWindowWidth) - model.getStartTimestamp())) * ((double) maxValue - scrollbarExtent - (double) minValue));
-			System.out.println("scrollbar position (timestamps): " + scrollbarPosition);
-			controller.updateGraphPanelZoomAndScroll((long) desiredStartTimestamp, (long) (desiredEndTimestamp));
-			controller.scrollToValue(scrollbarPosition);
-			controller.updateScrollBarExtent(scrollbarExtent);
+		// Normalize all values
+		limitValues();
 
-			shouldScrollToDesiredTimestamps = false;
+		controller.updateGraphPanelZoomAndScroll(currentStartTimestamp, currentStartTimestamp + currentWindowWidth);
+
+		int scrollbarExtent = (int) ((scrollMaxValue - scrollMinValue) * ((double) currentWindowWidth / ((double) model.getEndTimestamp() - (double) model.getStartTimestamp())));
+		scrollPanel.setScrollBarExtent(scrollbarExtent);
+
+		if (!dontDoNextScrollbarPositionCalculation) {
+			int scrollbarPosition = (int) ((double) (scrollMaxValue - scrollbarExtent - scrollMinValue) * (((double) currentStartTimestamp - (double) model.getStartTimestamp()) / ((double) model
+					.getEndTimestamp() - (double) model.getStartTimestamp() - (double) currentWindowWidth)));
+			System.out.println("Calculated scrollbar position: " + scrollbarPosition);
+			scrollPanel.scrollToValue(scrollbarPosition);
 		}
+
+		ignoreNextScrollBarPositionUpdate = false;
+		dontDoNextScrollbarPositionCalculation = false;
 	}
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
+		if (model == null) {
+			return;
+		}
 		if (e.getModifiers() == InputEvent.CTRL_MASK) {
-			// We subtract so that scrolling zooms in the right direction
-			zoomFactor -= e.getPreciseWheelRotation() * deltaZoomFactor;
+			// We multiply by -1 so that scrolling zooms in the right direction
+			double deltaSlidingWindowWidth = currentWindowWidth * (e.getPreciseWheelRotation() * DELTA_ZOOM_FACTOR * -1);
+			// Keep the sliding window centered by adding half the delta width to the start timestamp
+			currentStartTimestamp = (long) (currentStartTimestamp - (deltaSlidingWindowWidth / 2));
+			currentWindowWidth = (long) (currentWindowWidth - deltaSlidingWindowWidth);
+
+			// Track the zoom factor
+			zoomFactor -= (e.getPreciseWheelRotation() * DELTA_ZOOM_FACTOR);
 			if (zoomFactor < 1) {
 				zoomFactor = 1.0;
 			}
+			ignoreNextScrollBarPositionUpdate = true;
 		} else {
-			controller.scrollByValue(e.getWheelRotation());
+			currentStartTimestamp -= (e.getWheelRotation() * 5);
+			ignoreNextScrollBarPositionUpdate = true;
 		}
 		recalculateAndUpdate();
 	}
 
 	public void resetDefaultZoom() {
 		zoomFactor = 1.0;
+		currentStartTimestamp = model.getStartTimestamp();
+		currentWindowWidth = (model.getEndTimestamp() - model.getStartTimestamp());
+		ignoreNextScrollBarPositionUpdate = true;
 		recalculateAndUpdate();
 	}
 
 	public void updateModel(LogsModel model) {
 		this.model = model;
-		recalculateAndUpdate();
-	}
-
-	public void scrollPositionUpdated() {
+		// Default to zoomed all the way out
+		currentStartTimestamp = model.getStartTimestamp();
+		currentWindowWidth = (model.getEndTimestamp() - model.getStartTimestamp());
+		ignoreNextScrollBarPositionUpdate = true;
 		recalculateAndUpdate();
 	}
 
 	public void zoomAndScrollToTimestampRange(long startTimestamp, long endTimestamp) {
-		desiredStartTimestamp = startTimestamp;
-		desiredEndTimestamp = endTimestamp;
-		shouldScrollToDesiredTimestamps = true;
+		currentStartTimestamp = startTimestamp;
+		currentWindowWidth = endTimestamp - startTimestamp;
+		ignoreNextScrollBarPositionUpdate = true;
+		recalculateAndUpdate();
+	}
+
+	private void limitValues() {
+		// If the current window is wider than the total window width, limit it.
+		if (currentWindowWidth > (model.getEndTimestamp() - model.getStartTimestamp())) {
+			currentWindowWidth = (model.getEndTimestamp() - model.getStartTimestamp());
+			zoomFactor = 1.0;
+		}
+
+		// Check if the beginning of the window would be below the start timestamp.
+		if (currentStartTimestamp < model.getStartTimestamp()) {
+			currentStartTimestamp = model.getStartTimestamp();
+		}
+
+		if (currentStartTimestamp + currentWindowWidth > model.getEndTimestamp()) {
+			currentStartTimestamp = currentStartTimestamp - ((currentStartTimestamp + currentWindowWidth) - model.getEndTimestamp());
+		}
+	}
+
+	@Override
+	public void adjustmentValueChanged(AdjustmentEvent e) {
+		if (ignoreNextScrollBarPositionUpdate) {
+			return;
+		}
+
+		int scrollerPosition = scrollPanel.getScrollPosition();
+		System.out.println("scroll position: " + scrollerPosition);
+
+		// TODO Fix this calculation
+		currentStartTimestamp = (int) (((double) model.getEndTimestamp() - (double) model.getStartTimestamp() - (double) currentWindowWidth) * ((double) scrollerPosition / ((double) scrollPanel
+				.getMaximum() - (double) scrollPanel.getMinimum())));
+		System.out.println("start timestamp: " + currentStartTimestamp);
+		dontDoNextScrollbarPositionCalculation = true;
 		recalculateAndUpdate();
 	}
 }

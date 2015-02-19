@@ -42,7 +42,7 @@ public class ApplicationController implements ComponentListener {
 		organizeFrameComponents();
 
 		// Init controllers
-		graphPanelViewController = new GraphPanelController(this);
+		graphPanelViewController = new GraphPanelController(this, scrollBar);
 		frame.addMouseWheelListener(graphPanelViewController);
 	}
 
@@ -128,23 +128,6 @@ public class ApplicationController implements ComponentListener {
 			dataPanels[i].updateGraphPanelZoomAndScroll(startTimestamp, endTimestamp);
 		}
 		timeline.updateGraphPanelZoomAndScroll(startTimestamp, endTimestamp);
-	}
-
-	public void scrollByValue(int value) {
-		scrollBar.scrollByValue(value);
-	}
-
-	public void scrollToValue(int value) {
-		scrollBar.scrollToValue(value);
-	}
-
-	public void updateScrollBarPosition(int position, int min, int max) {
-		position = 100;
-		graphPanelViewController.scrollPositionUpdated();
-	}
-
-	public void updateScrollBarExtent(int scrollbarExtent) {
-		scrollBar.setScrollBarExtent(scrollbarExtent);
 	}
 
 	public ScrollBarPanel getScroller() {

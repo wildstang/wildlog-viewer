@@ -1,7 +1,6 @@
 package org.wildstang.wildlog.views;
 
 import java.awt.BorderLayout;
-import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 
 import javax.swing.JPanel;
@@ -9,7 +8,7 @@ import javax.swing.JScrollBar;
 
 import org.wildstang.wildlog.controllers.ApplicationController;
 
-public class ScrollBarPanel extends JPanel implements AdjustmentListener {
+public class ScrollBarPanel extends JPanel {
 	JScrollBar scrollBar;
 
 	private ApplicationController controller;
@@ -19,15 +18,10 @@ public class ScrollBarPanel extends JPanel implements AdjustmentListener {
 		setLayout(new BorderLayout());
 		scrollBar = new JScrollBar(JScrollBar.HORIZONTAL, 0, 1000, 0, 1000);
 		add(scrollBar, BorderLayout.CENTER);
-		scrollBar.addAdjustmentListener(this);
 	}
-
-	public void adjustmentValueChanged(AdjustmentEvent event) {
-		scrollBarUpdated();
-	}
-
-	private void scrollBarUpdated() {
-		controller.updateScrollBarPosition(getScrollPosition(), scrollBar.getMinimum(), scrollBar.getMaximum());
+	
+	public void addAdjustmentListener(AdjustmentListener listener) {
+		scrollBar.addAdjustmentListener(listener);
 	}
 
 	/**
