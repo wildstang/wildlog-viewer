@@ -12,15 +12,14 @@ import javax.swing.JTextField;
 import org.wildstang.wildlog.models.LogsModel;
 
 public class DataSelectPanel extends JPanel {
-	
+
 	private static final String DEFAULT_KEY = "Select Key";
 	private static final String DEFAULT_DATA_TYPE = "Data Type";
 
 	JComboBox<String> keySelected;
 	JTextField typeOfKey;
-	String[] keys = new String[1];        
+	String[] keys = new String[1];
 	String[] tempKeys;
-	
 
 	public DataSelectPanel(Color color) {
 		keys[0] = DEFAULT_KEY;
@@ -42,11 +41,11 @@ public class DataSelectPanel extends JPanel {
 		keys[0] = DEFAULT_KEY;
 		keySelected.setModel(new DefaultComboBoxModel<>(keys));
 	}
-	
+
 	public void setDataTypeText(String text) {
 		typeOfKey.setText(text);
 	}
-	
+
 	public void clearAllFields() {
 		keySelected.setSelectedIndex(0);
 		setDataTypeText(DEFAULT_DATA_TYPE);

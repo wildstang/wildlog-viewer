@@ -31,7 +31,7 @@ public class LogsModel {
 	public String[] getAllKeys() {
 		return keys;
 	}
-	
+
 	public Class<?> getClassTypeForKey(String key) {
 		List<DataPoint> dataForKey = data.get(key);
 		return dataForKey.get(0).getObject().getClass();

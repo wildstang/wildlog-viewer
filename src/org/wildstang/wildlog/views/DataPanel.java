@@ -84,7 +84,7 @@ public class DataPanel extends JPanel implements ActionListener, MouseMotionList
 						DataPanel.this.controller.zoomToDragRegion(startX, finalX);
 					}
 				} else {
-					DataPanel.this.controller.updateDragRegion(0,0,false);
+					DataPanel.this.controller.updateDragRegion(0, 0, false);
 				}
 			}
 		};
@@ -117,7 +117,7 @@ public class DataPanel extends JPanel implements ActionListener, MouseMotionList
 			dataKeyUpdated(selectedKey);
 		}
 	}
-	
+
 	public void dataKeyUpdated(String newKey) {
 		if (dataSelectPanel.keySelected.getSelectedIndex() != 0) {
 			graphPanel.setDataKey(newKey);
@@ -126,16 +126,13 @@ public class DataPanel extends JPanel implements ActionListener, MouseMotionList
 			if (clazz.equals(Double.class)) {
 				dataSelectPanel.setDataTypeText("Double");
 				graphPanel.setType(GraphingPanel.DOUBLE_TYPE);
-			}
-			else if (clazz.equals(String.class)) {
+			} else if (clazz.equals(String.class)) {
 				dataSelectPanel.setDataTypeText("String");
 				graphPanel.setType(GraphingPanel.STRING_TYPE);
-			}
-			else if (clazz.equals(Boolean.class)) {
+			} else if (clazz.equals(Boolean.class)) {
 				dataSelectPanel.setDataTypeText("Boolean");
 				graphPanel.setType(GraphingPanel.BOOL_TYPE);
-			}
-			else {
+			} else {
 				dataSelectPanel.setDataTypeText("Invalid type!");
 				graphPanel.setType(GraphingPanel.DEFAULT_TYPE);
 			}

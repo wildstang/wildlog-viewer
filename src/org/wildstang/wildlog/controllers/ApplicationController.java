@@ -35,8 +35,7 @@ public class ApplicationController implements ComponentListener {
 	public void initializeApplication() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		}
-		catch (Exception exc) {
+		} catch (Exception exc) {
 
 		}
 		initFrameComponents();

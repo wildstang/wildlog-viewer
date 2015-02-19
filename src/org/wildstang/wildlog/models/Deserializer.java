@@ -15,7 +15,7 @@ import java.util.Map;
 import org.wildstang.wildlog.controllers.ApplicationController;
 
 public class Deserializer {
-	
+
 	@SuppressWarnings("unchecked")
 	public static LogsModel loadLogsModelFromFile(File file) throws IOException, ClassNotFoundException {
 		if (file != null) {
@@ -68,7 +68,7 @@ public class Deserializer {
 						}
 						dataPoints.get(key).add(new DataPoint(value, timestamp));
 					}
-					
+
 				}
 			}
 
