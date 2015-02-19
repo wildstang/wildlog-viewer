@@ -70,7 +70,7 @@ public class GraphPanelController implements MouseWheelListener, AdjustmentListe
 			// We multiply by -1 so that scrolling zooms in the right direction
 			double deltaSlidingWindowWidth = currentWindowWidth * (e.getPreciseWheelRotation() * DELTA_ZOOM_FACTOR * -1);
 			// Keep the sliding window centered by adding half the delta width to the start timestamp
-			currentStartTimestamp = (long) (currentStartTimestamp - (deltaSlidingWindowWidth / 2));
+			currentStartTimestamp = (long) (currentStartTimestamp + (deltaSlidingWindowWidth / 2));
 			currentWindowWidth = (long) (currentWindowWidth - deltaSlidingWindowWidth);
 
 			// Track the zoom factor
