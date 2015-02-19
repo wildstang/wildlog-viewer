@@ -56,34 +56,36 @@ public class DataPanel extends JPanel implements ActionListener, MouseMotionList
 			public void mousePressed(MouseEvent e) {
 				startX = e.getXOnScreen();
 				DataPanel.this.controller.updateDragRegion(startX, startX, true);
-				System.out.println("Mouse pressed: " + e);
 			}
 
 			public void mouseDragged(MouseEvent e) {
 				int currentX = e.getXOnScreen();
 
 				// If we dragged to the left of the initial point, invert the points
-				if (currentX < startX) {
-					DataPanel.this.controller.updateDragRegion(currentX, startX, true);
-				} else {
-					DataPanel.this.controller.updateDragRegion(startX, currentX, true);
+				if (Math.abs(currentX - startX) > 1) {
+					if (currentX < startX) {
+						DataPanel.this.controller.updateDragRegion(currentX, startX, true);
+					} else {
+						DataPanel.this.controller.updateDragRegion(startX, currentX, true);
+					}
 				}
-				System.out.println("Mouse dragged: " + e);
 			}
 
 			public void mouseReleased(MouseEvent e) {
 				int finalX = e.getXOnScreen();
 
 				// If we dragged to the left of the initial point, invert the points
-				if (finalX < startX) {
-					DataPanel.this.controller.updateDragRegion(finalX, startX, false);
-					DataPanel.this.controller.zoomToDragRegion(finalX, startX);
+				if (Math.abs(finalX - startX) > 1) {
+					if (finalX < startX) {
+						DataPanel.this.controller.updateDragRegion(finalX, startX, false);
+						DataPanel.this.controller.zoomToDragRegion(finalX, startX);
+					} else {
+						DataPanel.this.controller.updateDragRegion(startX, finalX, false);
+						DataPanel.this.controller.zoomToDragRegion(startX, finalX);
+					}
 				} else {
-					DataPanel.this.controller.updateDragRegion(startX, finalX, false);
-					DataPanel.this.controller.zoomToDragRegion(startX, finalX);
+					DataPanel.this.controller.updateDragRegion(0,0,false);
 				}
-
-				System.out.println("Mouse released: " + e);
 			}
 		};
 
@@ -117,25 +119,31 @@ public class DataPanel extends JPanel implements ActionListener, MouseMotionList
 	}
 	
 	public void dataKeyUpdated(String newKey) {
-		graphPanel.setDataKey(newKey);
-		Class<?> clazz = model.getClassTypeForKey(newKey);
-		System.out.println("Selected key class: " + clazz.getName());
-
-		if (clazz.equals(Double.class)) {
-			dataSelectPanel.setDataTypeText("Double");
-			graphPanel.setType(GraphingPanel.DOUBLE_TYPE);
-		} else if (clazz.equals(String.class)) {
-			dataSelectPanel.setDataTypeText("String");
-			graphPanel.setType(GraphingPanel.STRING_TYPE);
-		} else if (clazz.equals(Boolean.class)) {
-			dataSelectPanel.setDataTypeText("Boolean");
-			graphPanel.setType(GraphingPanel.BOOL_TYPE);
+		if (dataSelectPanel.keySelected.getSelectedIndex() != 0) {
+			graphPanel.setDataKey(newKey);
+			Class<?> clazz = model.getClassTypeForKey(newKey);
+			System.out.println("Selected key class: " + clazz.getName());
+			if (clazz.equals(Double.class)) {
+				dataSelectPanel.setDataTypeText("Double");
+				graphPanel.setType(GraphingPanel.DOUBLE_TYPE);
+			}
+			else if (clazz.equals(String.class)) {
+				dataSelectPanel.setDataTypeText("String");
+				graphPanel.setType(GraphingPanel.STRING_TYPE);
+			}
+			else if (clazz.equals(Boolean.class)) {
+				dataSelectPanel.setDataTypeText("Boolean");
+				graphPanel.setType(GraphingPanel.BOOL_TYPE);
+			}
+			else {
+				dataSelectPanel.setDataTypeText("Invalid type!");
+				graphPanel.setType(GraphingPanel.DEFAULT_TYPE);
+			}
 		} else {
-			dataSelectPanel.setDataTypeText("Invalid type!");
-			graphPanel.setType(GraphingPanel.DEFAULT_TYPE);
+			graphPanel.clearData();
 		}
 	}
-	
+
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
 

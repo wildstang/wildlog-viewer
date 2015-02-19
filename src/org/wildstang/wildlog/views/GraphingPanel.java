@@ -87,11 +87,17 @@ public class GraphingPanel extends JPanel {
 
 	}
 
+	public void clearData() {
+		dataPoints = null;
+		repaint();
+	}
+
 	private void drawTimeLine(Graphics g, long startTimestamp, long endTimestamp) {
 		long deltaTime = endTimestamp - startTimestamp;
 
 		if (shouldShowDragRegion) {
-			// Draw drag region, with the time scrubber positioned at the current mouse position
+			// Draw drag region, with the time scrubber positioned at the
+			// current mouse position
 
 			int localPxDragRegionStart = dragRegionStart - getLocationOnScreen().x;
 			int localPxDragRegionEnd = dragRegionEnd - getLocationOnScreen().x;
@@ -109,7 +115,8 @@ public class GraphingPanel extends JPanel {
 			g.setColor(Color.WHITE);
 			g.fillRect(localPxDragRegionStart, 0, localPxDragRegionEnd - localPxDragRegionStart, getHeight());
 
-			// Compute where we should draw the labels (inside or outside the time line)
+			// Compute where we should draw the labels (inside or outside the
+			// time line)
 			FontMetrics fMetrics = g.getFontMetrics();
 			String startTimestampString = Long.toString(mapMousePositionToTimestamp(localPxDragRegionStart, startTimestamp, endTimestamp));
 			String endTimestampString = Long.toString(mapMousePositionToTimestamp(localPxDragRegionEnd, startTimestamp, endTimestamp));
@@ -117,7 +124,8 @@ public class GraphingPanel extends JPanel {
 			int startTimestampX;
 			int startStringWidth = SwingUtilities.computeStringWidth(fMetrics, startTimestampString);
 			if (localPxDragRegionStart - startStringWidth - 5 < 0) {
-				// The label would extend past the start of the panel and we should draw it on the inside
+				// The label would extend past the start of the panel and we
+				// should draw it on the inside
 				startTimestampX = localPxDragRegionStart + 5;
 			} else {
 				// There's enough room on the outside
@@ -127,7 +135,8 @@ public class GraphingPanel extends JPanel {
 			int endTimestampX;
 			int endStringWidth = SwingUtilities.computeStringWidth(fMetrics, endTimestampString);
 			if (localPxDragRegionEnd + 5 + endStringWidth > getWidth()) {
-				// The label would extend past the start of the panel and we should draw it on the inside
+				// The label would extend past the start of the panel and we
+				// should draw it on the inside
 				endTimestampX = localPxDragRegionEnd - 5 - endStringWidth;
 			} else {
 				// There's enough room on the outside
@@ -172,9 +181,10 @@ public class GraphingPanel extends JPanel {
 		double space = (double) getHeight() - topPadding - bottomPadding;
 
 		// draw gridlines (just min and max)
-		g.drawLine(50, (int) topPadding, getWidth(), (int) topPadding);
-		g.drawLine(50, (int) (getHeight() - bottomPadding), getWidth(), (int) (getHeight() - bottomPadding));
-
+		g.setColor(Color.LIGHT_GRAY);
+		g.drawLine(40, (int) topPadding, getWidth(), (int) topPadding);
+		g.drawLine(40, (int) (getHeight() - bottomPadding), getWidth(), (int) (getHeight() - bottomPadding));
+		g.setColor(Color.BLACK);
 		// finds the height of the nearest point and draws it
 		double distance = Math.abs(dataPoints.get(0).getTimeStamp() - (startTimestamp + ((double) mouseX / (double) getWidth()) * deltaTime));
 		int indexOfClosest = 0;
@@ -191,6 +201,7 @@ public class GraphingPanel extends JPanel {
 			bd = bd.setScale(2, RoundingMode.HALF_UP);
 			String label = Double.toString(bd.doubleValue());
 			int stringWidth = SwingUtilities.computeStringWidth(g.getFontMetrics(), label);
+
 			g.drawString(label, mouseX - stringWidth - 5, getHeight() - 2);
 		}
 
@@ -363,7 +374,6 @@ public class GraphingPanel extends JPanel {
 	}
 
 	public void updateModel(LogsModel model) {
-		System.out.println("updated model");
 		this.model = model;
 		if (logKey != null) {
 			dataPoints = model.getDataPointsForKey(logKey);
@@ -372,7 +382,6 @@ public class GraphingPanel extends JPanel {
 	}
 
 	public void setDataKey(String key) {
-		System.out.println("updated data key");
 		this.logKey = key;
 		if (model != null) {
 			dataPoints = model.getDataPointsForKey(logKey);
@@ -397,10 +406,6 @@ public class GraphingPanel extends JPanel {
 		dragRegionEnd = pxEnd;
 		this.shouldShowDragRegion = shouldShowDragRegion;
 		repaint();
-	}
-
-	private void clearPanel() {
-		setBackground(UIManager.getColor("Panel.background"));
 	}
 
 	public void setType(int type) {

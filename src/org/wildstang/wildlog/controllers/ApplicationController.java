@@ -35,7 +35,8 @@ public class ApplicationController implements ComponentListener {
 	public void initializeApplication() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception exc) {
+		}
+		catch (Exception exc) {
 
 		}
 		initFrameComponents();
@@ -141,7 +142,6 @@ public class ApplicationController implements ComponentListener {
 	public void updateScrollBarPosition(int position, int min, int max) {
 		position = 100;
 		graphPanelViewController.scrollPositionUpdated();
-		System.out.println(position + ", " + min + ", " + max);
 	}
 
 	public void updateScrollBarExtent(int scrollbarExtent) {
@@ -171,35 +171,33 @@ public class ApplicationController implements ComponentListener {
 
 	@Override
 	public void componentHidden(ComponentEvent e) {
-		// System.out.println("Component event!");
 
 	}
 
 	@Override
 	public void componentMoved(ComponentEvent e) {
-		// System.out.println("Component event!");
 		if (e.getSource() == dataPanels[0]) {
-			Point pos = dataPanels[0].getGraphingPanel().getLocationOnScreen();
-			Rectangle bounds = dataPanels[0].getGraphingPanel().getBounds();
-			updateDataPanelBounds(pos.x, pos.x + bounds.width);
+			if (dataPanels[0].isVisible()) {
+				Point pos = dataPanels[0].getGraphingPanel().getLocationOnScreen();
+				Rectangle bounds = dataPanels[0].getGraphingPanel().getBounds();
+				updateDataPanelBounds(pos.x, pos.x + bounds.width);
+			}
 		}
 
 	}
 
 	@Override
 	public void componentResized(ComponentEvent e) {
-		// System.out.println("Component event!");
 		if (e.getSource() == dataPanels[0]) {
-			Point pos = dataPanels[0].getGraphingPanel().getLocationOnScreen();
-			Rectangle bounds = dataPanels[0].getGraphingPanel().getBounds();
-			updateDataPanelBounds(pos.x, pos.x + bounds.width);
-			// chooserPanel.resizeBorder();
+			if (dataPanels[0].isVisible()) {
+				Point pos = dataPanels[0].getGraphingPanel().getLocationOnScreen();
+				Rectangle bounds = dataPanels[0].getGraphingPanel().getBounds();
+				updateDataPanelBounds(pos.x, pos.x + bounds.width);
+			}
 		}
 	}
 
 	@Override
 	public void componentShown(ComponentEvent e) {
-		// System.out.println("Component event!");
-
 	}
 }
