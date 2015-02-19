@@ -148,6 +148,10 @@ public class ApplicationController implements ComponentListener {
 		// Map pixels to timestamps
 		long startTimestamp = dataPanels[0].getGraphingPanel().mapAbsoluteMousePositionToTimestamp(pxStart);
 		long endTimestamp = dataPanels[0].getGraphingPanel().mapAbsoluteMousePositionToTimestamp(pxEnd);
+		if(startTimestamp == endTimestamp) {
+			// Don't drag to a region 0 time wide! Abort! Abort!
+			return;
+		}
 		graphPanelViewController.zoomAndScrollToTimestampRange(startTimestamp, endTimestamp);
 	}
 

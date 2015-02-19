@@ -24,7 +24,7 @@ public class GraphPanelController implements MouseWheelListener, AdjustmentListe
 	private double zoomFactor = 1.0;
 
 	private boolean ignoreNextScrollBarPositionUpdate = false;
-	private boolean dontDoNextScrollbarPositionCalculation = false;
+	private boolean skipNextScrollbarPositionCalculation = false;
 
 	public GraphPanelController(ApplicationController c, ScrollBarPanel scroll) {
 		controller = c;
@@ -48,7 +48,7 @@ public class GraphPanelController implements MouseWheelListener, AdjustmentListe
 		int scrollbarExtent = (int) ((scrollMaxValue - scrollMinValue) * ((double) currentWindowWidth / ((double) model.getEndTimestamp() - (double) model.getStartTimestamp())));
 		scrollPanel.setScrollBarExtent(scrollbarExtent);
 
-		if (!dontDoNextScrollbarPositionCalculation) {
+		if (!skipNextScrollbarPositionCalculation) {
 			int scrollbarPosition = (int) ((double) (scrollMaxValue - scrollbarExtent - scrollMinValue) * (((double) currentStartTimestamp - (double) model.getStartTimestamp()) / ((double) model
 					.getEndTimestamp() - (double) model.getStartTimestamp() - (double) currentWindowWidth)));
 			System.out.println("Calculated scrollbar position: " + scrollbarPosition);
@@ -56,7 +56,7 @@ public class GraphPanelController implements MouseWheelListener, AdjustmentListe
 		}
 
 		ignoreNextScrollBarPositionUpdate = false;
-		dontDoNextScrollbarPositionCalculation = false;
+		skipNextScrollbarPositionCalculation = false;
 	}
 
 	@Override
@@ -64,6 +64,8 @@ public class GraphPanelController implements MouseWheelListener, AdjustmentListe
 		if (model == null) {
 			return;
 		}
+		// Prevent event from triggering twice
+		e.consume();
 		if (e.getModifiers() == InputEvent.CTRL_MASK) {
 			// We multiply by -1 so that scrolling zooms in the right direction
 			double deltaSlidingWindowWidth = currentWindowWidth * (e.getPreciseWheelRotation() * DELTA_ZOOM_FACTOR * -1);
@@ -78,7 +80,18 @@ public class GraphPanelController implements MouseWheelListener, AdjustmentListe
 			}
 			ignoreNextScrollBarPositionUpdate = true;
 		} else {
-			currentStartTimestamp -= (e.getWheelRotation() * 5);
+			System.out.println("Zoom factor: " + zoomFactor);
+			long distanceToShift = (int) (e.getWheelRotation() * 100 * (1 / zoomFactor));
+			// If we get zero through rounding, ensure we still scroll
+			if (distanceToShift == 0) {
+				// Make sure we scroll in the right direction
+				if (e.getWheelRotation() < 0) {
+					distanceToShift = 1;
+				} else {
+					distanceToShift = -1;
+				}
+			}
+			currentStartTimestamp -= distanceToShift;
 			ignoreNextScrollBarPositionUpdate = true;
 		}
 		recalculateAndUpdate();
@@ -104,6 +117,8 @@ public class GraphPanelController implements MouseWheelListener, AdjustmentListe
 	public void zoomAndScrollToTimestampRange(long startTimestamp, long endTimestamp) {
 		currentStartTimestamp = startTimestamp;
 		currentWindowWidth = endTimestamp - startTimestamp;
+		// Recalculate zoom factor
+		zoomFactor = ((double) model.getEndTimestamp() - (double) model.getStartTimestamp()) / (double) currentWindowWidth;
 		ignoreNextScrollBarPositionUpdate = true;
 		recalculateAndUpdate();
 	}
@@ -130,15 +145,15 @@ public class GraphPanelController implements MouseWheelListener, AdjustmentListe
 		if (ignoreNextScrollBarPositionUpdate) {
 			return;
 		}
+		System.out.println("Event: " + e);
 
 		int scrollerPosition = scrollPanel.getScrollPosition();
 		System.out.println("scroll position: " + scrollerPosition);
 
-		// TODO Fix this calculation
-		currentStartTimestamp = (int) (((double) model.getEndTimestamp() - (double) model.getStartTimestamp() - (double) currentWindowWidth) * ((double) scrollerPosition / ((double) scrollPanel
-				.getMaximum() - (double) scrollPanel.getMinimum())));
+		currentStartTimestamp = (int) (((double) model.getEndTimestamp() - (double) currentWindowWidth) * ((double) scrollerPosition / ((double) scrollPanel.getMaximum() - (double) scrollPanel
+				.getMinimum())));
 		System.out.println("start timestamp: " + currentStartTimestamp);
-		dontDoNextScrollbarPositionCalculation = true;
+		skipNextScrollbarPositionCalculation = true;
 		recalculateAndUpdate();
 	}
 }
