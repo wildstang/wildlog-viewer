@@ -10,6 +10,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import org.wildstang.wildlog.models.LogsModel;
@@ -130,10 +131,6 @@ public class ApplicationController implements ComponentListener {
 		timeline.updateGraphPanelZoomAndScroll(startTimestamp, endTimestamp);
 	}
 
-	public ScrollBarPanel getScroller() {
-		return scrollBar;
-	}
-
 	public void updateDataPanelBounds(int leftEdgePx, int rightEdgePx) {
 		timeline.updateGraphingPanelsBounds(leftEdgePx, rightEdgePx);
 	}
@@ -148,11 +145,15 @@ public class ApplicationController implements ComponentListener {
 		// Map pixels to timestamps
 		long startTimestamp = dataPanels[0].getGraphingPanel().mapAbsoluteMousePositionToTimestamp(pxStart);
 		long endTimestamp = dataPanels[0].getGraphingPanel().mapAbsoluteMousePositionToTimestamp(pxEnd);
-		if(startTimestamp == endTimestamp) {
+		if (startTimestamp == endTimestamp) {
 			// Don't drag to a region 0 time wide! Abort! Abort!
 			return;
 		}
 		graphPanelViewController.zoomAndScrollToTimestampRange(startTimestamp, endTimestamp);
+	}
+
+	public void errorReadingFile() {
+		JOptionPane.showMessageDialog(frame, "Error reading the selected file. Please try another file.", "Error", JOptionPane.ERROR_MESSAGE);
 	}
 
 	@Override

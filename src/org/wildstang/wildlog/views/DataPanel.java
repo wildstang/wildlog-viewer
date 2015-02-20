@@ -10,12 +10,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
 
 import org.wildstang.wildlog.controllers.ApplicationController;
 import org.wildstang.wildlog.models.LogsModel;
 
-public class DataPanel extends JPanel implements ActionListener, MouseMotionListener {
+public class DataPanel extends JPanel implements ActionListener {
 
 	public ApplicationController controller;
 
@@ -48,10 +49,13 @@ public class DataPanel extends JPanel implements ActionListener, MouseMotionList
 		graphPanel = new GraphingPanel(c);
 		add(graphPanel, j);
 
-		graphPanel.addMouseMotionListener(this);
-
 		MouseInputAdapter mouseAdapter = new MouseInputAdapter() {
 			private int startX;
+			private int lastX;
+
+			public void mouseMoved(MouseEvent e) {
+				controller.updateMousePosition(e.getX(), e.getY());
+			}
 
 			public void mousePressed(MouseEvent e) {
 				startX = e.getXOnScreen();
@@ -60,7 +64,6 @@ public class DataPanel extends JPanel implements ActionListener, MouseMotionList
 
 			public void mouseDragged(MouseEvent e) {
 				int currentX = e.getXOnScreen();
-
 				// If we dragged to the left of the initial point, invert the points
 				if (Math.abs(currentX - startX) > 1) {
 					if (currentX < startX) {
@@ -139,16 +142,6 @@ public class DataPanel extends JPanel implements ActionListener, MouseMotionList
 		} else {
 			graphPanel.clearData();
 		}
-	}
-
-	@Override
-	public void mouseDragged(MouseEvent arg0) {
-
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent e) {
-		controller.updateMousePosition(e.getX(), e.getY());
 	}
 
 	public void updateMousePosition(int posX, int posY) {

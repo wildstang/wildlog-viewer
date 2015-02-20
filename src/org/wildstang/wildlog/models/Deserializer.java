@@ -17,28 +17,33 @@ import org.wildstang.wildlog.controllers.ApplicationController;
 public class Deserializer {
 
 	@SuppressWarnings("unchecked")
-	public static LogsModel loadLogsModelFromFile(File file) throws IOException, ClassNotFoundException {
+	public static LogsModel loadLogsModelFromFile(File file) throws IOException {
 		if (file != null) {
 
 			List<Map<String, Object>> logsList = new ArrayList<Map<String, Object>>();
 
-			ObjectInputStream oin = new ObjectInputStream(new FileInputStream(file));
-			while (true) {
-				try {
-					Object o = oin.readObject();
-					if (o instanceof HashMap) {
-						logsList.add((HashMap<String, Object>) o);
+			try {
+				ObjectInputStream oin = new ObjectInputStream(new FileInputStream(file));
+				while (true) {
+					try {
+						Object o = oin.readObject();
+						if (o instanceof HashMap) {
+							logsList.add((HashMap<String, Object>) o);
+						}
+					} catch (EOFException e) {
+						// End of file. Break.
+						break;
+					} catch (ClassCastException e) {
+						e.printStackTrace();
+						continue;
 					}
-				} catch (EOFException e) {
-					// End of file. Break.
-					break;
-				} catch (ClassCastException e) {
-					e.printStackTrace();
-					continue;
 				}
-			}
 
-			oin.close();
+				oin.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new IOException("Error reading selected file.");
+			}
 
 			// Extract list of all keys from the data
 			List<String> keys = new ArrayList<>();

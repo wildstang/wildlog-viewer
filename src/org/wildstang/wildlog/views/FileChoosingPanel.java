@@ -84,10 +84,9 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 			model = Deserializer.loadLogsModelFromFile(file);
 			controller.updateLogsModel(model);
 			fileName.setText(file.getName());
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+			controller.errorReadingFile();
 		}
 	}
 }

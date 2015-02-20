@@ -1,6 +1,7 @@
 package org.wildstang.wildlog.views;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.AdjustmentListener;
 
 import javax.swing.JPanel;
@@ -17,9 +18,10 @@ public class ScrollBarPanel extends JPanel {
 		this.controller = controller;
 		setLayout(new BorderLayout());
 		scrollBar = new JScrollBar(JScrollBar.HORIZONTAL, 0, 1000, 0, 1000);
+		scrollBar.setMinimumSize(new Dimension(0, 80));
 		add(scrollBar, BorderLayout.CENTER);
 	}
-	
+
 	public void addAdjustmentListener(AdjustmentListener listener) {
 		scrollBar.addAdjustmentListener(listener);
 	}

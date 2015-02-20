@@ -66,7 +66,8 @@ public class GraphPanelController implements MouseWheelListener, AdjustmentListe
 		}
 		// Prevent event from triggering twice
 		e.consume();
-		if (e.getModifiers() == InputEvent.CTRL_MASK) {
+		// Pressing control while scrolling will zoom
+		if (e.isControlDown()) {
 			// We multiply by -1 so that scrolling zooms in the right direction
 			double deltaSlidingWindowWidth = currentWindowWidth * (e.getPreciseWheelRotation() * DELTA_ZOOM_FACTOR * -1);
 			// Keep the sliding window centered by adding half the delta width to the start timestamp
@@ -83,11 +84,11 @@ public class GraphPanelController implements MouseWheelListener, AdjustmentListe
 			System.out.println("Zoom factor: " + zoomFactor);
 			// The amount we shift is inversely proportional to the zoom factor.
 			// For instance, at zoom level "5", distanceToShift would be 20.
-			long distanceToShift = (int) (e.getWheelRotation() * 100 * (1 / zoomFactor));
+			long distanceToShift = (int) (e.getPreciseWheelRotation() * 100 * (1 / zoomFactor));
 			// If we get zero through rounding, ensure we still scroll
 			if (distanceToShift == 0) {
 				// Make sure we scroll in the right direction
-				if (e.getWheelRotation() < 0) {
+				if (e.getPreciseWheelRotation() < 0) {
 					distanceToShift = 1;
 				} else {
 					distanceToShift = -1;
@@ -147,14 +148,12 @@ public class GraphPanelController implements MouseWheelListener, AdjustmentListe
 		if (ignoreNextScrollBarPositionUpdate) {
 			return;
 		}
-		System.out.println("Event: " + e);
 
 		int scrollerPosition = scrollPanel.getScrollPosition();
-		System.out.println("scroll position: " + scrollerPosition);
 
 		currentStartTimestamp = (int) (((double) model.getEndTimestamp() - (double) currentWindowWidth) * ((double) scrollerPosition / ((double) scrollPanel.getMaximum() - (double) scrollPanel
 				.getMinimum())));
-		System.out.println("start timestamp: " + currentStartTimestamp);
+		// The scrollbar was moved by the user; don't recalculate its position ourselves
 		skipNextScrollbarPositionCalculation = true;
 		recalculateAndUpdate();
 	}
