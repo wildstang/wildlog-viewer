@@ -75,22 +75,21 @@ public class DataPanel extends JPanel implements ActionListener {
 			}
 
 			public void mouseReleased(MouseEvent e) {
-				if (ApplicationController.chooserPanel.chosenFile != null) {
-					int finalX = e.getXOnScreen();
+				int finalX = e.getXOnScreen();
 
-					// If we dragged to the left of the initial point, invert the points
-					if (Math.abs(finalX - startX) > 1) {
-						if (finalX < startX) {
-							DataPanel.this.controller.updateDragRegion(finalX, startX, false);
-							DataPanel.this.controller.zoomToDragRegion(finalX, startX);
-						} else {
-							DataPanel.this.controller.updateDragRegion(startX, finalX, false);
-							DataPanel.this.controller.zoomToDragRegion(startX, finalX);
-						}
+				// If we dragged to the left of the initial point, invert the points
+				if (Math.abs(finalX - startX) > 1) {
+					if (finalX < startX) {
+						DataPanel.this.controller.updateDragRegion(finalX, startX, false);
+						DataPanel.this.controller.zoomToDragRegion(finalX, startX);
 					} else {
-						DataPanel.this.controller.updateDragRegion(0, 0, false);
+						DataPanel.this.controller.updateDragRegion(startX, finalX, false);
+						DataPanel.this.controller.zoomToDragRegion(startX, finalX);
 					}
+				} else {
+					DataPanel.this.controller.updateDragRegion(0, 0, false);
 				}
+
 			}
 		};
 
@@ -99,7 +98,7 @@ public class DataPanel extends JPanel implements ActionListener {
 	}
 
 	public GraphingPanel getGraphingPanel() {
-			return graphPanel;
+		return graphPanel;
 	}
 
 	public void updateModel(LogsModel model) {

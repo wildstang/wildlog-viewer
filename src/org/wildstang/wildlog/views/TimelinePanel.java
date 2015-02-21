@@ -13,16 +13,14 @@ public class TimelinePanel extends JPanel {
 	private long startTimestamp, endTimestamp;
 	private int leftEdgePx, rightEdgePx;
 	private int mouseX, mouseY;
-	private int timelineLeftBound;
-	private int timelineRightBound;
 
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
 		// Convert graphing panel bounds to local coordinates
-		timelineLeftBound = ApplicationController.dataPanels[0].dataSelectPanel.getWidth();
-		timelineRightBound = rightEdgePx - getLocationOnScreen().x;
+		int timelineLeftBound = ApplicationController.DATA_SELECT_PANEL_WIDTH;
+		int timelineRightBound = getWidth();
 		g.setColor(Color.GREEN);
 		g.fillRect(timelineLeftBound, 0, timelineRightBound, getHeight());
 		g.setColor(Color.BLACK);
@@ -44,12 +42,6 @@ public class TimelinePanel extends JPanel {
 		} else {
 			g.drawString(currentPositionLabel, timelineLeftBound + mouseX - (int) (stringBounds.getWidth()) - 5, (int) (stringBounds.getHeight() / 2) + 5);
 		}
-	}
-
-	public void updateGraphingPanelsBounds(int leftEdgePx, int rightEdgePx) {
-		this.leftEdgePx = leftEdgePx;
-		this.rightEdgePx = rightEdgePx;
-		repaint();
 	}
 
 	public void updateGraphPanelZoomAndScroll(long startTimestamp, long endTimestamp) {

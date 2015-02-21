@@ -59,32 +59,29 @@ public class GraphingPanel extends JPanel {
 			endTimestamp = viewEndTimestamp;
 		}
 
+		if (dataPoints != null && !dataPoints.isEmpty()) {
+			// Check if we have any data in the displayed range
+			// If our data is outside the range, skip all the next stuff for
+			// efficiency
+			if ((dataPoints.get(0).getTimeStamp() > endTimestamp) || (dataPoints.get(dataPoints.size() - 1).getTimeStamp() < startTimestamp)) {
+				return;
+			}
+
+			int firstPointIndex = findFirstPoint(startTimestamp);
+			int lastPointIndex = findLastPoint(endTimestamp);
+
+			// If we're dragging to zoom, hide the labels/highlights on points
+			boolean shouldDrawHighlightsAndLabels = !shouldShowDragRegion;
+			if (graphType == DOUBLE_TYPE) {
+				drawForDouble(g, startTimestamp, endTimestamp, firstPointIndex, lastPointIndex, shouldDrawHighlightsAndLabels);
+			} else if (graphType == BOOL_TYPE) {
+				drawForBoolean(g, startTimestamp, endTimestamp, firstPointIndex, lastPointIndex);
+			} else if (graphType == STRING_TYPE) {
+				drawForString(g, startTimestamp, endTimestamp, firstPointIndex, lastPointIndex);
+			}
+		}
+
 		drawTimeLine(g, startTimestamp, endTimestamp);
-
-		if (dataPoints == null || dataPoints.isEmpty()) {
-			return;
-		}
-
-		// Check if we have any data in the displayed range
-		// If our data is outside the range, skip all the next stuff for
-		// efficiency
-		if ((dataPoints.get(0).getTimeStamp() > endTimestamp) || (dataPoints.get(dataPoints.size() - 1).getTimeStamp() < startTimestamp)) {
-			return;
-		}
-
-		int firstPointIndex = findFirstPoint(startTimestamp);
-		int lastPointIndex = findLastPoint(endTimestamp);
-
-		// If we're dragging to zoom, hide the labels/highlights on points
-		boolean shouldDrawHighlightsAndLabels = !shouldShowDragRegion;
-		if (graphType == DOUBLE_TYPE) {
-			drawForDouble(g, startTimestamp, endTimestamp, firstPointIndex, lastPointIndex, shouldDrawHighlightsAndLabels);
-		} else if (graphType == BOOL_TYPE) {
-			drawForBoolean(g, startTimestamp, endTimestamp, firstPointIndex, lastPointIndex);
-		} else if (graphType == STRING_TYPE) {
-			drawForString(g, startTimestamp, endTimestamp, firstPointIndex, lastPointIndex);
-		}
-
 	}
 
 	public void clearData() {
@@ -112,7 +109,8 @@ public class GraphingPanel extends JPanel {
 			}
 
 			// Draw drag region
-			g.setColor(Color.WHITE);
+			Color transparentWhite = new Color(255, 255, 255, 150);
+			g.setColor(transparentWhite);
 			g.fillRect(localPxDragRegionStart, 0, localPxDragRegionEnd - localPxDragRegionStart, getHeight());
 
 			// Compute where we should draw the labels (inside or outside the
@@ -218,13 +216,11 @@ public class GraphingPanel extends JPanel {
 				int startXVal = (int) ((point.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()));
 
 				/*
-				 * Calculate the scaled position of this point. It will be a value between 0 and 1, with 0 corresponding
-				 * with the min in the range, and 1 with the max
+				 * Calculate the scaled position of this point. It will be a value between 0 and 1, with 0 corresponding with the min in the range, and 1 with the max
 				 */
 				double scaledPosition = (((Double) point.getObject()) - lowest) / range;
 				/*
-				 * "space" is the amount of vertical space we have to graph in. This is equal to the height, minus a 10%
-				 * padding on the top and bottom.
+				 * "space" is the amount of vertical space we have to graph in. This is equal to the height, minus a 10% padding on the top and bottom.
 				 */
 				int yPos = (int) (scaledPosition * space);
 				int startYVal = (int) (getHeight() - bottomPadding - yPos);
@@ -280,8 +276,7 @@ public class GraphingPanel extends JPanel {
 				g.setColor(dotColor);
 				g.fillRect(startXVal - 2, getHeight() / 2 - 2, 5, 5);
 				if (mouseX >= startXVal - 2 && mouseX <= startXVal + 2 /*
-																		 * && mouseY >= getHeight() / 2 - 2 && mouseY <=
-																		 * getHeight() / 2 + 2
+																		 * && mouseY >= getHeight() / 2 - 2 && mouseY <= getHeight() / 2 + 2
 																		 */) {
 					FontMetrics fm = g.getFontMetrics();
 					String string = (String) point.getObject();

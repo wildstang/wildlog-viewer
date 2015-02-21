@@ -4,10 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -19,16 +15,16 @@ import org.wildstang.wildlog.views.FileChoosingPanel;
 import org.wildstang.wildlog.views.ScrollBarPanel;
 import org.wildstang.wildlog.views.TimelinePanel;
 
-public class ApplicationController implements ComponentListener {
+public class ApplicationController {
 
-	//public static final int DATA_SEL_PAN_WIDTH = 162;
+	public static final int DATA_SELECT_PANEL_WIDTH = 150;
 	private static final int NUM_DATA_PANELS = 8;
 	public static JFrame frame;
-	public static FileChoosingPanel chooserPanel;
+	public FileChoosingPanel chooserPanel;
 
-	public static DataPanel[] dataPanels = new DataPanel[NUM_DATA_PANELS];
-	public static Color[] theWSRainbow = new Color[NUM_DATA_PANELS];
-	public static TimelinePanel timeline;
+	public DataPanel[] dataPanels = new DataPanel[NUM_DATA_PANELS];
+	public Color[] theWSRainbow = new Color[NUM_DATA_PANELS];
+	public TimelinePanel timeline;
 	private ScrollBarPanel scrollBar;
 
 	// Controllers
@@ -68,7 +64,6 @@ public class ApplicationController implements ComponentListener {
 			dataPanels[i] = new DataPanel(this, theWSRainbow[i]);
 		}
 
-		dataPanels[0].addComponentListener(this);
 		scrollBar = new ScrollBarPanel(this);
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -132,10 +127,6 @@ public class ApplicationController implements ComponentListener {
 		timeline.updateGraphPanelZoomAndScroll(startTimestamp, endTimestamp);
 	}
 
-	public void updateDataPanelBounds(int leftEdgePx, int rightEdgePx) {
-		timeline.updateGraphingPanelsBounds(leftEdgePx, rightEdgePx);
-	}
-
 	public void updateDragRegion(int pxStart, int pxEnd, boolean shouldShowDragRegion) {
 		for (int i = 0; i < dataPanels.length; i++) {
 			dataPanels[i].updateDragRegion(pxStart, pxEnd, shouldShowDragRegion);
@@ -152,41 +143,18 @@ public class ApplicationController implements ComponentListener {
 		}
 		graphPanelViewController.zoomAndScrollToTimestampRange(startTimestamp, endTimestamp);
 	}
+	
+	public void clearAllFields() {
+		for (int i = 0; i < dataPanels.length; i++) {
+			dataPanels[i].dataSelectPanel.clearAllFields();
+		}
+	}
+	
+	public void resetZoomToDefault() {
+		graphPanelViewController.resetDefaultZoom();
+	}
 
 	public void errorReadingFile() {
 		JOptionPane.showMessageDialog(frame, "Error reading the selected file. Please try another file.", "Error", JOptionPane.ERROR_MESSAGE);
-	}
-
-	@Override
-	public void componentHidden(ComponentEvent e) {
-
-	}
-
-	@Override
-	public void componentMoved(ComponentEvent e) {
-		if (e.getSource() == dataPanels[0]) {
-			if (dataPanels[0].isVisible()) {
-					Point pos = dataPanels[0].getGraphingPanel().getLocationOnScreen();
-					Rectangle bounds = dataPanels[0].getGraphingPanel().getBounds();
-					int left = dataPanels[0].dataSelectPanel.getWidth();
-					updateDataPanelBounds(left, pos.x + bounds.width);
-			}
-		}
-
-	}
-
-	@Override
-	public void componentResized(ComponentEvent e) {
-		if (e.getSource() == dataPanels[0]) {
-			if (dataPanels[0].isVisible()) {
-					Point pos = dataPanels[0].getGraphingPanel().getLocationOnScreen();
-					Rectangle bounds = dataPanels[0].getGraphingPanel().getBounds();
-					updateDataPanelBounds(pos.x, pos.x + bounds.width);
-			}
-		}
-	}
-
-	@Override
-	public void componentShown(ComponentEvent e) {
 	}
 }

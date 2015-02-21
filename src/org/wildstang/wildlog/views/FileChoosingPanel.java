@@ -26,14 +26,13 @@ import org.wildstang.wildlog.models.LogsModel;
 public class FileChoosingPanel extends JPanel implements ActionListener {
 
 	private ApplicationController controller;
-	public File chosenFile;
 
 	WildStangLogoPanel logoPanel = new WildStangLogoPanel();
 	JLabel fileLabel = new JLabel("File: ");
 	JTextField fileName = new JTextField("No file Selected", 15);
 	JButton readFileStart = new JButton("Select Data File from SD Card");
 
-	PanelEditor pEditor = new PanelEditor();
+	ApplicationControlPanel controlPanel;
 
 	public FileChoosingPanel(ApplicationController c) {
 		controller = c;
@@ -48,7 +47,8 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 		paneLeft.add(choosingFiles);
 		JPanel paneRight = new JPanel();
 		paneRight.setLayout(new FlowLayout(FlowLayout.TRAILING));
-		paneRight.add(pEditor);
+		controlPanel = new ApplicationControlPanel(controller);
+		paneRight.add(controlPanel);
 		add(paneLeft, BorderLayout.WEST);
 		try {
 			Image wsLogo = ImageIO.read(getClass().getResourceAsStream("/wildstang-logo.png"));
@@ -72,8 +72,8 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 
 	public void chooseFile() {
 		JFileChooser chooser = new JFileChooser();
-		chosenFile = new File(System.getProperty("user.home"));
-		chooser.setCurrentDirectory(chooser.getFileSystemView().getParentDirectory(chosenFile));
+		File startFile = new File(System.getProperty("user.home"));
+		chooser.setCurrentDirectory(chooser.getFileSystemView().getParentDirectory(startFile));
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		chooser.setDialogTitle("Select the Local location");
 		File file;
@@ -87,20 +87,10 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 			model = Deserializer.loadLogsModelFromFile(file);
 			controller.updateLogsModel(model);
 			fileName.setText(file.getName());
-			dataSelectResized();
+			//dataSelectResized();
 		} catch (IOException e) {
 			e.printStackTrace();
 			controller.errorReadingFile();
-		}
-	}
-	private void dataSelectResized() {
-		if (controller.dataPanels[0].isVisible()) {
-			if (ApplicationController.chooserPanel.chosenFile != null) {
-				Point pos = controller.dataPanels[0].getGraphingPanel().getLocationOnScreen();
-				Rectangle bounds = controller.dataPanels[0].getGraphingPanel().getBounds();
-				int left = controller.dataPanels[0].dataSelectPanel.getWidth();
-				controller.updateDataPanelBounds(left, pos.x + bounds.width);
-			}
 		}
 	}
 }

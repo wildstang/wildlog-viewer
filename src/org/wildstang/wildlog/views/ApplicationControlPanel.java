@@ -8,12 +8,15 @@ import javax.swing.JPanel;
 
 import org.wildstang.wildlog.controllers.ApplicationController;
 
-public class PanelEditor extends JPanel implements ActionListener {
+public class ApplicationControlPanel extends JPanel implements ActionListener {
 
+	private ApplicationController controller;
+	
 	JButton resetZoom = new JButton("Reset Zoom");
 	JButton clearAllFields = new JButton("Clear All Fields");
 
-	public PanelEditor() {
+	public ApplicationControlPanel(ApplicationController controller) {
+		this.controller = controller;
 		add(clearAllFields);
 		add(resetZoom);
 		clearAllFields.addActionListener(this);
@@ -22,11 +25,9 @@ public class PanelEditor extends JPanel implements ActionListener {
 
 	public void actionPerformed(ActionEvent event) {
 		if (event.getSource() == resetZoom) {
-			ApplicationController.graphPanelViewController.resetDefaultZoom();
+			controller.resetZoomToDefault();
 		} else if (event.getSource() == clearAllFields) {
-			for (int i = 0; i < ApplicationController.dataPanels.length; i++) {
-				ApplicationController.dataPanels[i].dataSelectPanel.clearAllFields();
-			}
+			controller.clearAllFields();
 		}
 	}
 }
