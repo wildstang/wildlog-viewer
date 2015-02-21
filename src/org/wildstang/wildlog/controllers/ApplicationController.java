@@ -21,9 +21,10 @@ import org.wildstang.wildlog.views.TimelinePanel;
 
 public class ApplicationController implements ComponentListener {
 
+	//public static final int DATA_SEL_PAN_WIDTH = 162;
 	private static final int NUM_DATA_PANELS = 8;
 	public static JFrame frame;
-	private FileChoosingPanel chooserPanel;
+	public static FileChoosingPanel chooserPanel;
 
 	public static DataPanel[] dataPanels = new DataPanel[NUM_DATA_PANELS];
 	public static Color[] theWSRainbow = new Color[NUM_DATA_PANELS];
@@ -114,7 +115,7 @@ public class ApplicationController implements ComponentListener {
 		for (int i = 0; i < dataPanels.length; i++) {
 			dataPanels[i].updateMousePosition(x, y);
 		}
-		timeline.updateMosuePosition(x, y);
+		timeline.updateMousePosition(x, y);
 	}
 
 	public void updateLogsModel(LogsModel model) {
@@ -165,9 +166,10 @@ public class ApplicationController implements ComponentListener {
 	public void componentMoved(ComponentEvent e) {
 		if (e.getSource() == dataPanels[0]) {
 			if (dataPanels[0].isVisible()) {
-				Point pos = dataPanels[0].getGraphingPanel().getLocationOnScreen();
-				Rectangle bounds = dataPanels[0].getGraphingPanel().getBounds();
-				updateDataPanelBounds(pos.x, pos.x + bounds.width);
+					Point pos = dataPanels[0].getGraphingPanel().getLocationOnScreen();
+					Rectangle bounds = dataPanels[0].getGraphingPanel().getBounds();
+					int left = dataPanels[0].dataSelectPanel.getWidth();
+					updateDataPanelBounds(left, pos.x + bounds.width);
 			}
 		}
 
@@ -177,9 +179,9 @@ public class ApplicationController implements ComponentListener {
 	public void componentResized(ComponentEvent e) {
 		if (e.getSource() == dataPanels[0]) {
 			if (dataPanels[0].isVisible()) {
-				Point pos = dataPanels[0].getGraphingPanel().getLocationOnScreen();
-				Rectangle bounds = dataPanels[0].getGraphingPanel().getBounds();
-				updateDataPanelBounds(pos.x, pos.x + bounds.width);
+					Point pos = dataPanels[0].getGraphingPanel().getLocationOnScreen();
+					Rectangle bounds = dataPanels[0].getGraphingPanel().getBounds();
+					updateDataPanelBounds(pos.x, pos.x + bounds.width);
 			}
 		}
 	}

@@ -3,6 +3,8 @@ package org.wildstang.wildlog.views;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -24,6 +26,7 @@ import org.wildstang.wildlog.models.LogsModel;
 public class FileChoosingPanel extends JPanel implements ActionListener {
 
 	private ApplicationController controller;
+	public File chosenFile;
 
 	WildStangLogoPanel logoPanel = new WildStangLogoPanel();
 	JLabel fileLabel = new JLabel("File: ");
@@ -69,8 +72,8 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 
 	public void chooseFile() {
 		JFileChooser chooser = new JFileChooser();
-		File startFile = new File(System.getProperty("user.home"));
-		chooser.setCurrentDirectory(chooser.getFileSystemView().getParentDirectory(startFile));
+		chosenFile = new File(System.getProperty("user.home"));
+		chooser.setCurrentDirectory(chooser.getFileSystemView().getParentDirectory(chosenFile));
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		chooser.setDialogTitle("Select the Local location");
 		File file;
@@ -84,9 +87,20 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 			model = Deserializer.loadLogsModelFromFile(file);
 			controller.updateLogsModel(model);
 			fileName.setText(file.getName());
+			dataSelectResized();
 		} catch (IOException e) {
 			e.printStackTrace();
 			controller.errorReadingFile();
+		}
+	}
+	private void dataSelectResized() {
+		if (controller.dataPanels[0].isVisible()) {
+			if (ApplicationController.chooserPanel.chosenFile != null) {
+				Point pos = controller.dataPanels[0].getGraphingPanel().getLocationOnScreen();
+				Rectangle bounds = controller.dataPanels[0].getGraphingPanel().getBounds();
+				int left = controller.dataPanels[0].dataSelectPanel.getWidth();
+				controller.updateDataPanelBounds(left, pos.x + bounds.width);
+			}
 		}
 	}
 }

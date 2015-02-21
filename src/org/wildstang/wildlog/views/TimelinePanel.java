@@ -6,6 +6,8 @@ import java.awt.geom.Rectangle2D;
 
 import javax.swing.JPanel;
 
+import org.wildstang.wildlog.controllers.ApplicationController;
+
 public class TimelinePanel extends JPanel {
 
 	private long startTimestamp, endTimestamp;
@@ -19,7 +21,7 @@ public class TimelinePanel extends JPanel {
 		super.paintComponent(g);
 
 		// Convert graphing panel bounds to local coordinates
-		timelineLeftBound = leftEdgePx - getLocationOnScreen().x;
+		timelineLeftBound = ApplicationController.dataPanels[0].dataSelectPanel.getWidth();
 		timelineRightBound = rightEdgePx - getLocationOnScreen().x;
 		g.setColor(Color.GREEN);
 		g.fillRect(timelineLeftBound, 0, timelineRightBound, getHeight());
@@ -56,7 +58,7 @@ public class TimelinePanel extends JPanel {
 		repaint();
 	}
 
-	public void updateMosuePosition(int mouseX, int mouseY) {
+	public void updateMousePosition(int mouseX, int mouseY) {
 		this.mouseX = mouseX;
 		this.mouseY = mouseY;
 		repaint();
