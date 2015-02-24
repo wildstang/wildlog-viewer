@@ -3,8 +3,6 @@ package org.wildstang.wildlog.views;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -12,21 +10,19 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 import org.wildstang.wildlog.models.DataPoint;
 import org.wildstang.wildlog.models.LogsModel;
 
 public class GraphingPanel extends JPanel {
 
-	private LogsModel model;
-	private String logKey;
-
 	public final static int BOOL_TYPE = 1;
 	public final static int DOUBLE_TYPE = 2;
 	public final static int STRING_TYPE = 3;
 	public final static int DEFAULT_TYPE = 0;
 
+	private LogsModel model;
+	private String logKey;
 	List<DataPoint> dataPoints;
 	private int graphType = -1;
 	long firstTimestamp;
@@ -65,15 +61,16 @@ public class GraphingPanel extends JPanel {
 			return;
 		}
 
-		// Check if we have any data in the displayed range
-		// If our data is outside the range, skip all the next stuff for
-		// efficiency
+		/*
+		 * Check if we have any data in the displayed range. If our data is outside the range, skip all the next stuff
+		 * for efficiency.
+		 */
 		if ((dataPoints.get(0).getTimeStamp() > endTimestamp) || (dataPoints.get(dataPoints.size() - 1).getTimeStamp() < startTimestamp)) {
 			return;
 		}
 
-		int firstPointIndex = findFirstPoint(startTimestamp);
-		int lastPointIndex = findLastPoint(endTimestamp);
+		int firstPointIndex = findFirstPointBeforeTimestamp(startTimestamp);
+		int lastPointIndex = findFirstPointAfterTimestamp(endTimestamp);
 
 		// If we're dragging to zoom, hide the labels/highlights on points
 		boolean shouldDrawHighlightsAndLabels = !shouldShowDragRegion;
@@ -99,8 +96,12 @@ public class GraphingPanel extends JPanel {
 			// Draw drag region, with the time scrubber positioned at the
 			// current mouse position
 
+			// Convert the drag region coordinates to local coordinates
+			// They are originally in the coordinate system of the containing DataPanel
 			int localPxDragRegionStart = dragRegionStart - getLocationOnScreen().x;
 			int localPxDragRegionEnd = dragRegionEnd - getLocationOnScreen().x;
+			
+			System.out.println("localMouseX: " + localPxDragRegionStart + "; dragRegionStart: " + dragRegionStart);
 
 			// Bound the drag region by the width of the box
 			if (localPxDragRegionStart < 0) {
@@ -115,8 +116,7 @@ public class GraphingPanel extends JPanel {
 			g.setColor(Color.WHITE);
 			g.fillRect(localPxDragRegionStart, 0, localPxDragRegionEnd - localPxDragRegionStart, getHeight());
 
-			// Compute where we should draw the labels (inside or outside the
-			// time line)
+			// Compute where we should draw the labels (inside or outside the time line)
 			FontMetrics fMetrics = g.getFontMetrics();
 			String startTimestampString = Long.toString(mapMousePositionToTimestamp(localPxDragRegionStart, startTimestamp, endTimestamp));
 			String endTimestampString = Long.toString(mapMousePositionToTimestamp(localPxDragRegionEnd, startTimestamp, endTimestamp));
@@ -155,7 +155,6 @@ public class GraphingPanel extends JPanel {
 
 		g.setColor(Color.BLACK);
 		g.drawLine(mouseX, 0, mouseX, getHeight());
-
 	}
 
 	private void drawForDouble(Graphics g, long startTimestamp, long endTimestamp, int firstPointIndex, int lastPointIndex, boolean highlightAndLabelNearestPoint) {
@@ -176,9 +175,9 @@ public class GraphingPanel extends JPanel {
 		double range = highest - lowest;
 
 		// compute constant things
-		double topPadding = (double) getHeight() * 0.1;
+		double topPadding = getHeight() * 0.1;
 		double bottomPadding = g.getFontMetrics().getHeight();
-		double space = (double) getHeight() - topPadding - bottomPadding;
+		double space = getHeight() - topPadding - bottomPadding;
 
 		// draw gridlines (just min and max)
 		g.setColor(Color.LIGHT_GRAY);
@@ -279,10 +278,7 @@ public class GraphingPanel extends JPanel {
 				int startXVal = (int) ((point.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()));
 				g.setColor(dotColor);
 				g.fillRect(startXVal - 2, getHeight() / 2 - 2, 5, 5);
-				if (mouseX >= startXVal - 2 && mouseX <= startXVal + 2 /*
-																		 * && mouseY >= getHeight() / 2 - 2 && mouseY <=
-																		 * getHeight() / 2 + 2
-																		 */) {
+				if (mouseX >= startXVal - 2 && mouseX <= startXVal + 2) {
 					FontMetrics fm = g.getFontMetrics();
 					String string = (String) point.getObject();
 					int boxWidth = fm.stringWidth(string) + (int) (.33 * fm.getHeight());
@@ -331,7 +327,7 @@ public class GraphingPanel extends JPanel {
 		}
 	}
 
-	private int findFirstPoint(long startTimestamp) {
+	private int findFirstPointBeforeTimestamp(long startTimestamp) {
 		// Find the index of the first data point prior to the start timestamp
 		int firstPointIndex = -1;
 		for (int i = 0; i < dataPoints.size(); i++) {
@@ -348,14 +344,13 @@ public class GraphingPanel extends JPanel {
 		return firstPointIndex;
 	}
 
-	private int findLastPoint(long endTimestamp) {
-		// If the last timestamp we have data for is less than the end
-		// timestamp,
-		// use the last timestamp. Otherwise, search ahead in the data for the
-		// first timestamp
-		// beyond the end timestamp
+	private int findFirstPointAfterTimestamp(long endTimestamp) {
+		/*
+		 * If the last timestamp in our data set is less than the target end timestamp, use the last timestamp.
+		 * Otherwise, search through the data for the first timestamp beyond the end timestamp.
+		 */
 		int lastPointIndex = -1;
-		if (dataPoints.get(dataPoints.size() - 1).getTimeStamp() < endTimestamp) {
+		if (dataPoints.get(dataPoints.size() - 1).getTimeStamp() <= endTimestamp) {
 			lastPointIndex = dataPoints.size() - 1;
 		} else {
 			for (int i = 0; i < dataPoints.size(); i++) {
