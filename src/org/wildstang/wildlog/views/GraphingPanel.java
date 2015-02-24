@@ -81,7 +81,6 @@ public class GraphingPanel extends JPanel {
 		} else if (graphType == STRING_TYPE) {
 			drawForString(g, startTimestamp, endTimestamp, firstPointIndex, lastPointIndex);
 		}
-
 	}
 
 	public void clearData() {
@@ -113,7 +112,8 @@ public class GraphingPanel extends JPanel {
 			}
 
 			// Draw drag region
-			g.setColor(Color.WHITE);
+			Color transparentWhite = new Color(255, 255, 255, 150);
+			g.setColor(transparentWhite);
 			g.fillRect(localPxDragRegionStart, 0, localPxDragRegionEnd - localPxDragRegionStart, getHeight());
 
 			// Compute where we should draw the labels (inside or outside the time line)
@@ -217,13 +217,11 @@ public class GraphingPanel extends JPanel {
 				int startXVal = (int) ((point.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()));
 
 				/*
-				 * Calculate the scaled position of this point. It will be a value between 0 and 1, with 0 corresponding
-				 * with the min in the range, and 1 with the max
+				 * Calculate the scaled position of this point. It will be a value between 0 and 1, with 0 corresponding with the min in the range, and 1 with the max
 				 */
 				double scaledPosition = (((Double) point.getObject()) - lowest) / range;
 				/*
-				 * "space" is the amount of vertical space we have to graph in. This is equal to the height, minus a 10%
-				 * padding on the top and bottom.
+				 * "space" is the amount of vertical space we have to graph in. This is equal to the height, minus a 10% padding on the top and bottom.
 				 */
 				int yPos = (int) (scaledPosition * space);
 				int startYVal = (int) (getHeight() - bottomPadding - yPos);

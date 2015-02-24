@@ -6,21 +6,21 @@ import java.awt.geom.Rectangle2D;
 
 import javax.swing.JPanel;
 
+import org.wildstang.wildlog.controllers.ApplicationController;
+
 public class TimelinePanel extends JPanel {
 
 	private long startTimestamp, endTimestamp;
 	private int leftEdgePx, rightEdgePx;
 	private int mouseX, mouseY;
-	private int timelineLeftBound;
-	private int timelineRightBound;
 
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
 		// Convert graphing panel bounds to local coordinates
-		timelineLeftBound = leftEdgePx - getLocationOnScreen().x;
-		timelineRightBound = rightEdgePx - getLocationOnScreen().x;
+		int timelineLeftBound = ApplicationController.DATA_SELECT_PANEL_WIDTH;
+		int timelineRightBound = getWidth();
 		g.setColor(Color.GREEN);
 		g.fillRect(timelineLeftBound, 0, timelineRightBound, getHeight());
 		g.setColor(Color.BLACK);
@@ -44,19 +44,13 @@ public class TimelinePanel extends JPanel {
 		}
 	}
 
-	public void updateGraphingPanelsBounds(int leftEdgePx, int rightEdgePx) {
-		this.leftEdgePx = leftEdgePx;
-		this.rightEdgePx = rightEdgePx;
-		repaint();
-	}
-
 	public void updateGraphPanelZoomAndScroll(long startTimestamp, long endTimestamp) {
 		this.startTimestamp = startTimestamp;
 		this.endTimestamp = endTimestamp;
 		repaint();
 	}
 
-	public void updateMosuePosition(int mouseX, int mouseY) {
+	public void updateMousePosition(int mouseX, int mouseY) {
 		this.mouseX = mouseX;
 		this.mouseY = mouseY;
 		repaint();

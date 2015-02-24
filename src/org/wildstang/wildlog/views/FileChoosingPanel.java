@@ -3,6 +3,8 @@ package org.wildstang.wildlog.views;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -30,7 +32,7 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 	JTextField fileName = new JTextField("No file Selected", 15);
 	JButton readFileStart = new JButton("Select Data File from SD Card");
 
-	PanelEditor pEditor = new PanelEditor();
+	ApplicationControlPanel controlPanel;
 
 	public FileChoosingPanel(ApplicationController c) {
 		controller = c;
@@ -45,7 +47,8 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 		paneLeft.add(choosingFiles);
 		JPanel paneRight = new JPanel();
 		paneRight.setLayout(new FlowLayout(FlowLayout.TRAILING));
-		paneRight.add(pEditor);
+		controlPanel = new ApplicationControlPanel(controller);
+		paneRight.add(controlPanel);
 		add(paneLeft, BorderLayout.WEST);
 		try {
 			Image wsLogo = ImageIO.read(getClass().getResourceAsStream("/wildstang-logo.png"));
@@ -84,6 +87,7 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 			model = Deserializer.loadLogsModelFromFile(file);
 			controller.updateLogsModel(model);
 			fileName.setText(file.getName());
+			//dataSelectResized();
 		} catch (IOException e) {
 			e.printStackTrace();
 			controller.errorReadingFile();

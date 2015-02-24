@@ -25,7 +25,7 @@ public class DataPanel extends JPanel implements ActionListener {
 
 	private LogsModel model;
 
-	public DataPanel(ApplicationController controller, Color c) {
+	public DataPanel(final ApplicationController controller, Color c) {
 		this.controller = controller;
 
 		setLayout(new GridBagLayout());
@@ -89,6 +89,7 @@ public class DataPanel extends JPanel implements ActionListener {
 				} else {
 					DataPanel.this.controller.updateDragRegion(0, 0, false);
 				}
+
 			}
 		};
 

@@ -1,7 +1,7 @@
 package org.wildstang.wildlog.views;
 
 import java.awt.Color;
-import java.awt.GridLayout;
+import java.awt.Dimension;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -9,6 +9,7 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.wildstang.wildlog.controllers.ApplicationController;
 import org.wildstang.wildlog.models.LogsModel;
 
 public class DataSelectPanel extends JPanel {
@@ -30,6 +31,8 @@ public class DataSelectPanel extends JPanel {
 		add(typeOfKey);
 		setBackground(color);
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		setMinimumSize(new Dimension(ApplicationController.DATA_SELECT_PANEL_WIDTH, 0));
+		setMaximumSize(new Dimension(ApplicationController.DATA_SELECT_PANEL_WIDTH, 0));
 	}
 
 	public void updateModel(LogsModel model) {
