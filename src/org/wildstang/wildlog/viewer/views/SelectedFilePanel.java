@@ -1,4 +1,4 @@
-package org.wildstang.wildlog.views;
+package org.wildstang.wildlog.viewer.views;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;

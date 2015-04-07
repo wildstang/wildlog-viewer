@@ -1,4 +1,4 @@
-package org.wildstang.wildlog.models;
+package org.wildstang.wildlog.viewer.models;
 
 import java.util.List;
 import java.util.Map;

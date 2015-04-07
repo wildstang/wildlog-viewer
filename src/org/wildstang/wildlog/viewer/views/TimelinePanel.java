@@ -1,4 +1,4 @@
-package org.wildstang.wildlog.views;
+package org.wildstang.wildlog.viewer.views;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -6,7 +6,7 @@ import java.awt.geom.Rectangle2D;
 
 import javax.swing.JPanel;
 
-import org.wildstang.wildlog.controllers.ApplicationController;
+import org.wildstang.wildlog.viewer.controllers.ApplicationController;
 
 public class TimelinePanel extends JPanel {
 

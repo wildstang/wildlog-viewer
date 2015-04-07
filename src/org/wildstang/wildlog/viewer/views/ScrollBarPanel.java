@@ -1,4 +1,4 @@
-package org.wildstang.wildlog.views;
+package org.wildstang.wildlog.viewer.views;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -7,7 +7,7 @@ import java.awt.event.AdjustmentListener;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 
-import org.wildstang.wildlog.controllers.ApplicationController;
+import org.wildstang.wildlog.viewer.controllers.ApplicationController;
 
 public class ScrollBarPanel extends JPanel {
 	JScrollBar scrollBar;

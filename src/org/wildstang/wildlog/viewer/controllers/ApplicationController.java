@@ -1,4 +1,4 @@
-package org.wildstang.wildlog.controllers;
+package org.wildstang.wildlog.viewer.controllers;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -9,11 +9,11 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
-import org.wildstang.wildlog.models.LogsModel;
-import org.wildstang.wildlog.views.DataPanel;
-import org.wildstang.wildlog.views.FileChoosingPanel;
-import org.wildstang.wildlog.views.ScrollBarPanel;
-import org.wildstang.wildlog.views.TimelinePanel;
+import org.wildstang.wildlog.viewer.models.LogsModel;
+import org.wildstang.wildlog.viewer.views.DataPanel;
+import org.wildstang.wildlog.viewer.views.FileChoosingPanel;
+import org.wildstang.wildlog.viewer.views.ScrollBarPanel;
+import org.wildstang.wildlog.viewer.views.TimelinePanel;
 
 public class ApplicationController {
 

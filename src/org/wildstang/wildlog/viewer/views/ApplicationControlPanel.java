@@ -1,4 +1,4 @@
-package org.wildstang.wildlog.views;
+package org.wildstang.wildlog.viewer.views;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import org.wildstang.wildlog.controllers.ApplicationController;
+import org.wildstang.wildlog.viewer.controllers.ApplicationController;
 
 public class ApplicationControlPanel extends JPanel implements ActionListener {
 

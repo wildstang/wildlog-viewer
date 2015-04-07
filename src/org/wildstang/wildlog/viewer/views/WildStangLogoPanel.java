@@ -1,4 +1,4 @@
-package org.wildstang.wildlog.views;
+package org.wildstang.wildlog.viewer.views;
 
 import java.awt.Dimension;
 import java.awt.Graphics;

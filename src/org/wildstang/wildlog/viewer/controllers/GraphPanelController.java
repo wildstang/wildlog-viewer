@@ -1,4 +1,4 @@
-package org.wildstang.wildlog.controllers;
+package org.wildstang.wildlog.viewer.controllers;
 
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
@@ -6,8 +6,8 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
-import org.wildstang.wildlog.models.LogsModel;
-import org.wildstang.wildlog.views.ScrollBarPanel;
+import org.wildstang.wildlog.viewer.models.LogsModel;
+import org.wildstang.wildlog.viewer.views.ScrollBarPanel;
 
 import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 

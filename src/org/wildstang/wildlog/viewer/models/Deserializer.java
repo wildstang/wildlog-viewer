@@ -1,4 +1,4 @@
-package org.wildstang.wildlog.models;
+package org.wildstang.wildlog.viewer.models;
 
 import java.io.EOFException;
 import java.io.File;
@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.wildstang.wildlog.controllers.ApplicationController;
+import org.wildstang.wildlog.viewer.controllers.ApplicationController;
 
 public class Deserializer {
 

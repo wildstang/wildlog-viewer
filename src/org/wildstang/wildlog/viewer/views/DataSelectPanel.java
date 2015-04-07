@@ -1,4 +1,4 @@
-package org.wildstang.wildlog.views;
+package org.wildstang.wildlog.viewer.views;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -9,8 +9,8 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.wildstang.wildlog.controllers.ApplicationController;
-import org.wildstang.wildlog.models.LogsModel;
+import org.wildstang.wildlog.viewer.controllers.ApplicationController;
+import org.wildstang.wildlog.viewer.models.LogsModel;
 
 public class DataSelectPanel extends JPanel {
 

@@ -1,4 +1,4 @@
-package org.wildstang.wildlog.models;
+package org.wildstang.wildlog.viewer.models;
 
 public class DataPoint {
 

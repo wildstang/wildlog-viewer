@@ -1,6 +1,6 @@
-package org.wildstang.wildlog;
+package org.wildstang.wildlog.viewer;
 
-import org.wildstang.wildlog.controllers.ApplicationController;
+import org.wildstang.wildlog.viewer.controllers.ApplicationController;
 
 public class Main {
 
