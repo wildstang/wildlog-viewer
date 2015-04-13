@@ -12,8 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.wildstang.wildlog.viewer.controllers.ApplicationController;
-
 public class Deserializer {
 
 	@SuppressWarnings("unchecked")

@@ -2,14 +2,11 @@ package org.wildstang.wildlog.viewer.controllers;
 
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import java.awt.event.InputEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import org.wildstang.wildlog.viewer.models.LogsModel;
 import org.wildstang.wildlog.viewer.views.ScrollBarPanel;
-
-import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 
 public class GraphPanelController implements MouseWheelListener, AdjustmentListener {
 
@@ -151,14 +148,14 @@ public class GraphPanelController implements MouseWheelListener, AdjustmentListe
 		}
 
 		int scrollerPosition = scrollPanel.getScrollPosition();
-		
+
 		System.out.println("New scroll position: " + scrollerPosition);
 
-		currentStartTimestamp = (long) (((double) model.getEndTimestamp() - (double) model.getStartTimestamp() - (double) currentWindowWidth) * ((double) scrollerPosition / ((double) scrollPanel.getMaximum() - (double) scrollPanel
-				.getMinimum())) + model.getStartTimestamp());
-		
+		currentStartTimestamp = (long) (((double) model.getEndTimestamp() - (double) model.getStartTimestamp() - (double) currentWindowWidth)
+				* ((double) scrollerPosition / ((double) scrollPanel.getMaximum() - (double) scrollPanel.getMinimum())) + model.getStartTimestamp());
+
 		System.out.println("New start timestamp: " + currentStartTimestamp);
-		
+
 		// The scrollbar was moved by the user; don't recalculate its position ourselves
 		skipNextScrollbarPositionCalculation = true;
 		recalculateAndUpdate();

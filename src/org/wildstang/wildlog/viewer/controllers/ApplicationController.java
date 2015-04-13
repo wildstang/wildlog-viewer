@@ -143,13 +143,13 @@ public class ApplicationController {
 		}
 		graphPanelViewController.zoomAndScrollToTimestampRange(startTimestamp, endTimestamp);
 	}
-	
+
 	public void clearAllFields() {
 		for (int i = 0; i < dataPanels.length; i++) {
 			dataPanels[i].dataSelectPanel.clearAllFields();
 		}
 	}
-	
+
 	public void resetZoomToDefault() {
 		graphPanelViewController.resetDefaultZoom();
 	}

@@ -11,7 +11,7 @@ import org.wildstang.wildlog.viewer.controllers.ApplicationController;
 public class ApplicationControlPanel extends JPanel implements ActionListener {
 
 	private ApplicationController controller;
-	
+
 	JButton resetZoom = new JButton("Reset Zoom");
 	JButton clearAllFields = new JButton("Clear All Fields");
 
