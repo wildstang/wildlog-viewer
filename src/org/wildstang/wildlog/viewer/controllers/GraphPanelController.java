@@ -53,6 +53,7 @@ public class GraphPanelController implements MouseWheelListener, AdjustmentListe
 					.getEndTimestamp() - (double) model.getStartTimestamp() - (double) currentWindowWidth)));
 			System.out.println("Calculated scrollbar position: " + scrollbarPosition);
 			scrollPanel.scrollToValue(scrollbarPosition);
+			System.out.println("Scrollbar now at position " + scrollPanel.getScrollPosition());
 		}
 
 		ignoreNextScrollBarPositionUpdate = false;
@@ -80,8 +81,8 @@ public class GraphPanelController implements MouseWheelListener, AdjustmentListe
 				zoomFactor = 1.0;
 			}
 			ignoreNextScrollBarPositionUpdate = true;
-		} else {
 			System.out.println("Zoom factor: " + zoomFactor);
+		} else {
 			// The amount we shift is inversely proportional to the zoom factor.
 			// For instance, at zoom level "5", distanceToShift would be 20.
 			long distanceToShift = (int) (e.getPreciseWheelRotation() * 100 * (1 / zoomFactor));
@@ -150,9 +151,14 @@ public class GraphPanelController implements MouseWheelListener, AdjustmentListe
 		}
 
 		int scrollerPosition = scrollPanel.getScrollPosition();
+		
+		System.out.println("New scroll position: " + scrollerPosition);
 
-		currentStartTimestamp = (int) (((double) model.getEndTimestamp() - (double) currentWindowWidth) * ((double) scrollerPosition / ((double) scrollPanel.getMaximum() - (double) scrollPanel
-				.getMinimum())));
+		currentStartTimestamp = (long) (((double) model.getEndTimestamp() - (double) model.getStartTimestamp() - (double) currentWindowWidth) * ((double) scrollerPosition / ((double) scrollPanel.getMaximum() - (double) scrollPanel
+				.getMinimum())) + model.getStartTimestamp());
+		
+		System.out.println("New start timestamp: " + currentStartTimestamp);
+		
 		// The scrollbar was moved by the user; don't recalculate its position ourselves
 		skipNextScrollbarPositionCalculation = true;
 		recalculateAndUpdate();

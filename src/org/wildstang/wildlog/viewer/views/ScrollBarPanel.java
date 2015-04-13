@@ -17,7 +17,9 @@ public class ScrollBarPanel extends JPanel {
 	public ScrollBarPanel(ApplicationController controller) {
 		this.controller = controller;
 		setLayout(new BorderLayout());
-		scrollBar = new JScrollBar(JScrollBar.HORIZONTAL, 0, 1000, 0, 1000);
+		// The range is stupidly big so we get better precision in calculations
+		// If these were smaller, rounding errors would cause a jumpy display
+		scrollBar = new JScrollBar(JScrollBar.HORIZONTAL, 0, 10000000, 0, 10000000);
 		scrollBar.setMinimumSize(new Dimension(0, 80));
 		add(scrollBar, BorderLayout.CENTER);
 	}
