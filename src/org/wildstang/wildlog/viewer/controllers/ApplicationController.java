@@ -17,7 +17,7 @@ import org.wildstang.wildlog.viewer.views.TimelinePanel;
 
 public class ApplicationController {
 
-	public static final int DATA_SELECT_PANEL_WIDTH = 150;
+	public static final int DATA_SELECT_PANEL_WIDTH = 200;
 	private static final int NUM_DATA_PANELS = 8;
 	public static JFrame frame;
 	public FileChoosingPanel chooserPanel;
@@ -45,7 +45,7 @@ public class ApplicationController {
 	}
 
 	private void initFrameComponents() {
-		frame = new JFrame("WildStang: SD Log Reader");
+		frame = new JFrame("WildLog");
 		chooserPanel = new FileChoosingPanel(this);
 
 		timeline = new TimelinePanel();
@@ -143,18 +143,31 @@ public class ApplicationController {
 		}
 		graphPanelViewController.zoomAndScrollToTimestampRange(startTimestamp, endTimestamp);
 	}
-	
+
 	public void clearAllFields() {
 		for (int i = 0; i < dataPanels.length; i++) {
-			dataPanels[i].dataSelectPanel.clearAllFields();
+			dataPanels[i].getDataSelectPanel().clearAllFields();
 		}
 	}
-	
+
 	public void resetZoomToDefault() {
 		graphPanelViewController.resetDefaultZoom();
 	}
 
 	public void errorReadingFile() {
 		JOptionPane.showMessageDialog(frame, "Error reading the selected file. Please try another file.", "Error", JOptionPane.ERROR_MESSAGE);
+	}
+
+	/**
+	 * Should be called when a new file is selected so that the window title can be updated.
+	 * 
+	 * @param fileName
+	 */
+	public void updateFileName(String fileName) {
+		if (fileName != null && !fileName.isEmpty()) {
+			frame.setTitle("WildLog: " + fileName);
+		} else {
+			frame.setTitle("WildLog");
+		}
 	}
 }

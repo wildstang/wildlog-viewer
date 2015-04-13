@@ -30,7 +30,7 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 	WildStangLogoPanel logoPanel = new WildStangLogoPanel();
 	JLabel fileLabel = new JLabel("File: ");
 	JTextField fileName = new JTextField("No file Selected", 15);
-	JButton readFileStart = new JButton("Select Data File from SD Card");
+	JButton readFileStart = new JButton("Select Log File");
 
 	ApplicationControlPanel controlPanel;
 
@@ -75,12 +75,15 @@ public class FileChoosingPanel extends JPanel implements ActionListener {
 		File startFile = new File(System.getProperty("user.home"));
 		chooser.setCurrentDirectory(chooser.getFileSystemView().getParentDirectory(startFile));
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		chooser.setDialogTitle("Select the Local location");
+		chooser.setDialogTitle("Select the log file");
 		File file;
 		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 			file = chooser.getSelectedFile();
 		} else {
 			file = null;
+		}
+		if(file != null) {
+			controller.updateFileName(file.getName());
 		}
 		LogsModel model;
 		try {

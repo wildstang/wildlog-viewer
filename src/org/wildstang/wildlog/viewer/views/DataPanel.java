@@ -21,7 +21,7 @@ public class DataPanel extends JPanel implements ActionListener {
 	public ApplicationController controller;
 
 	GraphingPanel graphPanel;
-	public DataSelectPanel dataSelectPanel;
+	DataSelectPanel dataSelectPanel;
 
 	private LogsModel model;
 
@@ -38,7 +38,7 @@ public class DataPanel extends JPanel implements ActionListener {
 		j.weighty = 1.0;
 		dataSelectPanel = new DataSelectPanel(c);
 		dataSelectPanel.setPreferredSize(new Dimension(200, 500));
-		dataSelectPanel.keySelected.addActionListener(this);
+		dataSelectPanel.dataKeySelector.addActionListener(this);
 		add(dataSelectPanel, j);
 
 		j.gridx = 1;
@@ -96,6 +96,10 @@ public class DataPanel extends JPanel implements ActionListener {
 		graphPanel.addMouseMotionListener(mouseAdapter);
 		graphPanel.addMouseListener(mouseAdapter);
 	}
+	
+	public DataSelectPanel getDataSelectPanel() {
+		return dataSelectPanel;
+	}
 
 	public GraphingPanel getGraphingPanel() {
 		return graphPanel;
@@ -116,14 +120,14 @@ public class DataPanel extends JPanel implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == dataSelectPanel.keySelected) {
-			String selectedKey = (String) dataSelectPanel.keySelected.getSelectedItem();
+		if (e.getSource() == dataSelectPanel.dataKeySelector) {
+			String selectedKey = (String) dataSelectPanel.dataKeySelector.getSelectedItem();
 			dataKeyUpdated(selectedKey);
 		}
 	}
 
 	public void dataKeyUpdated(String newKey) {
-		if (dataSelectPanel.keySelected.getSelectedIndex() != 0) {
+		if (dataSelectPanel.dataKeySelector.getSelectedIndex() != 0) {
 			graphPanel.setDataKey(newKey);
 			Class<?> clazz = model.getClassTypeForKey(newKey);
 			System.out.println("Selected key class: " + clazz.getName());
