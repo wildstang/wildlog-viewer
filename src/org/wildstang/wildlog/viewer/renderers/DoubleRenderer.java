@@ -63,6 +63,7 @@ public class DoubleRenderer extends LogRenderer {
 			}
 			if (point.getObject() instanceof Double && nextPoint.getObject() instanceof Double) {
 				int startXVal = (int) ((point.getTimeStamp() - startTimestamp) / (deltaTime / (double) panelWidth));
+				int nextXVal = (int) ((nextPoint.getTimeStamp() - startTimestamp) / (deltaTime / (double) panelWidth));
 
 				/*
 				 * Calculate the scaled position of this point. It will be a value between 0 and 1, with 0 corresponding
@@ -75,8 +76,6 @@ public class DoubleRenderer extends LogRenderer {
 				 */
 				int yPos = (int) (scaledPosition * space);
 				int startYVal = (int) (panelHeight - bottomPadding - yPos);
-
-				int nextXVal = (int) ((nextPoint.getTimeStamp() - startTimestamp) / (deltaTime / (double) panelWidth));
 
 				scaledPosition = (((Double) nextPoint.getObject()) - minValue) / range;
 				yPos = (int) (scaledPosition * space);
