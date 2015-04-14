@@ -122,22 +122,10 @@ public class DataPanel extends JPanel implements ActionListener {
 
 	public void dataKeyUpdated(String newKey) {
 		if (dataSelectPanel.keySelected.getSelectedIndex() != 0) {
-			graphPanel.setDataKey(newKey);
 			Class<?> clazz = model.getClassTypeForKey(newKey);
-			System.out.println("Selected key class: " + clazz.getName());
-			if (clazz.equals(Double.class)) {
-				dataSelectPanel.setDataTypeText("Double");
-				graphPanel.setType(GraphingPanel.DOUBLE_TYPE);
-			} else if (clazz.equals(String.class)) {
-				dataSelectPanel.setDataTypeText("String");
-				graphPanel.setType(GraphingPanel.STRING_TYPE);
-			} else if (clazz.equals(Boolean.class)) {
-				dataSelectPanel.setDataTypeText("Boolean");
-				graphPanel.setType(GraphingPanel.BOOL_TYPE);
-			} else {
-				dataSelectPanel.setDataTypeText("Invalid type!");
-				graphPanel.setType(GraphingPanel.DEFAULT_TYPE);
-			}
+			graphPanel.updateSelectedDataKey(newKey, clazz);
+			
+			dataSelectPanel.setDataTypeText(clazz.getName());
 		} else {
 			graphPanel.clearData();
 		}

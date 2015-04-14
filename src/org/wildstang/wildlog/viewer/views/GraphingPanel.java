@@ -3,8 +3,6 @@ package org.wildstang.wildlog.viewer.views;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -13,18 +11,14 @@ import javax.swing.SwingUtilities;
 
 import org.wildstang.wildlog.viewer.models.DataPoint;
 import org.wildstang.wildlog.viewer.models.LogsModel;
+import org.wildstang.wildlog.viewer.renderers.LogRenderer;
+import org.wildstang.wildlog.viewer.renderers.RendererFactory;
 
 public class GraphingPanel extends JPanel {
-
-	public final static int BOOL_TYPE = 1;
-	public final static int DOUBLE_TYPE = 2;
-	public final static int STRING_TYPE = 3;
-	public final static int DEFAULT_TYPE = 0;
 
 	private LogsModel model;
 	private String logKey;
 	List<DataPoint> dataPoints;
-	private int graphType = -1;
 	long firstTimestamp;
 	int mouseX;
 	int mouseY;
@@ -32,6 +26,8 @@ public class GraphingPanel extends JPanel {
 	int dragRegionStart, dragRegionEnd;
 	boolean shouldShowDragRegion = false;
 	Color dotColor;
+
+	private LogRenderer renderer;
 
 	public GraphingPanel(Color c) {
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -55,32 +51,29 @@ public class GraphingPanel extends JPanel {
 			endTimestamp = viewEndTimestamp;
 		}
 
+		if (dataPoints != null && !dataPoints.isEmpty()) {
+			/*
+			 * Check if we have any data in the displayed range. If our data is outside the range, skip all the next
+			 * stuff for efficiency.
+			 */
+			if ((dataPoints.get(0).getTimeStamp() > endTimestamp) || (dataPoints.get(dataPoints.size() - 1).getTimeStamp() < startTimestamp)) {
+				return;
+			}
+
+			if (renderer != null) {
+				renderer.renderLogs(g, getWidth(), getHeight(), startTimestamp, endTimestamp);
+				if (!shouldShowDragRegion) {
+					renderer.renderDecorations(g, getWidth(), getHeight(), startTimestamp, endTimestamp, mouseX);
+				}
+			} else {
+				String noRendererFound = "No renderer found for the selected data type.";
+				int stringWidth = SwingUtilities.computeStringWidth(g.getFontMetrics(), noRendererFound);
+
+				g.drawString(noRendererFound, (getWidth() / 2) - (stringWidth / 2), getHeight() / 2);
+			}
+		}
+
 		drawTimeLine(g, startTimestamp, endTimestamp);
-
-		if (dataPoints == null || dataPoints.isEmpty()) {
-			return;
-		}
-
-		/*
-		 * Check if we have any data in the displayed range. If our data is outside the range, skip all the next stuff
-		 * for efficiency.
-		 */
-		if ((dataPoints.get(0).getTimeStamp() > endTimestamp) || (dataPoints.get(dataPoints.size() - 1).getTimeStamp() < startTimestamp)) {
-			return;
-		}
-
-		int firstPointIndex = findFirstPointBeforeTimestamp(startTimestamp);
-		int lastPointIndex = findFirstPointAfterTimestamp(endTimestamp);
-
-		// If we're dragging to zoom, hide the labels/highlights on points
-		boolean shouldDrawHighlightsAndLabels = !shouldShowDragRegion;
-		if (graphType == DOUBLE_TYPE) {
-			drawForDouble(g, startTimestamp, endTimestamp, firstPointIndex, lastPointIndex, shouldDrawHighlightsAndLabels);
-		} else if (graphType == BOOL_TYPE) {
-			drawForBoolean(g, startTimestamp, endTimestamp, firstPointIndex, lastPointIndex);
-		} else if (graphType == STRING_TYPE) {
-			drawForString(g, startTimestamp, endTimestamp, firstPointIndex, lastPointIndex);
-		}
 	}
 
 	public void clearData() {
@@ -89,7 +82,6 @@ public class GraphingPanel extends JPanel {
 	}
 
 	private void drawTimeLine(Graphics g, long startTimestamp, long endTimestamp) {
-		long deltaTime = endTimestamp - startTimestamp;
 
 		if (shouldShowDragRegion) {
 			// Draw drag region, with the time scrubber positioned at the
@@ -157,217 +149,6 @@ public class GraphingPanel extends JPanel {
 		g.drawLine(mouseX, 0, mouseX, getHeight());
 	}
 
-	private void drawForDouble(Graphics g, long startTimestamp, long endTimestamp, int firstPointIndex, int lastPointIndex, boolean highlightAndLabelNearestPoint) {
-		// compute delta time
-		long deltaTime = endTimestamp - startTimestamp;
-
-		// finds the highest and lowest points and their difference
-		double highest = (Double) dataPoints.get(firstPointIndex).getObject();
-		double lowest = (Double) dataPoints.get(firstPointIndex).getObject();
-		for (int i = 0; i < dataPoints.size(); i++) {
-			double current = (Double) dataPoints.get(i).getObject();
-			if (current > highest) {
-				highest = current;
-			} else if (current < lowest) {
-				lowest = current;
-			}
-		}
-		double range = highest - lowest;
-
-		// compute constant things
-		double topPadding = getHeight() * 0.1;
-		double bottomPadding = g.getFontMetrics().getHeight();
-		double space = getHeight() - topPadding - bottomPadding;
-
-		// draw gridlines (just min and max)
-		g.setColor(Color.LIGHT_GRAY);
-		g.drawLine(40, (int) topPadding, getWidth(), (int) topPadding);
-		g.drawLine(40, (int) (getHeight() - bottomPadding), getWidth(), (int) (getHeight() - bottomPadding));
-		g.setColor(Color.BLACK);
-		// finds the height of the nearest point and draws it
-		double distance = Math.abs(dataPoints.get(0).getTimeStamp() - (startTimestamp + ((double) mouseX / (double) getWidth()) * deltaTime));
-		int indexOfClosest = 0;
-		for (int i = firstPointIndex; i < lastPointIndex + 1; i++) {
-
-			double newdist = Math.abs(dataPoints.get(i).getTimeStamp() - (startTimestamp + ((double) mouseX / (double) getWidth()) * deltaTime));
-			if (newdist < distance) {
-				distance = newdist;
-				indexOfClosest = i;
-			}
-		}
-		if (highlightAndLabelNearestPoint) {
-			BigDecimal bd = new BigDecimal((Double) dataPoints.get(indexOfClosest).getObject());
-			bd = bd.setScale(2, RoundingMode.HALF_UP);
-			String label = Double.toString(bd.doubleValue());
-			int stringWidth = SwingUtilities.computeStringWidth(g.getFontMetrics(), label);
-
-			g.drawString(label, mouseX - stringWidth - 5, getHeight() - 2);
-		}
-
-		// iterates through points and draws them
-		for (int i = firstPointIndex; i < lastPointIndex + 1; i++) {
-			DataPoint point = dataPoints.get(i);
-			DataPoint nextPoint = null;
-			if (i < (dataPoints.size() - 1)) {
-				nextPoint = dataPoints.get(i + 1);
-			} else {
-				break;
-			}
-			if (point.getObject() instanceof Double && nextPoint.getObject() instanceof Double) {
-				int startXVal = (int) ((point.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()));
-
-				/*
-				 * Calculate the scaled position of this point. It will be a value between 0 and 1, with 0 corresponding
-				 * with the min in the range, and 1 with the max
-				 */
-				double scaledPosition = (((Double) point.getObject()) - lowest) / range;
-				/*
-				 * "space" is the amount of vertical space we have to graph in. This is equal to the height, minus a 10%
-				 * padding on the top and bottom.
-				 */
-				int yPos = (int) (scaledPosition * space);
-				int startYVal = (int) (getHeight() - bottomPadding - yPos);
-
-				int nextXVal = (int) ((nextPoint.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()));
-
-				scaledPosition = (((Double) nextPoint.getObject()) - lowest) / range;
-				yPos = (int) (scaledPosition * space);
-				int nextYVal = (int) (getHeight() - bottomPadding - yPos);
-
-				g.setColor(Color.BLACK);
-				g.drawLine(startXVal, startYVal, nextXVal, nextYVal);
-
-				g.setColor(dotColor);
-				// Highlight the current point if we so desire
-				if (highlightAndLabelNearestPoint && i == indexOfClosest) {
-					g.fillRect(startXVal - 3, startYVal - 3, 7, 7);
-				} else {
-					g.fillRect(startXVal - 1, startYVal - 1, 3, 3);
-
-				}
-				if (highlightAndLabelNearestPoint && i + 1 == indexOfClosest) {
-					g.fillRect(nextXVal - 3, nextYVal - 3, 7, 7);
-				} else {
-					g.fillRect(nextXVal - 1, nextYVal - 1, 3, 3);
-
-				}
-			}
-		}
-		FontMetrics fm = g.getFontMetrics();
-		g.setColor(Color.DARK_GRAY);
-		BigDecimal bd = new BigDecimal(lowest);
-		bd = bd.setScale(2, RoundingMode.HALF_UP);
-		g.drawString(Double.toString(bd.doubleValue()), 5, getHeight() - fm.getHeight() / 2);
-		bd = new BigDecimal(highest);
-		bd = bd.setScale(2, RoundingMode.HALF_UP);
-		g.drawString(Double.toString(bd.doubleValue()), 5, fm.getHeight());
-	}
-
-	private void drawForString(Graphics g, long startTimestamp, long endTimestamp, int firstPointIndex, int lastPointIndex) {
-		long deltaTime = endTimestamp - startTimestamp;
-		for (int i = firstPointIndex; i < lastPointIndex + 1; i++) {
-			DataPoint point = dataPoints.get(i);
-			DataPoint nextPoint = null;
-			if (i < (dataPoints.size() - 1)) {
-				nextPoint = dataPoints.get(i + 1);
-			} else {
-				return;
-			}
-
-			if (point.getObject() instanceof String && nextPoint.getObject() instanceof String) {
-				int startXVal = (int) ((point.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()));
-				g.setColor(dotColor);
-				g.fillRect(startXVal - 2, getHeight() / 2 - 2, 5, 5);
-				if (mouseX >= startXVal - 2 && mouseX <= startXVal + 2) {
-					FontMetrics fm = g.getFontMetrics();
-					String string = (String) point.getObject();
-					int boxWidth = fm.stringWidth(string) + (int) (.33 * fm.getHeight());
-					int boxHeight = (int) (1.33 * fm.getHeight());
-
-					g.setColor(new Color(255, 255, 202));
-					if (mouseX + (1.2 * fm.stringWidth(string)) > getWidth()) {
-						g.fillRect(getWidth() - boxWidth, mouseY - boxHeight, boxWidth, boxHeight);
-						g.setColor(new Color(0, 0, 19));
-						g.drawRect(getWidth() - boxWidth, mouseY - boxHeight, boxWidth, boxHeight);
-						g.setColor(Color.BLACK);
-						g.drawString(string, getWidth() - (fm.getHeight() + (int) (.33 * fm.getHeight())) + (int) (.33 * fm.getHeight()), mouseY - (int) (.33 * fm.getHeight()));
-					} else {
-						g.fillRect(mouseX, mouseY - boxHeight, boxWidth, boxHeight);
-						g.setColor(new Color(0, 0, 19));
-						g.drawRect(mouseX, mouseY - boxHeight, boxWidth, boxHeight);
-						g.setColor(Color.BLACK);
-						g.drawString(string, mouseX + (int) (.25 * fm.getHeight()), mouseY - (int) (.33 * fm.getHeight()));
-					}
-				}
-			}
-		}
-	}
-
-	private void drawForBoolean(Graphics g, long startTimestamp, long endTimestamp, int firstPointIndex, int lastPointIndex) {
-		long deltaTime = endTimestamp - startTimestamp;
-		for (int i = firstPointIndex; i < lastPointIndex + 1; i++) {
-			DataPoint point = dataPoints.get(i);
-			DataPoint nextPoint = null;
-			if (i < (dataPoints.size() - 1)) {
-				nextPoint = dataPoints.get(i + 1);
-			} else {
-				return;
-			}
-
-			if (point.getObject() instanceof Boolean && nextPoint.getObject() instanceof Boolean) {
-				int xVal = (int) ((point.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()));
-				int width = (int) ((nextPoint.getTimeStamp() - startTimestamp) / (deltaTime / (double) getWidth()) - xVal);
-				if (dataPoints.get(i).getObject().equals(true)) {
-					g.setColor(Color.GREEN);
-				} else {
-					g.setColor(Color.RED);
-				}
-				g.fillRect(xVal, 0, width, getHeight());
-			}
-		}
-	}
-
-	private int findFirstPointBeforeTimestamp(long startTimestamp) {
-		// Find the index of the first data point prior to the start timestamp
-		int firstPointIndex = -1;
-		for (int i = 0; i < dataPoints.size(); i++) {
-			long timestamp = dataPoints.get(i).getTimeStamp();
-			if (timestamp > startTimestamp) {
-				firstPointIndex = i - 1;
-				if (firstPointIndex < 0) {
-					firstPointIndex = 0;
-				}
-				break;
-			}
-		}
-
-		return firstPointIndex;
-	}
-
-	private int findFirstPointAfterTimestamp(long endTimestamp) {
-		/*
-		 * If the last timestamp in our data set is less than the target end timestamp, use the last timestamp.
-		 * Otherwise, search through the data for the first timestamp beyond the end timestamp.
-		 */
-		int lastPointIndex = -1;
-		if (dataPoints.get(dataPoints.size() - 1).getTimeStamp() <= endTimestamp) {
-			lastPointIndex = dataPoints.size() - 1;
-		} else {
-			for (int i = 0; i < dataPoints.size(); i++) {
-				long timestamp = dataPoints.get(i).getTimeStamp();
-				if (timestamp >= endTimestamp) {
-					lastPointIndex = i;
-					if (lastPointIndex > (dataPoints.size() - 1)) {
-						lastPointIndex = dataPoints.size() - 1;
-					}
-					break;
-				}
-			}
-		}
-
-		return lastPointIndex;
-	}
-
 	public void updateModel(LogsModel model) {
 		this.model = model;
 		if (logKey != null) {
@@ -376,10 +157,15 @@ public class GraphingPanel extends JPanel {
 		repaint();
 	}
 
-	public void setDataKey(String key) {
+	public void updateSelectedDataKey(String key, Class<?> dataClass) {
 		this.logKey = key;
 		if (model != null) {
 			dataPoints = model.getDataPointsForKey(logKey);
+		}
+		renderer = RendererFactory.getRendererForClass(dataClass);
+		if (renderer != null) {
+			renderer.updateLogModel(dataPoints);
+			renderer.updateAccentColor(dotColor);
 		}
 		repaint();
 	}
@@ -400,11 +186,6 @@ public class GraphingPanel extends JPanel {
 		dragRegionStart = pxStart;
 		dragRegionEnd = pxEnd;
 		this.shouldShowDragRegion = shouldShowDragRegion;
-		repaint();
-	}
-
-	public void setType(int type) {
-		graphType = type;
 		repaint();
 	}
 

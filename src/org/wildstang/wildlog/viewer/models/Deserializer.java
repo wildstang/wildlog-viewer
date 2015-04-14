@@ -60,7 +60,7 @@ public class Deserializer {
 			Collections.sort(logsList, new DataPointsListComparator());
 
 			// Convert data to DataPoints
-			HashMap<String, List<DataPoint>> dataPoints = new HashMap<>();
+			Map<String, List<DataPoint>> dataPoints = new HashMap<>();
 			for (String key : keys) {
 				for (Map<String, Object> map : logsList) {
 					if (map.containsKey(key)) {
@@ -74,6 +74,13 @@ public class Deserializer {
 
 				}
 			}
+			
+			// Count total number of data points
+			long pointsCount = 0;
+			for(List<DataPoint> points : dataPoints.values()) {
+				pointsCount += points.size();
+			}
+			System.out.println("Total data points: " + pointsCount);
 
 			// Get the first and last timestamps
 			long startTimestamp = (Long) logsList.get(0).get("Timestamp");
