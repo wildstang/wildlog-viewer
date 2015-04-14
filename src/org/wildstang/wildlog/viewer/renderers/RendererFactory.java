@@ -25,5 +25,9 @@ public class RendererFactory {
 			return null;
 		}
 	}
+	
+	public static boolean hasRendererForClass(Class<?> clazz) {
+		return (renderers.get(clazz) != null);
+	}
 
 }
