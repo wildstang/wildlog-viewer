@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
@@ -17,18 +18,22 @@ public class DataSelectPanel extends JPanel {
 	private static final String DEFAULT_KEY = "Select Key";
 	private static final String DEFAULT_DATA_TYPE = "Data Type";
 
-	JComboBox<String> keySelected;
-	JTextField typeOfKey;
+	JComboBox<String> dataKeySelector;
+	JTextField dataKeyType;
 	String[] keys = new String[1];
 	String[] tempKeys;
 
 	public DataSelectPanel(Color color) {
 		keys[0] = DEFAULT_KEY;
-		keySelected = new JComboBox<>(keys);
-		add(keySelected);
-		typeOfKey = new JTextField(DEFAULT_DATA_TYPE, 8);
-		typeOfKey.setEditable(false);
-		add(typeOfKey);
+		
+		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		dataKeySelector = new JComboBox<>(keys);
+		dataKeySelector.setMaximumSize(new Dimension(10000, 20));
+		add(dataKeySelector);
+		dataKeyType = new JTextField(DEFAULT_DATA_TYPE, 8);
+		dataKeyType.setEditable(false);
+		dataKeyType.setMaximumSize(new Dimension(10000, 20));
+		add(dataKeyType);
 		setBackground(color);
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		setMinimumSize(new Dimension(ApplicationController.DATA_SELECT_PANEL_WIDTH, 0));
@@ -42,15 +47,15 @@ public class DataSelectPanel extends JPanel {
 		tempKeys[0] = "SelectKey";
 		keys = tempKeys;
 		keys[0] = DEFAULT_KEY;
-		keySelected.setModel(new DefaultComboBoxModel<>(keys));
+		dataKeySelector.setModel(new DefaultComboBoxModel<>(keys));
 	}
 
 	public void setDataTypeText(String text) {
-		typeOfKey.setText(text);
+		dataKeyType.setText(text);
 	}
 
 	public void clearAllFields() {
-		keySelected.setSelectedIndex(0);
+		dataKeySelector.setSelectedIndex(0);
 		setDataTypeText(DEFAULT_DATA_TYPE);
 	}
 }

@@ -16,8 +16,8 @@ public class StringRenderer extends LogRenderer {
 
 	@Override
 	public void renderDecorations(Graphics g, int panelWidth, int panelHeight, long startTimestamp, long endTimestamp, int mousePosition) {
-		int firstPointIndex = LogRenderer.findFirstPointBeforeTimestamp(dataPoints, startTimestamp);
-		int lastPointIndex = LogRenderer.findFirstPointAfterTimestamp(dataPoints, endTimestamp);
+		int firstPointIndex = findFirstPointBeforeTimestamp(startTimestamp);
+		int lastPointIndex = findFirstPointAfterTimestamp( endTimestamp);
 		long deltaTime = endTimestamp - startTimestamp;
 		for (int i = firstPointIndex; i < lastPointIndex + 1; i++) {
 			DataPoint point = dataPoints.get(i);

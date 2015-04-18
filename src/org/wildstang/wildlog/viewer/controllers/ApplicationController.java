@@ -1,14 +1,21 @@
 package org.wildstang.wildlog.viewer.controllers;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.io.File;
+import java.io.IOException;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 import javax.swing.UIManager;
 
+import org.wildstang.wildlog.viewer.models.Deserializer;
 import org.wildstang.wildlog.viewer.models.LogsModel;
 import org.wildstang.wildlog.viewer.views.DataPanel;
 import org.wildstang.wildlog.viewer.views.FileChoosingPanel;
@@ -17,7 +24,7 @@ import org.wildstang.wildlog.viewer.views.TimelinePanel;
 
 public class ApplicationController {
 
-	public static final int DATA_SELECT_PANEL_WIDTH = 150;
+	public static final int DATA_SELECT_PANEL_WIDTH = 200;
 	private static final int NUM_DATA_PANELS = 8;
 	public static JFrame frame;
 	public FileChoosingPanel chooserPanel;
@@ -45,7 +52,7 @@ public class ApplicationController {
 	}
 
 	private void initFrameComponents() {
-		frame = new JFrame("WildStang: SD Log Reader");
+		frame = new JFrame("WildLog");
 		chooserPanel = new FileChoosingPanel(this);
 
 		timeline = new TimelinePanel();
@@ -146,7 +153,7 @@ public class ApplicationController {
 
 	public void clearAllFields() {
 		for (int i = 0; i < dataPanels.length; i++) {
-			dataPanels[i].dataSelectPanel.clearAllFields();
+			dataPanels[i].getDataSelectPanel().clearAllFields();
 		}
 	}
 
@@ -156,5 +163,50 @@ public class ApplicationController {
 
 	public void errorReadingFile() {
 		JOptionPane.showMessageDialog(frame, "Error reading the selected file. Please try another file.", "Error", JOptionPane.ERROR_MESSAGE);
+	}
+	
+	public void attempLoadDataFromFile(final File file) {
+		final JDialog dlg = new JDialog(frame, "Loading Log File", true);
+	    JProgressBar dpb = new JProgressBar(0, 500);
+	    dpb.setIndeterminate(true);
+	    dlg.add(BorderLayout.CENTER, dpb);
+	    dlg.add(BorderLayout.NORTH, new JLabel("Loading..."));
+	    dlg.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+	    dlg.setSize(300, 75);
+	    dlg.setLocationRelativeTo(frame);
+	    
+	    Thread t = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					LogsModel model = Deserializer.loadLogsModelFromFile(file);
+					ApplicationController.this.updateLogsModel(model);
+					ApplicationController.this.updateFileName(file.getName());
+				} catch (Exception e) {
+					e.printStackTrace();
+					ApplicationController.this.errorReadingFile();
+				}
+				dlg.setVisible(false);
+				System.out.println("Load complete");
+			}
+		});
+	    t.start();
+	    // Showing the dialog suspends this thread. Fire off the background task before doing anything.
+	    dlg.setVisible(true);
+	}
+
+	/**
+	 * Should be called when a new file is selected so that the window title can be updated.
+	 * 
+	 * @param fileName
+	 */
+	public void updateFileName(String fileName) {
+		if (fileName != null && !fileName.isEmpty()) {
+			frame.setTitle("WildLog: " + fileName);
+		} else {
+			frame.setTitle("WildLog");
+		}
+		chooserPanel.setFileName(fileName);
 	}
 }

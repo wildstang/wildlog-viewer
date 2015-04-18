@@ -10,8 +10,8 @@ public class BooleanRenderer extends LogRenderer {
 	@Override
 	public void renderLogs(Graphics g, int panelWidth, int panelHeight, long startTimestamp, long endTimestamp) {
 		long deltaTime = endTimestamp - startTimestamp;
-		int firstPointIndex = LogRenderer.findFirstPointBeforeTimestamp(dataPoints, startTimestamp);
-		int lastPointIndex = LogRenderer.findFirstPointAfterTimestamp(dataPoints, endTimestamp);
+		int firstPointIndex = findFirstPointBeforeTimestamp(startTimestamp);
+		int lastPointIndex = findFirstPointAfterTimestamp(endTimestamp);
 		for (int i = firstPointIndex; i < lastPointIndex + 1; i++) {
 			DataPoint point = dataPoints.get(i);
 			DataPoint nextPoint = null;
@@ -37,7 +37,7 @@ public class BooleanRenderer extends LogRenderer {
 	@Override
 	public void renderDecorations(Graphics g, int panelWidth, int panelHeight, long startTimestamp, long endTimestamp, int mousePosition) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

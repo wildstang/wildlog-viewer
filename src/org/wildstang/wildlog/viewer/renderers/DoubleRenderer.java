@@ -34,8 +34,8 @@ public class DoubleRenderer extends LogRenderer {
 	@Override
 	public void renderLogs(Graphics g, int panelWidth, int panelHeight, long startTimestamp, long endTimestamp) {
 
-		int firstPointIndex = LogRenderer.findFirstPointBeforeTimestamp(dataPoints, startTimestamp);
-		int lastPointIndex = LogRenderer.findFirstPointAfterTimestamp(dataPoints, endTimestamp);
+		int firstPointIndex = findFirstPointBeforeTimestamp(startTimestamp);
+		int lastPointIndex = findFirstPointAfterTimestamp(endTimestamp);
 		// compute delta time
 		long deltaTime = endTimestamp - startTimestamp;
 
@@ -103,8 +103,8 @@ public class DoubleRenderer extends LogRenderer {
 
 	@Override
 	public void renderDecorations(Graphics g, int panelWidth, int panelHeight, long startTimestamp, long endTimestamp, int mousePosition) {
-		int firstPointIndex = LogRenderer.findFirstPointBeforeTimestamp(dataPoints, startTimestamp);
-		int lastPointIndex = LogRenderer.findFirstPointAfterTimestamp(dataPoints, endTimestamp);
+		int firstPointIndex = findFirstPointBeforeTimestamp(startTimestamp);
+		int lastPointIndex = findFirstPointAfterTimestamp(endTimestamp);
 		long deltaTime = endTimestamp - startTimestamp;
 
 		long targetTimestamp = LogRenderer.mapPointInRangeToTimestamp(startTimestamp, endTimestamp, 0, panelWidth, mousePosition);
