@@ -1,15 +1,11 @@
 package org.wildstang.wildlog.viewer.models;
 
-import java.io.EOFException;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -34,7 +30,6 @@ public class JSONFileReader {
 		{
 
 			try {
-				List<Map<String, Object>> logsList = new ArrayList<Map<String, Object>>();
 
 				FileReader reader = new FileReader(file);
 				JSONParser jsonParser = new JSONParser();
