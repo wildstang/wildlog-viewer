@@ -87,21 +87,22 @@ public class JSONFileReader {
 						String name = (String)iostate.get("name");
 						String value = (String)iostate.get("value");
 
-						if (dataPoints.get(name) == null) {
+						if (dataPoints.get(name) == null)
+						{
 							dataPoints.put(name, new ArrayList<DataPoint>());
 						}
 						if (value.equalsIgnoreCase("true"))
 						{
-							dataPoints.get(name).add(new DataPoint(true, timestamp));
+							dataPoints.get(name).add(new DataPoint(true, timestamp - startTimestamp));
 						}
 						else if (value.equalsIgnoreCase("false"))
 						{
-							dataPoints.get(name).add(new DataPoint(false, timestamp));
+							dataPoints.get(name).add(new DataPoint(false, timestamp - startTimestamp));
 						}
 						else
 						{
 							double doubleValue = Double.parseDouble(value);
-							dataPoints.get(name).add(new DataPoint(doubleValue, timestamp));
+							dataPoints.get(name).add(new DataPoint(doubleValue, timestamp - startTimestamp));
 						}
 					}
 					
@@ -111,11 +112,15 @@ public class JSONFileReader {
 					}
 				}
 
-				return new LogsModel(startTimestamp, endTimestamp, dataPoints, keys.toArray(new String[0]));
-			} catch (NumberFormatException e) {
+				return new LogsModel(startTimestamp - startTimestamp, endTimestamp - startTimestamp, dataPoints, keys.toArray(new String[0]));
+			}
+			catch (NumberFormatException e)
+			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (ParseException e) {
+			}
+			catch (ParseException e)
+			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -123,10 +128,12 @@ public class JSONFileReader {
 		return null;
 	}
 
-	private static class DataPointsListComparator implements Comparator<Map<String, Object>> {
+	private static class DataPointsListComparator implements Comparator<Map<String, Object>>
+	{
 
 		@Override
-		public int compare(Map<String, Object> arg0, Map<String, Object> arg1) {
+		public int compare(Map<String, Object> arg0, Map<String, Object> arg1)
+		{
 			Long timestamp1 = (Long) arg0.get("Timestamp");
 			Long timestamp2 = (Long) arg1.get("Timestamp");
 			return timestamp1.compareTo(timestamp2);

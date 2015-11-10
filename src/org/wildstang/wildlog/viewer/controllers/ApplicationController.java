@@ -16,6 +16,7 @@ import javax.swing.JProgressBar;
 import javax.swing.UIManager;
 
 import org.wildstang.wildlog.viewer.models.Deserializer;
+import org.wildstang.wildlog.viewer.models.JSONFileReader;
 import org.wildstang.wildlog.viewer.models.LogsModel;
 import org.wildstang.wildlog.viewer.views.DataPanel;
 import org.wildstang.wildlog.viewer.views.FileChoosingPanel;
@@ -180,7 +181,8 @@ public class ApplicationController {
 			@Override
 			public void run() {
 				try {
-					LogsModel model = Deserializer.loadLogsModelFromFile(file);
+//					LogsModel model = Deserializer.loadLogsModelFromFile(file);
+					LogsModel model = JSONFileReader.loadLogsModelFromFile(file);
 					ApplicationController.this.updateLogsModel(model);
 					ApplicationController.this.updateFileName(file.getName());
 				} catch (Exception e) {
