@@ -128,7 +128,7 @@ public class ApplicationController
          m_viewContainer.getDataPanels().get(i).dataKeyUpdated(panelConfigList.get(i).getKey());
       }
       
-      m_viewContainer.repaint();
+      frame.revalidate();
    }
    
    public void updateMousePosition(int x, int y)
