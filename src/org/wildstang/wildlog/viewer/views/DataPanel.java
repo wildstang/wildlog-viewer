@@ -14,132 +14,90 @@ import javax.swing.event.MouseInputAdapter;
 import org.wildstang.wildlog.viewer.controllers.ApplicationController;
 import org.wildstang.wildlog.viewer.models.LogsModel;
 
-public class DataPanel extends JPanel implements ActionListener {
+public class DataPanel extends JPanel
+{
 
-	public ApplicationController controller;
+   public ApplicationController controller;
 
-	GraphingPanel graphPanel;
-	DataSelectPanel dataSelectPanel;
+   GraphingPanel graphPanel;
+   DataSelectPanel dataSelectPanel;
 
-	private LogsModel model;
+   private LogsModel model;
+   private String m_key = "";
 
-	public DataPanel(final ApplicationController controller, Color c) {
-		this.controller = controller;
+   public DataPanel(final ApplicationController controller, Color c, String key)
+   {
+      this(controller, c);
+      m_key = key;
+   }
 
-		setLayout(new GridBagLayout());
-		GridBagConstraints j = new GridBagConstraints();
-		j.gridx = 0;
-		j.gridy = 0;
-		j.fill = GridBagConstraints.VERTICAL;
-		j.anchor = GridBagConstraints.LINE_START;
-		j.weightx = 0.0;
-		j.weighty = 1.0;
-		dataSelectPanel = new DataSelectPanel(c);
-		dataSelectPanel.setPreferredSize(new Dimension(200, 500));
-		dataSelectPanel.dataKeySelector.addActionListener(this);
-		add(dataSelectPanel, j);
+   public DataPanel(final ApplicationController controller, Color c)
+   {
+      this.controller = controller;
 
-		j.gridx = 1;
-		j.gridy = 0;
-		j.fill = GridBagConstraints.BOTH;
-		j.weightx = 1;
-		j.weighty = 1.0;
-		graphPanel = new GraphingPanel(c);
-		add(graphPanel, j);
+      setLayout(new GridBagLayout());
+      GridBagConstraints j = new GridBagConstraints();
+      j.gridx = 0;
+      j.gridy = 0;
+      j.fill = GridBagConstraints.VERTICAL;
+      j.anchor = GridBagConstraints.LINE_START;
+      j.weightx = 0.0;
+      j.weighty = 1.0;
+      dataSelectPanel = new DataSelectPanel(c);
+      dataSelectPanel.setPreferredSize(new Dimension(200, 500));
+      add(dataSelectPanel, j);
 
-		MouseInputAdapter mouseAdapter = new MouseInputAdapter() {
-			private int startX;
-			private int lastX;
+      j.gridx = 1;
+      j.gridy = 0;
+      j.fill = GridBagConstraints.BOTH;
+      j.weightx = 1;
+      j.weighty = 1.0;
+      graphPanel = new GraphingPanel(c);
+      add(graphPanel, j);
 
-			public void mouseMoved(MouseEvent e) {
-				controller.updateMousePosition(e.getX(), e.getY());
-			}
+   }
 
-			public void mousePressed(MouseEvent e) {
-				startX = e.getXOnScreen();
-				DataPanel.this.controller.updateDragRegion(startX, startX, true);
-			}
+   public DataSelectPanel getDataSelectPanel()
+   {
+      return dataSelectPanel;
+   }
 
-			public void mouseDragged(MouseEvent e) {
-				int currentX = e.getXOnScreen();
-				// If we dragged to the left of the initial point, invert the points
-				if (Math.abs(currentX - startX) > 1) {
-					if (currentX < startX) {
-						DataPanel.this.controller.updateDragRegion(currentX, startX, true);
-					} else {
-						DataPanel.this.controller.updateDragRegion(startX, currentX, true);
-					}
-				}
-			}
+   public GraphingPanel getGraphingPanel()
+   {
+      return graphPanel;
+   }
 
-			public void mouseReleased(MouseEvent e) {
-				int finalX = e.getXOnScreen();
+   public void updateModel(LogsModel model)
+   {
+      this.model = model;
+      graphPanel.updateModel(model);
+      dataKeyUpdated(m_key);
+   }
 
-				// If we dragged to the left of the initial point, invert the points
-				if (Math.abs(finalX - startX) > 1) {
-					if (finalX < startX) {
-						DataPanel.this.controller.updateDragRegion(finalX, startX, false);
-						DataPanel.this.controller.zoomToDragRegion(finalX, startX);
-					} else {
-						DataPanel.this.controller.updateDragRegion(startX, finalX, false);
-						DataPanel.this.controller.zoomToDragRegion(startX, finalX);
-					}
-				} else {
-					DataPanel.this.controller.updateDragRegion(0, 0, false);
-				}
+   public void updateGraphPanelZoomAndScroll(long startTimestamp,
+         long endTimestamp)
+   {
+      graphPanel.updateGraphView(startTimestamp, endTimestamp);
+   }
 
-			}
-		};
+   public void dataKeyUpdated(String newKey)
+   {
+      if (newKey != null && !newKey.equals(""))
+      {
+         Class<?> clazz = model.getClassTypeForKey(newKey);
+         graphPanel.updateSelectedDataKey(newKey, clazz);
+         dataSelectPanel.setKey(newKey);
+         dataSelectPanel.setDataTypeText(clazz.getName());
+      }
+   }
 
-		graphPanel.addMouseMotionListener(mouseAdapter);
-		graphPanel.addMouseListener(mouseAdapter);
-	}
-	
-	public DataSelectPanel getDataSelectPanel() {
-		return dataSelectPanel;
-	}
+   public void updateMousePosition(int posX, int posY)
+   {
+      graphPanel.updateMousePosition(posX, posY);
+   }
 
-	public GraphingPanel getGraphingPanel() {
-		return graphPanel;
-	}
-
-	public void updateModel(LogsModel model) {
-		this.model = model;
-		dataSelectPanel.updateModel(model);
-		graphPanel.updateModel(model);
-	}
-
-	public void updateGraphPanelZoomAndScroll(long startTimestamp, long endTimestamp) {
-		graphPanel.updateGraphView(startTimestamp, endTimestamp);
-	}
-
-	public void updateDragRegion(int pxStart, int pxEnd, boolean shouldShowDragRegion) {
-		graphPanel.updateDragRegion(pxStart, pxEnd, shouldShowDragRegion);
-	}
-
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == dataSelectPanel.dataKeySelector) {
-			String selectedKey = (String) dataSelectPanel.dataKeySelector.getSelectedItem();
-			dataKeyUpdated(selectedKey);
-		}
-	}
-
-	public void dataKeyUpdated(String newKey) {
-		if (dataSelectPanel.dataKeySelector.getSelectedIndex() != 0) {
-			Class<?> clazz = model.getClassTypeForKey(newKey);
-			graphPanel.updateSelectedDataKey(newKey, clazz);
-			
-			dataSelectPanel.setDataTypeText(clazz.getName());
-		} else {
-			graphPanel.clearData();
-		}
-	}
-
-	public void updateMousePosition(int posX, int posY) {
-		graphPanel.updateMousePosition(posX, posY);
-	}
-
-	public void updateGraphView(long startTimestamp, long endTimestamp) {
-		graphPanel.updateGraphView(startTimestamp, endTimestamp);
-	}
+   public void updateGraphView(long startTimestamp, long endTimestamp)
+   {
+      graphPanel.updateGraphView(startTimestamp, endTimestamp);
+   }
 }

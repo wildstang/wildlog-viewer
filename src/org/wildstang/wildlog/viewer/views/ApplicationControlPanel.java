@@ -1,33 +1,32 @@
 package org.wildstang.wildlog.viewer.views;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import org.wildstang.wildlog.viewer.controllers.ApplicationController;
 
-public class ApplicationControlPanel extends JPanel implements ActionListener {
+public class ApplicationControlPanel extends JPanel
+{
 
-	private ApplicationController controller;
+   JButton resetZoom;
+   JButton clearAllFields;
+   JButton configureButton;
+   JButton saveView;
+   JButton readView;
 
-	JButton resetZoom = new JButton("Reset Zoom");
-	JButton clearAllFields = new JButton("Clear All Fields");
+   public ApplicationControlPanel(ApplicationController controller)
+   {
+      configureButton = new JButton(controller.getActionManager().getConfigureAction());
+      resetZoom = new JButton(controller.getActionManager().getResetZoom());
+      clearAllFields = new JButton(controller.getActionManager().getClearAllFields());
+      saveView = new JButton(controller.getActionManager().getSaveView());
+      readView = new JButton(controller.getActionManager().getReadView());
 
-	public ApplicationControlPanel(ApplicationController controller) {
-		this.controller = controller;
-		add(clearAllFields);
-		add(resetZoom);
-		clearAllFields.addActionListener(this);
-		resetZoom.addActionListener(this);
-	}
+      add(readView);
+      add(saveView);
+      add(configureButton);
+      add(clearAllFields);
+      add(resetZoom);
+   }
 
-	public void actionPerformed(ActionEvent event) {
-		if (event.getSource() == resetZoom) {
-			controller.resetZoomToDefault();
-		} else if (event.getSource() == clearAllFields) {
-			controller.clearAllFields();
-		}
-	}
 }

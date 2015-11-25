@@ -3,7 +3,10 @@ package org.wildstang.wildlog.viewer.models;
 import java.util.List;
 import java.util.Map;
 
-public class LogsModel {
+import javax.swing.AbstractListModel;
+
+public class LogsModel extends AbstractListModel<String>
+{
 
 	private long startTimestamp, endTimestamp;
 	private Map<String, List<DataPoint>> data;
@@ -36,5 +39,17 @@ public class LogsModel {
 		List<DataPoint> dataForKey = data.get(key);
 		return dataForKey.get(0).getObject().getClass();
 	}
+
+   @Override
+   public int getSize()
+   {
+      return keys.length;
+   }
+
+   @Override
+   public String getElementAt(int index)
+   {
+      return keys[index];
+   }
 
 }
