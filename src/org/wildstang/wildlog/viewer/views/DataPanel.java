@@ -4,12 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-
 import javax.swing.JPanel;
-import javax.swing.event.MouseInputAdapter;
 
 import org.wildstang.wildlog.viewer.controllers.ApplicationController;
 import org.wildstang.wildlog.viewer.models.LogsModel;
@@ -74,8 +69,7 @@ public class DataPanel extends JPanel
       dataKeyUpdated(m_key);
    }
 
-   public void updateGraphPanelZoomAndScroll(long startTimestamp,
-         long endTimestamp)
+   public void updateGraphPanelZoomAndScroll(long startTimestamp, long endTimestamp)
    {
       controller.getViewProperties().setViewStartTimestamp(startTimestamp);
       controller.getViewProperties().setViewEndTimestamp(endTimestamp);

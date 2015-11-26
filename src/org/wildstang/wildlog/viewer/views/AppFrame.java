@@ -59,11 +59,6 @@ public class AppFrame extends JFrame
       this.setJMenuBar(m_menuBar);
    }
    
-   public AppGlassPane getAppGlassPane()
-   {
-      return (AppGlassPane)getGlassPane();
-   }
-
    public JMenuBar getJMenuBar()
    {
       return m_menuBar;

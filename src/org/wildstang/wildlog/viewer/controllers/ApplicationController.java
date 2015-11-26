@@ -3,7 +3,6 @@ package org.wildstang.wildlog.viewer.controllers;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JDialog;
@@ -18,10 +17,7 @@ import org.wildstang.wildlog.viewer.models.DataConfig;
 import org.wildstang.wildlog.viewer.models.JSONFileReader;
 import org.wildstang.wildlog.viewer.models.LogsModel;
 import org.wildstang.wildlog.viewer.views.AppFrame;
-import org.wildstang.wildlog.viewer.views.AppGlassPane;
-//import org.wildstang.wildlog.viewer.views.AppGlassPane;
 import org.wildstang.wildlog.viewer.views.AppViewContainer;
-import org.wildstang.wildlog.viewer.views.DataPanel;
 import org.wildstang.wildlog.viewer.views.ViewProperties;
 
 public class ApplicationController
@@ -85,7 +81,6 @@ public class ApplicationController
       frame.setContentPane(m_viewContainer);
       m_viewContainer.init(theWSRainbow);
 
-//      AppGlassPane glassPane = new AppGlassPane(this);
       GraphViewMouseListener listener = new GraphViewMouseListener(this);
       m_viewContainer.addMouseListener(listener);
       m_viewContainer.addMouseMotionListener(listener);
@@ -138,16 +133,13 @@ public class ApplicationController
       graphPanelViewController.updateModel(model);
    }
 
-   public void updateGraphPanelZoomAndScroll(long startTimestamp,
-         long endTimestamp)
+   public void updateGraphPanelZoomAndScroll(long startTimestamp, long endTimestamp)
    {
       for (int i = 0; i < m_viewContainer.getDataPanels().size(); i++)
       {
          m_viewContainer.getDataPanels().get(i).updateGraphPanelZoomAndScroll(startTimestamp, endTimestamp);
       }
       m_viewContainer.getTimeline().updateGraphPanelZoomAndScroll(startTimestamp, endTimestamp);
-
-//      frame.getAppGlassPane().updateGraphView(startTimestamp, endTimestamp);
    }
 
    public void zoomToDragRegion(int pxStart, int pxEnd)

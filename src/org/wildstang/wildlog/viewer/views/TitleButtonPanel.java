@@ -11,7 +11,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.wildstang.wildlog.viewer.actions.SelectFileAction;
 import org.wildstang.wildlog.viewer.controllers.ApplicationController;
 
 public class TitleButtonPanel extends JPanel

@@ -12,7 +12,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
 import org.wildstang.wildlog.viewer.controllers.ApplicationController;
-import org.wildstang.wildlog.viewer.models.AppViewConfig;
 
 public class SaveViewAction extends AbstractAction
 {

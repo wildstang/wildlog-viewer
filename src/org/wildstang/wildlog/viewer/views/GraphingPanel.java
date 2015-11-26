@@ -46,9 +46,10 @@ public class GraphingPanel extends JPanel
          return;
       }
 
+      int mouseX = m_viewProperties.getMouseX() - getLocationOnScreen().x;
+      
       long startTimestamp, endTimestamp;
-      if (m_viewProperties.getViewStartTimestamp() == -1
-            || m_viewProperties.getViewEndTimestamp() == -1)
+      if (m_viewProperties.getViewStartTimestamp() == -1 || m_viewProperties.getViewEndTimestamp() == -1)
       {
          startTimestamp = model.getStartTimestamp();
          endTimestamp = model.getEndTimestamp();
@@ -65,8 +66,7 @@ public class GraphingPanel extends JPanel
           * Check if we have any data in the displayed range. If our data is
           * outside the range, skip all the next stuff for efficiency.
           */
-         if ((dataPoints.get(0).getTimeStamp() > endTimestamp)
-               || (dataPoints.get(dataPoints.size() - 1).getTimeStamp() < startTimestamp))
+         if ((dataPoints.get(0).getTimeStamp() > endTimestamp) || (dataPoints.get(dataPoints.size() - 1).getTimeStamp() < startTimestamp))
          {
             return;
          }
@@ -76,7 +76,7 @@ public class GraphingPanel extends JPanel
             renderer.renderLogs(g, getWidth(), getHeight(), startTimestamp, endTimestamp);
             if (!m_viewProperties.isShouldShowDragRegion())
             {
-               renderer.renderDecorations(g, getWidth(), getHeight(), startTimestamp, endTimestamp, m_viewProperties.getMouseX());
+               renderer.renderDecorations(g, getWidth(), getHeight(), startTimestamp, endTimestamp, mouseX);
             }
          }
          else
@@ -88,7 +88,7 @@ public class GraphingPanel extends JPanel
          }
       }
 
-      drawTimeLine(g, startTimestamp, endTimestamp);
+      drawTimeLine(g, startTimestamp, endTimestamp, mouseX);
    }
 
    public void clearData()
@@ -97,7 +97,7 @@ public class GraphingPanel extends JPanel
       repaint();
    }
 
-   private void drawTimeLine(Graphics g, long startTimestamp, long endTimestamp)
+   private void drawTimeLine(Graphics g, long startTimestamp, long endTimestamp, int mouseX)
    {
 
       if (m_viewProperties.isShouldShowDragRegion())
@@ -174,7 +174,7 @@ public class GraphingPanel extends JPanel
       }
 
       g.setColor(Color.BLACK);
-      g.drawLine(m_viewProperties.getMouseX(), 0, m_viewProperties.getMouseX(), getHeight());
+      g.drawLine(mouseX, 0, mouseX, getHeight());
    }
 
    public void updateModel(LogsModel model)

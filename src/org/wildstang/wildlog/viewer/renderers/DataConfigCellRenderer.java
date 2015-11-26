@@ -19,16 +19,16 @@ public class DataConfigCellRenderer implements ListCellRenderer<DataConfig>
          boolean isSelected, boolean cellHasFocus)
    {
       JPanel cell = new JPanel();
-      
+
       cell.setLayout(new BorderLayout());
       JLabel label = new JLabel(value.getKey());
       label.setForeground(value.getColor());
       cell.add(label, BorderLayout.WEST);
-//      JLabel swatch = new JLabel();
-//      swatch.setBackground(value.getColor());
-//      cell.add(swatch, BorderLayout.CENTER);
+      // JLabel swatch = new JLabel();
+      // swatch.setBackground(value.getColor());
+      // cell.add(swatch, BorderLayout.CENTER);
       cell.setSize(200, 30);
-      
+
       return cell;
    }
 

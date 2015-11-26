@@ -35,7 +35,8 @@ public class LaunchConfigurationAction extends AbstractAction
          JOptionPane.showMessageDialog(null,
                "Please open a file before configuring the view.",
                "No file loaded",
-               JOptionPane.ERROR_MESSAGE);      }
+               JOptionPane.ERROR_MESSAGE);
+      }
    }
 
 }

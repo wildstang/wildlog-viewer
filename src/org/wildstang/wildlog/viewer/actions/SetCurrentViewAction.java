@@ -3,7 +3,6 @@ package org.wildstang.wildlog.viewer.actions;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.JButton;
 
 import org.wildstang.wildlog.viewer.controllers.ApplicationController;
 import org.wildstang.wildlog.viewer.models.AppViewConfig;
