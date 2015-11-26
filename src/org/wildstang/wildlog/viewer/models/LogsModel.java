@@ -11,14 +11,16 @@ public class LogsModel extends AbstractListModel<String>
    private long startTimestamp, endTimestamp;
    private Map<String, List<DataPoint>> data;
    private String[] keys;
+   private Map<String, IOInfo> m_ioInfo;
 
    public LogsModel(long startTimestamp, long endTimestamp,
-         Map<String, List<DataPoint>> data, String[] allKeys)
+         Map<String, List<DataPoint>> data, Map<String, IOInfo> ioInfo)
    {
       this.startTimestamp = startTimestamp;
       this.endTimestamp = endTimestamp;
       this.data = data;
-      this.keys = allKeys;
+      m_ioInfo = ioInfo;
+      keys = m_ioInfo.keySet().toArray(new String[0]);
    }
 
    public long getStartTimestamp()
@@ -59,4 +61,9 @@ public class LogsModel extends AbstractListModel<String>
       return keys[index];
    }
 
+   public IOInfo getIOInfo(String name)
+   {
+      return m_ioInfo.get(name);
+   }
+   
 }

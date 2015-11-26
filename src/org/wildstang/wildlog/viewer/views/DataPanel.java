@@ -38,7 +38,7 @@ public class DataPanel extends JPanel
       j.anchor = GridBagConstraints.LINE_START;
       j.weightx = 0.0;
       j.weighty = 1.0;
-      dataSelectPanel = new DataSelectPanel(c);
+      dataSelectPanel = new DataSelectPanel(c, controller.getModel() == null ? null : controller.getModel().getIOInfo(m_key));
       dataSelectPanel.setPreferredSize(new Dimension(200, 500));
       add(dataSelectPanel, j);
 
@@ -66,7 +66,7 @@ public class DataPanel extends JPanel
    {
       this.model = model;
       graphPanel.updateModel(model);
-      dataKeyUpdated(m_key);
+      dataKeyUpdated(m_key, model);
    }
 
    public void updateGraphPanelZoomAndScroll(long startTimestamp, long endTimestamp)
@@ -76,14 +76,14 @@ public class DataPanel extends JPanel
       graphPanel.repaint();
    }
 
-   public void dataKeyUpdated(String newKey)
+   public void dataKeyUpdated(String newKey, LogsModel model)
    {
       if (newKey != null && !newKey.equals(""))
       {
          Class<?> clazz = model.getClassTypeForKey(newKey);
          graphPanel.updateSelectedDataKey(newKey, clazz);
          dataSelectPanel.setKey(newKey);
-         dataSelectPanel.setDataTypeText(clazz.getName());
+         dataSelectPanel.setInfo(model.getIOInfo(newKey));
       }
    }
 

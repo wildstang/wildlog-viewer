@@ -59,8 +59,7 @@ public class TimelinePanel extends JPanel
 
    }
 
-   public void updateGraphPanelZoomAndScroll(long startTimestamp,
-         long endTimestamp)
+   public void updateGraphPanelZoomAndScroll(long startTimestamp, long endTimestamp)
    {
       this.startTimestamp = startTimestamp;
       this.endTimestamp = endTimestamp;

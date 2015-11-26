@@ -117,7 +117,7 @@ public class ApplicationController
       
       for (int i = 0; i < panelConfigList.size(); i++)
       {
-         m_viewContainer.getDataPanels().get(i).dataKeyUpdated(panelConfigList.get(i).getKey());
+         m_viewContainer.getDataPanels().get(i).dataKeyUpdated(panelConfigList.get(i).getKey(), m_model);
       }
       
       frame.revalidate();

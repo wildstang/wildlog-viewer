@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,8 +36,6 @@ public class JSONFileReader {
 				JSONParser jsonParser = new JSONParser();
 				JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
 				
-				
-				
 				JSONArray ioInfo = (JSONArray)jsonObject.get("ioinfo");
 				
 				JSONArray state = (JSONArray)jsonObject.get("state");
@@ -44,26 +43,28 @@ public class JSONFileReader {
 				// Extract list of all keys from the data
 				Iterator<JSONObject> ioIter = ioInfo.iterator();
 				List<String> keys = new ArrayList<>();
+				LinkedHashMap<String, IOInfo> ioInfoList = new LinkedHashMap<String, IOInfo>();
 				
 				while (ioIter.hasNext())
 				{
 					JSONObject currentInfo = ioIter.next();
-					keys.add((String)currentInfo.get("name"));
+					String name = (String)currentInfo.get("name");
+					keys.add(name);
+					String dirStr = (String)currentInfo.get("direction");
+					boolean dir = false;
+					if (dirStr.equalsIgnoreCase("input"))
+					{
+					   dir = true;
+					}
+					ioInfoList.put(name, new IOInfo((String)currentInfo.get("name"), (String)currentInfo.get("type"), dir));
 				}
 
 				// Sort them nicely
 				Collections.sort(keys);
 
-				// Sort the list of logs by timestamp. They should come in order, but we do this to avoid weird behavior.
-
-				// Add them all to a linked hashmap - key is the timestamp
-//			Collections.sort(logsList, new DataPointsListComparator());
-
 				// Convert data to DataPoints
-
 				// for each timestamp key, get the object name and value
 				// lookup by name as it does here, and create a new datapoint with the timestamp and value
-				
 				HashMap<String, List<DataPoint>> dataPoints = new HashMap<>();
 				Iterator<JSONObject> stateIter = state.iterator();
 				boolean first = true;
@@ -112,7 +113,7 @@ public class JSONFileReader {
 					}
 				}
 
-				return new LogsModel(startTimestamp - startTimestamp, endTimestamp - startTimestamp, dataPoints, keys.toArray(new String[0]));
+				return new LogsModel(startTimestamp - startTimestamp, endTimestamp - startTimestamp, dataPoints, ioInfoList);
 			}
 			catch (NumberFormatException e)
 			{
@@ -128,16 +129,4 @@ public class JSONFileReader {
 		return null;
 	}
 
-	private static class DataPointsListComparator implements Comparator<Map<String, Object>>
-	{
-
-		@Override
-		public int compare(Map<String, Object> arg0, Map<String, Object> arg1)
-		{
-			Long timestamp1 = (Long) arg0.get("Timestamp");
-			Long timestamp2 = (Long) arg1.get("Timestamp");
-			return timestamp1.compareTo(timestamp2);
-		}
-
-	}
 }

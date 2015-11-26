@@ -20,7 +20,6 @@ public class GraphViewMouseListener extends MouseAdapter
    
    public void mouseMoved(MouseEvent e)
    {
-      System.out.println("e.getX(): " + e.getX() + "\t\te.getXOnScreen(): " + e.getXOnScreen());
       m_viewProperties.setMouseX(e.getXOnScreen());
       m_viewProperties.setMouseY(e.getYOnScreen());
       m_controller.frame.repaint();

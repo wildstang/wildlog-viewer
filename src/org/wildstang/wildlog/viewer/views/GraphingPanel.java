@@ -111,7 +111,7 @@ public class GraphingPanel extends JPanel
          int localPxDragRegionStart = m_viewProperties.getDragRegionStart() - getLocationOnScreen().x;
          int localPxDragRegionEnd = m_viewProperties.getDragRegionEnd() - getLocationOnScreen().x;
 
-         System.out.println("localMouseX: " + localPxDragRegionStart + "; dragRegionStart: " + m_viewProperties.getDragRegionStart());
+//         System.out.println("localMouseX: " + localPxDragRegionStart + "; dragRegionStart: " + m_viewProperties.getDragRegionStart());
 
          // Bound the drag region by the width of the box
          if (localPxDragRegionStart < 0)

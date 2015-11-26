@@ -124,9 +124,9 @@ public class DoubleRenderer extends LogRenderer
       long deltaTime = endTimestamp - startTimestamp;
 
       long targetTimestamp = LogRenderer.mapPointInRangeToTimestamp(startTimestamp, endTimestamp, 0, panelWidth, mousePosition);
-      System.out.println("target timestamp: " + targetTimestamp);
+//      System.out.println("target timestamp: " + targetTimestamp);
       int indexOfClosest = findIndexOfClosestPointToTimestamp(dataPoints, targetTimestamp);
-      System.out.println("index of closest: " + indexOfClosest);
+//      System.out.println("index of closest: " + indexOfClosest);
 
       BigDecimal bd = new BigDecimal((Double) dataPoints.get(indexOfClosest).getObject());
       bd = bd.setScale(2, RoundingMode.HALF_UP);
