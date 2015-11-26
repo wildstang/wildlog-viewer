@@ -85,13 +85,10 @@ public class ApplicationController
       frame.setContentPane(m_viewContainer);
       m_viewContainer.init(theWSRainbow);
 
-      AppGlassPane glassPane = new AppGlassPane(this);
-      GlassPaneMouseListener listener = new GlassPaneMouseListener(this, glassPane, m_viewContainer);
-      glassPane.addMouseListener(listener);
-      glassPane.addMouseMotionListener(listener);
-      frame.setGlassPane(glassPane);
-      frame.getGlassPane().setVisible(true);
-      glassPane.setOpaque(false);
+//      AppGlassPane glassPane = new AppGlassPane(this);
+      GraphViewMouseListener listener = new GraphViewMouseListener(this);
+      m_viewContainer.addMouseListener(listener);
+      m_viewContainer.addMouseMotionListener(listener);
       
       frame.pack();
       frame.setVisible(true);
@@ -131,15 +128,6 @@ public class ApplicationController
       frame.revalidate();
    }
    
-   public void updateMousePosition(int x, int y)
-   {
-      for (int i = 0; i < m_viewContainer.getDataPanels().size(); i++)
-      {
-         m_viewContainer.getDataPanels().get(i).updateMousePosition(x, y);
-      }
-      m_viewContainer.getTimeline().updateMousePosition(x, y);
-   }
-
    public void updateLogsModel(LogsModel model)
    {
       m_model = model;
@@ -159,7 +147,7 @@ public class ApplicationController
       }
       m_viewContainer.getTimeline().updateGraphPanelZoomAndScroll(startTimestamp, endTimestamp);
 
-      frame.getAppGlassPane().updateGraphView(startTimestamp, endTimestamp);
+//      frame.getAppGlassPane().updateGraphView(startTimestamp, endTimestamp);
    }
 
    public void zoomToDragRegion(int pxStart, int pxEnd)

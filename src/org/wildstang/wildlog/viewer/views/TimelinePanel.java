@@ -11,14 +11,23 @@ import org.wildstang.wildlog.viewer.controllers.ApplicationController;
 public class TimelinePanel extends JPanel {
 
 	private long startTimestamp, endTimestamp;
-	private int mouseX, mouseY;
+//	private int mouseX, mouseY;
 
+	private ViewProperties m_viewProperties;
+	
+	public TimelinePanel(ApplicationController controller)
+   {
+	   m_viewProperties = controller.getViewProperties();
+   }
+	
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
+		int mouseX = m_viewProperties.getMouseX();
+		
 		// Convert graphing panel bounds to local coordinates
-		int timelineLeftBound = 0;//ApplicationController.DATA_SELECT_PANEL_WIDTH;
+		int timelineLeftBound = ApplicationController.DATA_SELECT_PANEL_WIDTH;
 		int timelineRightBound = getWidth();
 		g.setColor(Color.GREEN);
 		g.fillRect(timelineLeftBound, 0, timelineRightBound, getHeight());
@@ -29,8 +38,6 @@ public class TimelinePanel extends JPanel {
 		stringBounds = g.getFontMetrics().getStringBounds(endTimestamp + "ms", g);
 		g.drawString(endTimestamp + "ms", (int) (timelineRightBound - stringBounds.getWidth() - 5), (int) (getHeight() / 2 + stringBounds.getHeight() / 2) - 5);
 
-//		g.setColor(Color.BLACK);
-//		g.drawLine(mouseX/* + timelineLeftBound*/, 0, mouseX/* + timelineLeftBound*/, getHeight());
 		long deltaTime = endTimestamp - startTimestamp;
 		String currentPositionLabel = Long.toString((long) (startTimestamp + ((double) mouseX / (double) getWidth()) * deltaTime)) + "ms";
 		stringBounds = g.getFontMetrics().getStringBounds(currentPositionLabel, g);
@@ -52,9 +59,4 @@ public class TimelinePanel extends JPanel {
 		repaint();
 	}
 
-	public void updateMousePosition(int mouseX, int mouseY) {
-		this.mouseX = mouseX;
-		this.mouseY = mouseY;
-		repaint();
-	}
 }

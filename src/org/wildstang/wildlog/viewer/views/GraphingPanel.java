@@ -15,124 +15,219 @@ import org.wildstang.wildlog.viewer.models.LogsModel;
 import org.wildstang.wildlog.viewer.renderers.LogRenderer;
 import org.wildstang.wildlog.viewer.renderers.RendererFactory;
 
-public class GraphingPanel extends JPanel {
+public class GraphingPanel extends JPanel
+{
 
-	private LogsModel model;
-	private String logKey;
-	List<DataPoint> dataPoints;
-	long firstTimestamp;
-	int mouseX;
-	long viewStartTimestamp = -1, viewEndTimestamp = -1;
-	int dragRegionStart, dragRegionEnd;
-	boolean shouldShowDragRegion = false;
-	Color dotColor;
+   private LogsModel model;
+   private String logKey;
+   List<DataPoint> dataPoints;
+   long firstTimestamp;
 
-	private LogRenderer renderer;
+   Color dotColor;
 
-	public GraphingPanel(Color c) {
-		setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		dotColor = c;
-	}
+   private ViewProperties m_viewProperties;
 
-	@Override
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
+   private LogRenderer renderer;
 
-		if (model == null) {
-			return;
-		}
+   public GraphingPanel(ApplicationController controller, Color c)
+   {
+      setBorder(BorderFactory.createLineBorder(Color.BLACK));
+      dotColor = c;
+      m_viewProperties = controller.getViewProperties();
+   }
 
-		long startTimestamp, endTimestamp;
-		if (viewStartTimestamp == -1 || viewEndTimestamp == -1) {
-			startTimestamp = model.getStartTimestamp();
-			endTimestamp = model.getEndTimestamp();
-		} else {
-			startTimestamp = viewStartTimestamp;
-			endTimestamp = viewEndTimestamp;
-		}
+   @Override
+   public void paintComponent(Graphics g)
+   {
+      super.paintComponent(g);
 
-		if (dataPoints != null && !dataPoints.isEmpty()) {
-			/*
-			 * Check if we have any data in the displayed range. If our data is outside the range, skip all the next
-			 * stuff for efficiency.
-			 */
-			if ((dataPoints.get(0).getTimeStamp() > endTimestamp) || (dataPoints.get(dataPoints.size() - 1).getTimeStamp() < startTimestamp)) {
-				return;
-			}
+      if (model == null)
+      {
+         return;
+      }
 
-			if (renderer != null) {
-				renderer.renderLogs(g, getWidth(), getHeight(), startTimestamp, endTimestamp);
-				if (!shouldShowDragRegion) {
-					renderer.renderDecorations(g, getWidth(), getHeight(), startTimestamp, endTimestamp, mouseX);
-				}
-			} else {
-				String noRendererFound = "No renderer found for the selected data type.";
-				int stringWidth = SwingUtilities.computeStringWidth(g.getFontMetrics(), noRendererFound);
+      long startTimestamp, endTimestamp;
+      if (m_viewProperties.getViewStartTimestamp() == -1
+            || m_viewProperties.getViewEndTimestamp() == -1)
+      {
+         startTimestamp = model.getStartTimestamp();
+         endTimestamp = model.getEndTimestamp();
+      }
+      else
+      {
+         startTimestamp = m_viewProperties.getViewStartTimestamp();
+         endTimestamp = m_viewProperties.getViewEndTimestamp();
+      }
 
-				g.drawString(noRendererFound, (getWidth() / 2) - (stringWidth / 2), getHeight() / 2);
-			}
-		}
+      if (dataPoints != null && !dataPoints.isEmpty())
+      {
+         /*
+          * Check if we have any data in the displayed range. If our data is
+          * outside the range, skip all the next stuff for efficiency.
+          */
+         if ((dataPoints.get(0).getTimeStamp() > endTimestamp)
+               || (dataPoints.get(dataPoints.size() - 1).getTimeStamp() < startTimestamp))
+         {
+            return;
+         }
 
-	}
+         if (renderer != null)
+         {
+            renderer.renderLogs(g, getWidth(), getHeight(), startTimestamp, endTimestamp);
+            if (!m_viewProperties.isShouldShowDragRegion())
+            {
+               renderer.renderDecorations(g, getWidth(), getHeight(), startTimestamp, endTimestamp, m_viewProperties.getMouseX());
+            }
+         }
+         else
+         {
+            String noRendererFound = "No renderer found for the selected data type.";
+            int stringWidth = SwingUtilities.computeStringWidth(g.getFontMetrics(), noRendererFound);
 
-	public void clearData() {
-		dataPoints = null;
-		repaint();
-	}
+            g.drawString(noRendererFound, (getWidth() / 2) - (stringWidth / 2), getHeight() / 2);
+         }
+      }
 
+      drawTimeLine(g, startTimestamp, endTimestamp);
+   }
 
-	public void updateModel(LogsModel model) {
-		this.model = model;
-		if (logKey != null) {
-			dataPoints = model.getDataPointsForKey(logKey);
-		}
-		repaint();
-	}
+   public void clearData()
+   {
+      dataPoints = null;
+      repaint();
+   }
 
-	public void updateSelectedDataKey(String key, Class<?> dataClass) {
-		this.logKey = key;
-		if (model != null) {
-			dataPoints = model.getDataPointsForKey(logKey);
-		}
-		renderer = RendererFactory.getRendererForClass(dataClass);
-		if (renderer != null) {
-			renderer.updateLogModel(dataPoints);
-			renderer.updateAccentColor(dotColor);
-		}
-		repaint();
-	}
+   private void drawTimeLine(Graphics g, long startTimestamp, long endTimestamp)
+   {
 
-	public void updateMousePosition(int posX, int posY) {
-		mouseX = posX - ApplicationController.DATA_SELECT_PANEL_WIDTH;
-//		mouseY = posY;
-		repaint();
-	}
+      if (m_viewProperties.isShouldShowDragRegion())
+      {
+         // Draw drag region, with the time scrubber positioned at the
+         // current mouse position
 
-	public void updateGraphView(long startTimestamp, long endTimestamp) {
-		viewStartTimestamp = startTimestamp;
-		viewEndTimestamp = endTimestamp;
-		repaint();
-	}
+         // Convert the drag region coordinates to local coordinates
+         // They are originally in the coordinate system of the containing
+         // DataPanel
+         int localPxDragRegionStart = m_viewProperties.getDragRegionStart() - getLocationOnScreen().x;
+         int localPxDragRegionEnd = m_viewProperties.getDragRegionEnd() - getLocationOnScreen().x;
 
-	public void updateDragRegion(int pxStart, int pxEnd, boolean shouldShowDragRegion) {
-		dragRegionStart = pxStart;
-		dragRegionEnd = pxEnd;
-		this.shouldShowDragRegion = shouldShowDragRegion;
-		repaint();
-	}
+         System.out.println("localMouseX: " + localPxDragRegionStart + "; dragRegionStart: " + m_viewProperties.getDragRegionStart());
 
-	public long mapAbsoluteMousePositionToTimestamp(int mouseX) {
-		long startTimestamp, endTimestamp;
-		if (viewStartTimestamp == -1 || viewEndTimestamp == -1) {
-			startTimestamp = model.getStartTimestamp();
-			endTimestamp = model.getEndTimestamp();
-		} else {
-			startTimestamp = viewStartTimestamp;
-			endTimestamp = viewEndTimestamp;
-		}
+         // Bound the drag region by the width of the box
+         if (localPxDragRegionStart < 0)
+         {
+            localPxDragRegionStart = 0;
+         }
 
-		int localX = mouseX - getLocationOnScreen().x;
-		long deltaTime = endTimestamp - startTimestamp;
-		return (long) (startTimestamp + ((double) localX / (double) getWidth()) * deltaTime);
-	}
+         if (localPxDragRegionEnd > getWidth())
+         {
+            localPxDragRegionEnd = getWidth();
+         }
+
+         // Draw drag region
+         Color transparentWhite = new Color(255, 255, 255, 150);
+         g.setColor(transparentWhite);
+         g.fillRect(localPxDragRegionStart, 0, localPxDragRegionEnd - localPxDragRegionStart, getHeight());
+
+         // Compute where we should draw the labels (inside or outside the time
+         // line)
+         FontMetrics fMetrics = g.getFontMetrics();
+         String startTimestampString = Long.toString(mapMousePositionToTimestamp(localPxDragRegionStart, startTimestamp, endTimestamp));
+         String endTimestampString = Long.toString(mapMousePositionToTimestamp(localPxDragRegionEnd, startTimestamp, endTimestamp));
+
+         int startTimestampX;
+         int startStringWidth = SwingUtilities.computeStringWidth(fMetrics, startTimestampString);
+         if (localPxDragRegionStart - startStringWidth - 5 < 0)
+         {
+            // The label would extend past the start of the panel and we
+            // should draw it on the inside
+            startTimestampX = localPxDragRegionStart + 5;
+         }
+         else
+         {
+            // There's enough room on the outside
+            startTimestampX = localPxDragRegionStart - startStringWidth - 5;
+         }
+
+         int endTimestampX;
+         int endStringWidth = SwingUtilities.computeStringWidth(fMetrics, endTimestampString);
+         if (localPxDragRegionEnd + 5 + endStringWidth > getWidth())
+         {
+            // The label would extend past the start of the panel and we
+            // should draw it on the inside
+            endTimestampX = localPxDragRegionEnd - 5 - endStringWidth;
+         }
+         else
+         {
+            // There's enough room on the outside
+            endTimestampX = localPxDragRegionEnd + 5;
+         }
+
+         // Draw start line and label
+         g.setColor(Color.BLACK);
+         g.drawLine(localPxDragRegionStart, 0, localPxDragRegionStart, getHeight());
+         g.drawString(startTimestampString, startTimestampX, getHeight());
+
+         // Draw end line and label
+         g.drawLine(localPxDragRegionEnd, 0, localPxDragRegionEnd, getHeight());
+         g.drawString(endTimestampString, endTimestampX, getHeight());
+      }
+
+      g.setColor(Color.BLACK);
+      g.drawLine(m_viewProperties.getMouseX(), 0, m_viewProperties.getMouseX(), getHeight());
+   }
+
+   public void updateModel(LogsModel model)
+   {
+      this.model = model;
+      if (logKey != null)
+      {
+         dataPoints = model.getDataPointsForKey(logKey);
+      }
+      repaint();
+   }
+
+   public void updateSelectedDataKey(String key, Class<?> dataClass)
+   {
+      this.logKey = key;
+      if (model != null)
+      {
+         dataPoints = model.getDataPointsForKey(logKey);
+      }
+      renderer = RendererFactory.getRendererForClass(dataClass);
+      if (renderer != null)
+      {
+         renderer.updateLogModel(dataPoints);
+         renderer.updateAccentColor(dotColor);
+      }
+      repaint();
+   }
+
+   private long mapMousePositionToTimestamp(int mouseX, long startTimestamp,
+         long endTimestamp)
+   {
+      long deltaTime = endTimestamp - startTimestamp;
+      return (long) (startTimestamp + ((double) mouseX / (double) getWidth())
+            * deltaTime);
+   }
+
+   public long mapAbsoluteMousePositionToTimestamp(int mouseX)
+   {
+      long startTimestamp, endTimestamp;
+      if (m_viewProperties.getViewStartTimestamp() == -1 || m_viewProperties.getViewEndTimestamp() == -1)
+      {
+         startTimestamp = model.getStartTimestamp();
+         endTimestamp = model.getEndTimestamp();
+      }
+      else
+      {
+         startTimestamp = m_viewProperties.getViewStartTimestamp();
+         endTimestamp = m_viewProperties.getViewEndTimestamp();
+      }
+
+      int localX = mouseX - getLocationOnScreen().x;
+      long deltaTime = endTimestamp - startTimestamp;
+      return (long) (startTimestamp + ((double) localX / (double) getWidth())
+            * deltaTime);
+   }
 }

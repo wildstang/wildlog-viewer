@@ -13,7 +13,6 @@ import org.wildstang.wildlog.viewer.models.LogsModel;
 
 public class DataSelectPanel extends JPanel {
 
-	private static final String DEFAULT_KEY = "Select Key";
 	private static final String DEFAULT_DATA_TYPE = "Data Type";
 
 	JTextField dataKey;
@@ -38,28 +37,16 @@ public class DataSelectPanel extends JPanel {
 		setMaximumSize(new Dimension(ApplicationController.DATA_SELECT_PANEL_WIDTH, 0));
 	}
 
-	public void updateModel(LogsModel model) {
-//		keys = model.getAllKeys();
-//		tempKeys = new String[keys.length + 1];
-//		System.arraycopy(keys, 0, tempKeys, 1, keys.length);
-//		tempKeys[0] = "SelectKey";
-//		keys = tempKeys;
-//		keys[0] = DEFAULT_KEY;
-//		dataKeySelector.setModel(new DefaultComboBoxModel<>(keys));
-	}
-
 	public void setDataTypeText(String text) {
 		dataKeyType.setText(text);
 	}
 
 	public void setKey(String key)
 	{
-//	   dataKeyName = key;
 	   dataKey.setText(key);
 	}
 	
 	public void clearAllFields() {
-//		dataKeySelector.setSelectedIndex(0);
 	   setKey("");
 		setDataTypeText(DEFAULT_DATA_TYPE);
 	}

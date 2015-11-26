@@ -52,7 +52,7 @@ public class DataPanel extends JPanel
       j.fill = GridBagConstraints.BOTH;
       j.weightx = 1;
       j.weighty = 1.0;
-      graphPanel = new GraphingPanel(c);
+      graphPanel = new GraphingPanel(controller, c);
       add(graphPanel, j);
 
    }
@@ -77,7 +77,9 @@ public class DataPanel extends JPanel
    public void updateGraphPanelZoomAndScroll(long startTimestamp,
          long endTimestamp)
    {
-      graphPanel.updateGraphView(startTimestamp, endTimestamp);
+      controller.getViewProperties().setViewStartTimestamp(startTimestamp);
+      controller.getViewProperties().setViewEndTimestamp(endTimestamp);
+      graphPanel.repaint();
    }
 
    public void dataKeyUpdated(String newKey)
@@ -91,13 +93,5 @@ public class DataPanel extends JPanel
       }
    }
 
-   public void updateMousePosition(int posX, int posY)
-   {
-      graphPanel.updateMousePosition(posX, posY);
-   }
 
-   public void updateGraphView(long startTimestamp, long endTimestamp)
-   {
-      graphPanel.updateGraphView(startTimestamp, endTimestamp);
-   }
 }
