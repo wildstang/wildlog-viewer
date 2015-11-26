@@ -227,7 +227,6 @@ public class GraphingPanel extends JPanel
 
       int localX = mouseX - getLocationOnScreen().x;
       long deltaTime = endTimestamp - startTimestamp;
-      return (long) (startTimestamp + ((double) localX / (double) getWidth())
-            * deltaTime);
+      return (long) (startTimestamp + ((double) localX / (double) getWidth()) * deltaTime);
    }
 }
