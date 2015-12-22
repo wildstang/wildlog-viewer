@@ -129,7 +129,7 @@ public class DoubleRenderer extends LogRenderer
 //      System.out.println("index of closest: " + indexOfClosest);
 
       BigDecimal bd = new BigDecimal((Double) dataPoints.get(indexOfClosest).getObject());
-      bd = bd.setScale(2, RoundingMode.HALF_UP);
+      bd = bd.setScale(8, RoundingMode.HALF_UP);
       String label = Double.toString(bd.doubleValue());
       int stringWidth = SwingUtilities.computeStringWidth(g.getFontMetrics(), label);
 

@@ -2,8 +2,10 @@ package org.wildstang.wildlog.viewer.views;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -24,6 +26,7 @@ public class ConfigWizardDialog extends JDialog
 {
    
    JList availableFields;
+   JList<DataConfig> selectedFields;
    ApplicationController m_controller;
    AppViewConfig m_viewConfig;
    
@@ -41,7 +44,7 @@ public class ConfigWizardDialog extends JDialog
       }
       
       availableFields = new JList<>(controller.getModel());
-      JList<DataConfig> selectedFields = new JList<DataConfig>(m_viewConfig);
+      selectedFields = new JList<DataConfig>(m_viewConfig);
       selectedFields.setCellRenderer(new DataConfigCellRenderer());
       
       container.setLayout(new BorderLayout());
@@ -54,38 +57,8 @@ public class ConfigWizardDialog extends JDialog
       container.add(okButton, BorderLayout.SOUTH);
       
       
-      availableFields.addMouseListener(new MouseListener()
+      availableFields.addMouseListener(new MouseAdapter()
       {
-         
-         @Override
-         public void mouseReleased(MouseEvent e)
-         {
-            // TODO Auto-generated method stub
-            
-         }
-         
-         @Override
-         public void mousePressed(MouseEvent e)
-         {
-            // TODO Auto-generated method stub
-            
-         }
-         
-         @Override
-         public void mouseExited(MouseEvent e)
-         {
-            // TODO Auto-generated method stub
-            
-         }
-         
-         @Override
-         public void mouseEntered(MouseEvent e)
-         {
-            // TODO Auto-generated method stub
-            
-         }
-         
-         @Override
          public void mouseClicked(MouseEvent e)
          {
             if (e.getClickCount() == 2)
@@ -95,23 +68,8 @@ public class ConfigWizardDialog extends JDialog
          }
       });
       
-      availableFields.addKeyListener(new KeyListener()
+      availableFields.addKeyListener(new KeyAdapter()
       {
-         
-         @Override
-         public void keyTyped(KeyEvent p_e)
-         {
-            // TODO Auto-generated method stub
-            
-         }
-         
-         @Override
-         public void keyReleased(KeyEvent p_e)
-         {
-            // TODO Auto-generated method stub
-            
-         }
-         
          @Override
          public void keyPressed(KeyEvent p_e)
          {
@@ -122,6 +80,31 @@ public class ConfigWizardDialog extends JDialog
             
          }
       });
+      
+      selectedFields.addMouseListener(new MouseAdapter()
+      {
+         public void mouseClicked(MouseEvent e)
+         {
+            if (e.getClickCount() == 2)
+            {
+               removeSelectedFields();
+            }
+         }
+      });
+      
+      selectedFields.addKeyListener(new KeyAdapter()
+      {
+         @Override
+         public void keyPressed(KeyEvent p_e)
+         {
+            if (p_e.getKeyCode() == KeyEvent.VK_ENTER)
+            {
+               removeSelectedFields();
+            }
+            
+         }
+      });
+      
    }
    
    public void addSelectedFields()
@@ -131,7 +114,7 @@ public class ConfigWizardDialog extends JDialog
       
       for (int i = 0; i < indices.length; i++)
       {
-         String key = model.getElementAt(i);
+         String key = model.getElementAt(indices[i]);
          if (!m_viewConfig.contains(key))
          {
             DataConfig dataConfig = new DataConfig(key, m_controller.getColor(m_viewConfig.getSize()));
@@ -140,6 +123,16 @@ public class ConfigWizardDialog extends JDialog
       }
    }
    
+   public void removeSelectedFields()
+   {
+      AppViewConfig model = (AppViewConfig)selectedFields.getModel();
+      int[] indices = selectedFields.getSelectedIndices();
+      
+      for (int i = 0; i < indices.length; i++)
+      {
+         model.remove(indices[i]);
+      }
+   }
    
    
    
