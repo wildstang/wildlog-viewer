@@ -1,18 +1,18 @@
 package org.wildstang.wildlog.viewer.views;
 
-import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JList;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.ListModel;
 
@@ -32,6 +32,7 @@ public class ConfigWizardDialog extends JDialog
    
    public ConfigWizardDialog(ApplicationController controller)
    {
+      super(controller.frame, "Configure View");
       m_controller = controller;
       Container container = getContentPane();
       if (m_controller.getViewConfig() != null)
@@ -46,15 +47,69 @@ public class ConfigWizardDialog extends JDialog
       availableFields = new JList<>(controller.getModel());
       selectedFields = new JList<DataConfig>(m_viewConfig);
       selectedFields.setCellRenderer(new DataConfigCellRenderer());
-      
-      container.setLayout(new BorderLayout());
+
       JScrollPane availableScrollPane = new JScrollPane(availableFields);
       JScrollPane selectedScrollPane = new JScrollPane(selectedFields);
-      container.add(availableScrollPane, BorderLayout.WEST);
-      container.add(selectedScrollPane, BorderLayout.EAST);
+      
+      JButton addButton = new JButton("Add >>");
+      JButton removeButton = new JButton("<< Remove");
+      addButton.addActionListener(new ActionListener()
+      {
+         
+         @Override
+         public void actionPerformed(ActionEvent p_arg0)
+         {
+            addSelectedFields();
+         }
+      });
+      removeButton.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent p_arg0)
+         {
+            removeSelectedFields();
+         }
+      });
+
+      
+      container.setLayout(new GridBagLayout());
+      GridBagConstraints c = new GridBagConstraints();
+      
+      c.fill = GridBagConstraints.BOTH;
+      c.gridx = 0;
+      c.gridy = 0;
+      c.gridwidth = 2;
+      c.gridheight = 7;
+      c.weightx = 1;
+      c.weighty = 1;
+      
+      container.add(availableScrollPane, c);
+      
+      c.gridx = 3;
+      c.gridy = 0;
+      container.add(selectedScrollPane, c);
+      
+      c.gridx = 2;
+      c.gridy = 3;
+      c.gridwidth = 1;
+      c.gridheight = 1;
+      c.weightx = 0;
+      c.weighty = 0;
+      
+      container.add(addButton, c);
+      c.gridx = 2;
+      c.gridy = 4;
+      container.add(removeButton, c);
       
       JButton okButton = new JButton(new SetCurrentViewAction("Update View", controller, m_viewConfig, this));
-      container.add(okButton, BorderLayout.SOUTH);
+      
+      c.gridx = 1;
+      c.gridy = 7;
+      c.gridwidth = 1;
+      c.gridheight = 1;
+      c.weightx = 0.0;
+      c.weighty = 0.0;
+      container.add(okButton, c);
       
       
       availableFields.addMouseListener(new MouseAdapter()
