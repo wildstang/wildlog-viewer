@@ -204,7 +204,6 @@ public class ApplicationController
          {
             try
             {
-               // LogsModel model = Deserializer.loadLogsModelFromFile(file);
                LogsModel model = JSONFileReader.loadLogsModelFromFile(file);
                ApplicationController.this.updateLogsModel(model);
                m_viewContainer.setStatus(file.getCanonicalPath());
@@ -215,7 +214,7 @@ public class ApplicationController
                ApplicationController.this.errorReadingFile();
             }
             dlg.setVisible(false);
-            System.out.println("Load complete");
+//            System.out.println("Load complete");
          }
       });
       t.start();

@@ -55,9 +55,9 @@ public class GraphPanelController implements MouseWheelListener,
          int scrollbarPosition = (int) ((double) (scrollMaxValue
                - scrollbarExtent - scrollMinValue) * (((double) currentStartTimestamp - (double) model.getStartTimestamp()) / ((double) model.getEndTimestamp()
                - (double) model.getStartTimestamp() - (double) currentWindowWidth)));
-         System.out.println("Calculated scrollbar position: " + scrollbarPosition);
+//         System.out.println("Calculated scrollbar position: " + scrollbarPosition);
          scrollPanel.scrollToValue(scrollbarPosition);
-         System.out.println("Scrollbar now at position " + scrollPanel.getScrollPosition());
+//         System.out.println("Scrollbar now at position " + scrollPanel.getScrollPosition());
       }
 
       ignoreNextScrollBarPositionUpdate = false;
@@ -90,7 +90,7 @@ public class GraphPanelController implements MouseWheelListener,
             zoomFactor = 1.0;
          }
          ignoreNextScrollBarPositionUpdate = true;
-         System.out.println("Zoom factor: " + zoomFactor);
+//         System.out.println("Zoom factor: " + zoomFactor);
       }
       else
       {
@@ -179,13 +179,13 @@ public class GraphPanelController implements MouseWheelListener,
 
       int scrollerPosition = scrollPanel.getScrollPosition();
 
-      System.out.println("New scroll position: " + scrollerPosition);
+//      System.out.println("New scroll position: " + scrollerPosition);
 
       currentStartTimestamp = (long) (((double) model.getEndTimestamp()
             - (double) model.getStartTimestamp() - (double) currentWindowWidth)
             * ((double) scrollerPosition / ((double) scrollPanel.getMaximum() - (double) scrollPanel.getMinimum())) + model.getStartTimestamp());
 
-      System.out.println("New start timestamp: " + currentStartTimestamp);
+//      System.out.println("New start timestamp: " + currentStartTimestamp);
 
       // The scrollbar was moved by the user; don't recalculate its position
       // ourselves
