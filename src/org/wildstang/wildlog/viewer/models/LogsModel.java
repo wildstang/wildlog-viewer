@@ -46,7 +46,14 @@ public class LogsModel extends AbstractListModel<String>
    public Class<?> getClassTypeForKey(String key)
    {
       List<DataPoint> dataForKey = data.get(key);
-      return dataForKey.get(0).getObject().getClass();
+      if (dataForKey != null)
+      {
+         return dataForKey.get(0).getObject().getClass();
+      }
+      else
+      {
+         return null;
+      }
    }
 
    @Override

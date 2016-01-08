@@ -183,7 +183,7 @@ public class ConfigWizardDialog extends JDialog
       AppViewConfig model = (AppViewConfig)selectedFields.getModel();
       int[] indices = selectedFields.getSelectedIndices();
       
-      for (int i = 0; i < indices.length; i++)
+      for (int i = indices.length - 1; i >= 0; i--)
       {
          model.remove(indices[i]);
       }

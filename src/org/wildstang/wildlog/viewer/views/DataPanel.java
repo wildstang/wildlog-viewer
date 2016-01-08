@@ -81,9 +81,12 @@ public class DataPanel extends JPanel
       if (newKey != null && !newKey.equals(""))
       {
          Class<?> clazz = model.getClassTypeForKey(newKey);
-         graphPanel.updateSelectedDataKey(newKey, clazz);
-         dataSelectPanel.setKey(newKey);
-         dataSelectPanel.setInfo(model.getIOInfo(newKey));
+         if (clazz != null)
+         {
+            graphPanel.updateSelectedDataKey(newKey, clazz);
+            dataSelectPanel.setKey(newKey);
+            dataSelectPanel.setInfo(model.getIOInfo(newKey));
+         }
       }
    }
 
