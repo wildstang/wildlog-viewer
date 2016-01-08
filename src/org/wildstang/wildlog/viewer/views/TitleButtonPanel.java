@@ -54,9 +54,9 @@ public class TitleButtonPanel extends JPanel
       }
       add(paneRight, BorderLayout.EAST);
 
-      JPanel paneCenter = new JPanel();
-      paneCenter.setLayout(new FlowLayout(FlowLayout.TRAILING));
-      add(paneCenter, BorderLayout.CENTER);
+//      JPanel paneCenter = new JPanel();
+//      paneCenter.setLayout(new FlowLayout(FlowLayout.TRAILING));
+//      add(paneCenter, BorderLayout.CENTER);
    }
 
 }
